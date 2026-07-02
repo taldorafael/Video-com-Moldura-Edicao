@@ -1,4 +1,4 @@
-# Video Frame Studio
+# Video com Moldura Edição
 
 Aplique molduras PNG em vídeos direto no navegador — sem upload, sem servidor, 100% privado. Todo o processamento roda localmente via [FFmpeg.wasm](https://ffmpeg.org/).
 
