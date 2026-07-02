@@ -301,6 +301,146 @@
       background: repeating-conic-gradient(#1a1a1f 0% 25%, #27272a 0% 50%) 50% / 16px 16px;
     }
 
+    .frame-editor-wrap {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 16px;
+      max-width: 100%;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+
+    .frame-editor-wrap img {
+      display: block;
+      max-width: 100%;
+      max-height: 340px;
+      width: auto;
+      height: auto;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background: repeating-conic-gradient(#1a1a1f 0% 25%, #27272a 0% 50%) 50% / 16px 16px;
+      pointer-events: none;
+    }
+
+    .area-box {
+      position: absolute;
+      border: 2px dashed var(--accent);
+      background: rgba(16, 185, 129, 0.14);
+      box-sizing: border-box;
+      cursor: move;
+      min-width: 16px;
+      min-height: 16px;
+    }
+
+    .area-box::before {
+      content: 'Área do vídeo';
+      position: absolute;
+      top: -22px;
+      left: 0;
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: var(--accent);
+      background: var(--bg-primary);
+      padding: 2px 6px;
+      border-radius: 4px;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .area-handle {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      background: var(--accent);
+      border: 2px solid var(--bg-primary);
+      border-radius: 50%;
+      z-index: 2;
+    }
+
+    .area-handle.nw { top: 0; left: 0; transform: translate(-50%, -50%); cursor: nwse-resize; }
+    .area-handle.ne { top: 0; right: 0; transform: translate(50%, -50%); cursor: nesw-resize; }
+    .area-handle.sw { bottom: 0; left: 0; transform: translate(-50%, 50%); cursor: nesw-resize; }
+    .area-handle.se { bottom: 0; right: 0; transform: translate(50%, 50%); cursor: nwse-resize; }
+
+    .area-controls {
+      text-align: left;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      margin-bottom: 16px;
+    }
+
+    .area-controls-title {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+    }
+
+    .area-controls-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .area-controls-grid label {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .area-controls-grid input[type="number"] {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 7px 9px;
+      color: var(--text-primary);
+      font-size: 0.85rem;
+      font-family: inherit;
+      width: 100%;
+      transition: border-color var(--transition);
+    }
+
+    .area-controls-grid input[type="number"]:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .area-controls-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-secondary-sm {
+      background: none;
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      padding: 7px 12px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .btn-secondary-sm:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .area-hint {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 10px;
+      line-height: 1.4;
+    }
+
     .frame-meta {
       font-size: 0.8rem;
       color: var(--text-secondary);
@@ -830,12 +970,34 @@
           </div>
 
           <div class="frame-preview-area hidden" id="frame-preview-container">
-            <div class="frame-preview-wrap">
-              <img id="frame-preview" alt="Preview da moldura">
+            <div class="frame-editor-wrap" id="frame-editor-wrap">
+              <img id="frame-preview" alt="Preview da moldura" draggable="false">
+              <div class="area-box" id="area-box">
+                <div class="area-handle nw" data-handle="nw"></div>
+                <div class="area-handle ne" data-handle="ne"></div>
+                <div class="area-handle sw" data-handle="sw"></div>
+                <div class="area-handle se" data-handle="se"></div>
+              </div>
             </div>
             <div class="frame-meta">
               <span id="frame-name"></span> • <span id="frame-size"></span>
             </div>
+
+            <div class="area-controls">
+              <div class="area-controls-title">Posição e tamanho do vídeo na moldura (em pixels)</div>
+              <div class="area-controls-grid">
+                <label>X <input type="number" id="area-x" min="0" step="1"></label>
+                <label>Y <input type="number" id="area-y" min="0" step="1"></label>
+                <label>Largura <input type="number" id="area-w" min="1" step="1"></label>
+                <label>Altura <input type="number" id="area-h" min="1" step="1"></label>
+              </div>
+              <div class="area-controls-actions">
+                <button class="btn-secondary-sm" id="area-auto-btn" type="button">Detectar automaticamente</button>
+                <button class="btn-secondary-sm" id="area-reset-btn" type="button">Centralizar</button>
+              </div>
+              <div class="area-hint">Arraste o retângulo verde sobre a moldura (ou puxe pelos cantos) para definir exatamente onde o vídeo vai aparecer. Você também pode digitar os valores diretamente.</div>
+            </div>
+
             <button class="btn-remove-frame" id="remove-frame-btn">Remover moldura</button>
           </div>
         </div>
