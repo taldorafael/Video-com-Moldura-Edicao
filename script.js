@@ -1,4 +1,4 @@
-// =====================================================
+// ====================================================
 // Video Frame Studio - Script Principal (VERSÃO ESTÁVEL 0.11.6)
 // =====================================================
 const FFmpegScript = 'https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js';
