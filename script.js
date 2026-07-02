@@ -8,6 +8,8 @@ const state = {
   ffmpegLoaded: false,
   fetchFile: null,
   frameFile: null,
+  frameOriginalImage: null,
+  frameHolePreviewUrl: null,
   frameInfo: null,
   videos: [],
   processing: false,
@@ -111,63 +113,122 @@ function showToast(message, type = 'info') {
 }
 
 // =====================================================
-// ANALISAR MOLDURA - Detectar área transparente
+// CARREGAR IMAGEM A PARTIR DE ARQUIVO
 // =====================================================
-async function analyzeFrame(file) {
+function loadImageFromFile(file) {
   return new Promise((resolve, reject) => {
     const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = img.width;
-      canvas.height = img.height;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0);
-      try {
-        const imageData = ctx.getImageData(0, 0, img.width, img.height);
-        const data = imageData.data;
-        let minX = img.width, maxX = 0;
-        let minY = img.height, maxY = 0;
-        let hasTransparent = false;
-
-        for (let y = 0; y < img.height; y++) {
-          for (let x = 0; x < img.width; x++) {
-            const alpha = data[(y * img.width + x) * 4 + 3];
-            if (alpha < 10) {
-              hasTransparent = true;
-              minX = Math.min(minX, x);
-              maxX = Math.max(maxX, x);
-              minY = Math.min(minY, y);
-              maxY = Math.max(maxY, y);
-            }
-          }
-        }
-
-        if (!hasTransparent || minX >= maxX || minY >= maxY) {
-          const margin = 0.1;
-          resolve({
-            frameWidth: img.width,
-            frameHeight: img.height,
-            videoX: Math.floor(img.width * margin),
-            videoY: Math.floor(img.height * margin),
-            videoWidth: Math.floor(img.width * (1 - 2 * margin)),
-            videoHeight: Math.floor(img.height * (1 - 2 * margin))
-          });
-        } else {
-          resolve({
-            frameWidth: img.width,
-            frameHeight: img.height,
-            videoX: minX,
-            videoY: minY,
-            videoWidth: maxX - minX,
-            videoHeight: maxY - minY
-          });
-        }
-      } catch (err) {
-        reject(err);
-      }
-    };
+    img.onload = () => resolve(img);
     img.onerror = reject;
     img.src = URL.createObjectURL(file);
+  });
+}
+
+// =====================================================
+// ANALISAR MOLDURA - Detectar área transparente
+// Recebe uma <img> já carregada (evita recarregar o arquivo toda vez).
+// Se a imagem não tiver transparência real, cai num retângulo central
+// (margem de 10%) que o usuário pode ajustar manualmente depois.
+// =====================================================
+function analyzeFrame(img) {
+  const canvas = document.createElement('canvas');
+  canvas.width = img.naturalWidth || img.width;
+  canvas.height = img.naturalHeight || img.height;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const data = imageData.data;
+  let minX = canvas.width, maxX = 0;
+  let minY = canvas.height, maxY = 0;
+  let hasTransparent = false;
+
+  for (let y = 0; y < canvas.height; y++) {
+    for (let x = 0; x < canvas.width; x++) {
+      const alpha = data[(y * canvas.width + x) * 4 + 3];
+      if (alpha < 10) {
+        hasTransparent = true;
+        minX = Math.min(minX, x);
+        maxX = Math.max(maxX, x);
+        minY = Math.min(minY, y);
+        maxY = Math.max(maxY, y);
+      }
+    }
+  }
+
+  if (!hasTransparent || minX >= maxX || minY >= maxY) {
+    const margin = 0.1;
+    return {
+      frameWidth: canvas.width,
+      frameHeight: canvas.height,
+      videoX: Math.floor(canvas.width * margin),
+      videoY: Math.floor(canvas.height * margin),
+      videoWidth: Math.floor(canvas.width * (1 - 2 * margin)),
+      videoHeight: Math.floor(canvas.height * (1 - 2 * margin))
+    };
+  }
+
+  return {
+    frameWidth: canvas.width,
+    frameHeight: canvas.height,
+    videoX: minX,
+    videoY: minY,
+    videoWidth: maxX - minX,
+    videoHeight: maxY - minY
+  };
+}
+
+// =====================================================
+// GERAR MOLDURA COM "FURO" TRANSPARENTE
+// Sempre parte da imagem ORIGINAL (nunca de uma versão já furada) e recorta
+// uma área 100% transparente exatamente na posição/tamanho definidos pelo
+// usuário no editor — independente da moldura já ter alpha real ali ou não.
+// É esse arquivo (não o PNG original) que é usado no FFmpeg e na prévia.
+// =====================================================
+function generateFrameWithHole(img, frameInfo) {
+  return new Promise((resolve, reject) => {
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = frameInfo.frameWidth;
+      canvas.height = frameInfo.frameHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, frameInfo.frameWidth, frameInfo.frameHeight);
+      ctx.clearRect(frameInfo.videoX, frameInfo.videoY, frameInfo.videoWidth, frameInfo.videoHeight);
+      canvas.toBlob((blob) => {
+        if (blob) resolve(blob);
+        else reject(new Error('Falha ao gerar moldura com área transparente'));
+      }, 'image/png');
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+// =====================================================
+// ATUALIZAR PRÉVIA VISUAL (mostra o furo de verdade na tela)
+// =====================================================
+function refreshFramePreviewWithHole() {
+  return new Promise((resolve) => {
+    if (!state.frameOriginalImage || !state.frameInfo) {
+      resolve();
+      return;
+    }
+    generateFrameWithHole(state.frameOriginalImage, state.frameInfo)
+      .then((blob) => {
+        const url = URL.createObjectURL(blob);
+        if (state.frameHolePreviewUrl) URL.revokeObjectURL(state.frameHolePreviewUrl);
+        state.frameHolePreviewUrl = url;
+        elements.framePreview.onload = () => {
+          renderAreaBox();
+          resolve();
+        };
+        elements.framePreview.src = url;
+      })
+      .catch((err) => {
+        console.error('Erro ao gerar prévia com área transparente:', err);
+        resolve();
+      });
   });
 }
 
@@ -258,28 +319,31 @@ async function handleFrameFile(file) {
   }
   
   state.frameFile = file;
-  const url = URL.createObjectURL(file);
-  elements.framePreview.src = url;
   elements.frameName.textContent = file.name;
   elements.frameSize.textContent = formatBytes(file.size);
   elements.framePreviewContainer.classList.remove('hidden');
   elements.frameDropArea.classList.add('hidden');
   
-  showToast('Analisando moldura...', 'info');
+  showToast('Carregando moldura...', 'info');
   
   try {
-    state.frameInfo = await analyzeFrame(file);
-    showToast(`Moldura analisada: ${state.frameInfo.frameWidth}x${state.frameInfo.frameHeight}px`, 'success');
+    const img = await loadImageFromFile(file);
+    state.frameOriginalImage = img;
+    state.frameInfo = analyzeFrame(img);
+    clampFrameInfo();
+    showToast(`Moldura carregada: ${state.frameInfo.frameWidth}x${state.frameInfo.frameHeight}px. Ajuste a área do vídeo abaixo.`, 'success');
   } catch (err) {
-    console.error('Erro ao analisar moldura:', err);
-    showToast('Erro ao analisar moldura', 'error');
+    console.error('Erro ao carregar moldura:', err);
+    showToast('Erro ao carregar moldura', 'error');
     state.frameInfo = null;
+    state.frameOriginalImage = null;
   }
 
-  if (elements.framePreview.complete && elements.framePreview.naturalWidth) {
-    initAreaEditor();
+  if (state.frameInfo && state.frameOriginalImage) {
+    await refreshFramePreviewWithHole();
+    syncAreaInputs();
   } else {
-    elements.framePreview.onload = () => initAreaEditor();
+    elements.framePreview.src = URL.createObjectURL(file);
   }
   
   updateProcessButton();
@@ -288,6 +352,11 @@ async function handleFrameFile(file) {
 function removeFrame() {
   state.frameFile = null;
   state.frameInfo = null;
+  state.frameOriginalImage = null;
+  if (state.frameHolePreviewUrl) {
+    URL.revokeObjectURL(state.frameHolePreviewUrl);
+    state.frameHolePreviewUrl = null;
+  }
   elements.frameInput.value = '';
   elements.framePreview.src = '';
   elements.framePreviewContainer.classList.add('hidden');
@@ -373,16 +442,19 @@ function updateFrameInfoFromInputs() {
 
 function setupAreaEditorEvents() {
   [elements.areaX, elements.areaY, elements.areaW, elements.areaH].forEach(input => {
-    input.addEventListener('change', updateFrameInfoFromInputs);
+    input.addEventListener('change', () => {
+      updateFrameInfoFromInputs();
+      refreshFramePreviewWithHole();
+    });
   });
 
   elements.areaAutoBtn.addEventListener('click', async () => {
-    if (!state.frameFile) return;
+    if (!state.frameOriginalImage) return;
     try {
-      state.frameInfo = await analyzeFrame(state.frameFile);
+      state.frameInfo = analyzeFrame(state.frameOriginalImage);
       clampFrameInfo();
-      renderAreaBox();
       syncAreaInputs();
+      await refreshFramePreviewWithHole();
       showToast('Área detectada automaticamente', 'success');
     } catch (err) {
       console.error('Erro ao detectar área:', err);
@@ -390,7 +462,7 @@ function setupAreaEditorEvents() {
     }
   });
 
-  elements.areaResetBtn.addEventListener('click', () => {
+  elements.areaResetBtn.addEventListener('click', async () => {
     const fi = state.frameInfo;
     if (!fi) return;
     const margin = 0.15;
@@ -398,8 +470,8 @@ function setupAreaEditorEvents() {
     fi.videoY = Math.floor(fi.frameHeight * margin);
     fi.videoWidth = Math.floor(fi.frameWidth * (1 - 2 * margin));
     fi.videoHeight = Math.floor(fi.frameHeight * (1 - 2 * margin));
-    renderAreaBox();
     syncAreaInputs();
+    await refreshFramePreviewWithHole();
   });
 
   elements.areaBox.addEventListener('pointerdown', (e) => {
@@ -479,6 +551,7 @@ function startAreaDrag(startEvent, mode) {
     elements.areaBox.releasePointerCapture(pointerId);
     window.removeEventListener('pointermove', onMove);
     window.removeEventListener('pointerup', onUp);
+    refreshFramePreviewWithHole();
   }
 
   window.addEventListener('pointermove', onMove);
@@ -666,6 +739,21 @@ elements.processAllBtn.addEventListener('click', async () => {
   } catch (err) {
     return;
   }
+
+  // Gera, a partir da moldura ORIGINAL, uma versão com um furo 100%
+  // transparente exatamente na área que o usuário definiu no editor —
+  // isso garante que o vídeo apareça ali mesmo que o PNG enviado não
+  // tivesse transparência real nenhuma.
+  let frameForProcessing = state.frameFile;
+  if (state.frameOriginalImage && state.frameInfo) {
+    try {
+      frameForProcessing = await generateFrameWithHole(state.frameOriginalImage, state.frameInfo);
+    } catch (err) {
+      console.error('Erro ao preparar a moldura com área transparente:', err);
+      showToast('Erro ao preparar a moldura. Tente ajustar a área novamente.', 'error');
+      return;
+    }
+  }
   
   state.processing = true;
   updateProcessButton();
@@ -693,7 +781,7 @@ elements.processAllBtn.addEventListener('click', async () => {
     setVideoStatus(video.id, 'processing');
     
     try {
-      await processVideo(video);
+      await processVideo(video, frameForProcessing);
       video.status = 'completed';
       setVideoStatus(video.id, 'done');
       addResultItem(video);
@@ -724,7 +812,7 @@ elements.processAllBtn.addEventListener('click', async () => {
 // =====================================================
 // PROCESSAR VÍDEO - COM OVERLAY
 // =====================================================
-async function processVideo(video) {
+async function processVideo(video, frameSource) {
   const ffmpeg = state.ffmpeg;
   const fetchFile = state.fetchFile;
   const inputName = `input_${video.id}.mp4`;
@@ -732,7 +820,7 @@ async function processVideo(video) {
   const outputName = `output_${video.id}.mp4`;
   
   await ffmpeg.FS('writeFile', inputName, await fetchFile(video.file));
-  await ffmpeg.FS('writeFile', frameName, await fetchFile(state.frameFile));
+  await ffmpeg.FS('writeFile', frameName, await fetchFile(frameSource || state.frameFile));
   
   const frameInfo = state.frameInfo;
   const duration = video.duration && isFinite(video.duration) ? video.duration : 3600;
