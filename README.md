@@ -61,4 +61,4 @@ Funciona nas versões recentes de Chrome, Edge e Firefox. Navegadores muito anti
 
 ## Licença
 
-Defina aqui a licença do projeto (ex.: MIT) conforme sua preferência.
+- Qualquer um pode usar, copiar ou modificar.
