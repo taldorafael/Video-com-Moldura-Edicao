@@ -22,6 +22,14 @@ const elements = {
   frameName: document.getElementById('frame-name'),
   frameSize: document.getElementById('frame-size'),
   removeFrameBtn: document.getElementById('remove-frame-btn'),
+  frameEditorWrap: document.getElementById('frame-editor-wrap'),
+  areaBox: document.getElementById('area-box'),
+  areaX: document.getElementById('area-x'),
+  areaY: document.getElementById('area-y'),
+  areaW: document.getElementById('area-w'),
+  areaH: document.getElementById('area-h'),
+  areaAutoBtn: document.getElementById('area-auto-btn'),
+  areaResetBtn: document.getElementById('area-reset-btn'),
   videosDropArea: document.getElementById('videos-drop-area'),
   videosInput: document.getElementById('videos-input'),
   videosListSection: document.getElementById('videos-list-section'),
@@ -267,6 +275,12 @@ async function handleFrameFile(file) {
     showToast('Erro ao analisar moldura', 'error');
     state.frameInfo = null;
   }
+
+  if (elements.framePreview.complete && elements.framePreview.naturalWidth) {
+    initAreaEditor();
+  } else {
+    elements.framePreview.onload = () => initAreaEditor();
+  }
   
   updateProcessButton();
 }
@@ -279,6 +293,196 @@ function removeFrame() {
   elements.framePreviewContainer.classList.add('hidden');
   elements.frameDropArea.classList.remove('hidden');
   updateProcessButton();
+}
+
+function initAreaEditor() {
+  if (!state.frameInfo) return;
+  clampFrameInfo();
+  renderAreaBox();
+  syncAreaInputs();
+}
+
+function clampFrameInfo() {
+  const fi = state.frameInfo;
+  if (!fi) return;
+  fi.videoWidth = Math.max(4, Math.min(fi.videoWidth, fi.frameWidth));
+  fi.videoHeight = Math.max(4, Math.min(fi.videoHeight, fi.frameHeight));
+  fi.videoX = Math.max(0, Math.min(fi.videoX, fi.frameWidth - fi.videoWidth));
+  fi.videoY = Math.max(0, Math.min(fi.videoY, fi.frameHeight - fi.videoHeight));
+}
+
+function getEditorScale() {
+  const img = elements.framePreview;
+  const naturalW = img.naturalWidth || (state.frameInfo && state.frameInfo.frameWidth) || 1;
+  const naturalH = img.naturalHeight || (state.frameInfo && state.frameInfo.frameHeight) || 1;
+  const displayedW = img.clientWidth || naturalW;
+  const displayedH = img.clientHeight || naturalH;
+  return {
+    scaleX: displayedW / naturalW,
+    scaleY: displayedH / naturalH
+  };
+}
+
+function renderAreaBox() {
+  const fi = state.frameInfo;
+  if (!fi) return;
+  const { scaleX, scaleY } = getEditorScale();
+  const box = elements.areaBox;
+  box.style.left = `${fi.videoX * scaleX}px`;
+  box.style.top = `${fi.videoY * scaleY}px`;
+  box.style.width = `${fi.videoWidth * scaleX}px`;
+  box.style.height = `${fi.videoHeight * scaleY}px`;
+}
+
+function syncAreaInputs() {
+  const fi = state.frameInfo;
+  if (!fi) return;
+  elements.areaX.value = Math.round(fi.videoX);
+  elements.areaY.value = Math.round(fi.videoY);
+  elements.areaW.value = Math.round(fi.videoWidth);
+  elements.areaH.value = Math.round(fi.videoHeight);
+}
+
+function updateFrameInfoFromInputs() {
+  const fi = state.frameInfo;
+  if (!fi) return;
+
+  let x = parseInt(elements.areaX.value, 10);
+  let y = parseInt(elements.areaY.value, 10);
+  let w = parseInt(elements.areaW.value, 10);
+  let h = parseInt(elements.areaH.value, 10);
+
+  if (isNaN(x)) x = fi.videoX;
+  if (isNaN(y)) y = fi.videoY;
+  if (isNaN(w)) w = fi.videoWidth;
+  if (isNaN(h)) h = fi.videoHeight;
+
+  w = Math.max(4, Math.min(w, fi.frameWidth));
+  h = Math.max(4, Math.min(h, fi.frameHeight));
+  x = Math.max(0, Math.min(x, fi.frameWidth - w));
+  y = Math.max(0, Math.min(y, fi.frameHeight - h));
+
+  fi.videoX = x;
+  fi.videoY = y;
+  fi.videoWidth = w;
+  fi.videoHeight = h;
+
+  renderAreaBox();
+  syncAreaInputs();
+}
+
+function setupAreaEditorEvents() {
+  [elements.areaX, elements.areaY, elements.areaW, elements.areaH].forEach(input => {
+    input.addEventListener('change', updateFrameInfoFromInputs);
+  });
+
+  elements.areaAutoBtn.addEventListener('click', async () => {
+    if (!state.frameFile) return;
+    try {
+      state.frameInfo = await analyzeFrame(state.frameFile);
+      clampFrameInfo();
+      renderAreaBox();
+      syncAreaInputs();
+      showToast('Área detectada automaticamente', 'success');
+    } catch (err) {
+      console.error('Erro ao detectar área:', err);
+      showToast('Erro ao detectar área automaticamente', 'error');
+    }
+  });
+
+  elements.areaResetBtn.addEventListener('click', () => {
+    const fi = state.frameInfo;
+    if (!fi) return;
+    const margin = 0.15;
+    fi.videoX = Math.floor(fi.frameWidth * margin);
+    fi.videoY = Math.floor(fi.frameHeight * margin);
+    fi.videoWidth = Math.floor(fi.frameWidth * (1 - 2 * margin));
+    fi.videoHeight = Math.floor(fi.frameHeight * (1 - 2 * margin));
+    renderAreaBox();
+    syncAreaInputs();
+  });
+
+  elements.areaBox.addEventListener('pointerdown', (e) => {
+    if (e.target.classList.contains('area-handle')) return;
+    e.preventDefault();
+    startAreaDrag(e, 'move');
+  });
+
+  elements.areaBox.querySelectorAll('.area-handle').forEach(handle => {
+    handle.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      startAreaDrag(e, handle.dataset.handle);
+    });
+  });
+
+  window.addEventListener('resize', () => {
+    if (state.frameInfo) renderAreaBox();
+  });
+}
+
+function startAreaDrag(startEvent, mode) {
+  const fi = state.frameInfo;
+  if (!fi) return;
+
+  const { scaleX, scaleY } = getEditorScale();
+  const startX = startEvent.clientX;
+  const startY = startEvent.clientY;
+  const startFrame = { x: fi.videoX, y: fi.videoY, w: fi.videoWidth, h: fi.videoHeight };
+  const pointerId = startEvent.pointerId;
+
+  elements.areaBox.setPointerCapture(pointerId);
+
+  function onMove(e) {
+    const dxNatural = (e.clientX - startX) / scaleX;
+    const dyNatural = (e.clientY - startY) / scaleY;
+
+    let { x, y, w, h } = startFrame;
+
+    if (mode === 'move') {
+      x = startFrame.x + dxNatural;
+      y = startFrame.y + dyNatural;
+    } else {
+      if (mode.includes('w')) {
+        x = startFrame.x + dxNatural;
+        w = startFrame.w - dxNatural;
+      }
+      if (mode.includes('e')) {
+        w = startFrame.w + dxNatural;
+      }
+      if (mode.includes('n')) {
+        y = startFrame.y + dyNatural;
+        h = startFrame.h - dyNatural;
+      }
+      if (mode.includes('s')) {
+        h = startFrame.h + dyNatural;
+      }
+    }
+
+    w = Math.max(4, w);
+    h = Math.max(4, h);
+    x = Math.max(0, Math.min(x, fi.frameWidth - w));
+    y = Math.max(0, Math.min(y, fi.frameHeight - h));
+    w = Math.min(w, fi.frameWidth - x);
+    h = Math.min(h, fi.frameHeight - y);
+
+    fi.videoX = x;
+    fi.videoY = y;
+    fi.videoWidth = w;
+    fi.videoHeight = h;
+
+    renderAreaBox();
+    syncAreaInputs();
+  }
+
+  function onUp() {
+    elements.areaBox.releasePointerCapture(pointerId);
+    window.removeEventListener('pointermove', onMove);
+    window.removeEventListener('pointerup', onUp);
+  }
+
+  window.addEventListener('pointermove', onMove);
+  window.addEventListener('pointerup', onUp);
 }
 
 // =====================================================
@@ -761,6 +965,7 @@ function init() {
   checkSharedArrayBuffer();
   setupFrameUpload();
   setupVideosUpload();
+  setupAreaEditorEvents();
   updateProcessButton();
 }
 
