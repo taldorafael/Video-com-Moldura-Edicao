@@ -223,10 +223,10 @@ async function loadFFmpeg() {
 // UPLOAD DE MOLDURA
 // =====================================================
 function setupFrameUpload() {
-  elements.frameDropArea.addEventListener('click', (e) => {
-    if (e.target.closest('#remove-frame-btn')) return;
-    elements.frameInput.click();
-  });
+  // O input#frame-input já cobre 100% da área da dropzone (posicionado em
+  // cima, transparente) e por isso já abre o seletor de arquivo sozinho ao
+  // ser clicado. NÃO adicionamos um clique extra no container, senão o
+  // seletor de arquivo abre duas vezes por clique.
   
   elements.frameInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
@@ -285,9 +285,9 @@ function removeFrame() {
 // UPLOAD DE VÍDEOS
 // =====================================================
 function setupVideosUpload() {
-  elements.videosDropArea.addEventListener('click', () => {
-    elements.videosInput.click();
-  });
+  // Mesmo caso do input da moldura: o input#videos-input já cobre toda a
+  // área da dropzone e abre o seletor sozinho, então nada de click() extra
+  // aqui — isso é o que causava o seletor abrindo duas vezes.
   
   elements.videosInput.addEventListener('change', (e) => {
     handleVideoFiles(Array.from(e.target.files));
