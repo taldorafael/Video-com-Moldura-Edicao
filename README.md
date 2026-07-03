@@ -1,38 +1,42 @@
 # Video com Moldura Edição
 
-Aplique molduras em vídeos diretamente no navegador — sem upload, sem servidor e com total privacidade. Todo o processamento é realizado localmente através do [FFmpeg.wasm](https://ffmpeg.org/).
+Aplique molduras em vídeos direto no navegador — sem upload, sem servidor, sem enviar nada para fora do seu computador. Todo o processamento roda localmente com [FFmpeg.wasm](https://ffmpeg.org/).
 
 **Demo:** [videocommoldura.vercel.app](https://videocommoldura.vercel.app/)
 
-## Como funciona
+## O que o app faz
 
-1. Você envia uma moldura com área central transparente ou não (preferencialmente em PNG com transparência).
-2. O aplicativo detecta automaticamente quando a região é transparente onde o vídeo será exibido.
-3. Você arrasta um ou vários vídeos (MP4, MOV ou WEBM).
-4. O FFmpeg.wasm processa tudo diretamente no navegador — o vídeo é encaixado na área transparente da moldura, que permanece sobreposta ao conteúdo.
-5. Ao final, você pode baixar cada vídeo individualmente ou todos os arquivos processados em um único `.zip`.
+O projeto tem duas partes, organizadas em abas:
 
-Nenhum arquivo é enviado para servidores externos. A moldura e os vídeos permanecem exclusivamente no dispositivo do usuário durante todo o processo.
+**1. Aplicar Moldura em Vídeo**
+Você envia uma arte PNG com uma área transparente, arrasta um ou vários vídeos (MP4, MOV, WEBM) e o app encaixa cada vídeo dentro da área transparente, mantendo a moldura por cima. No final, dá pra baixar cada vídeo separado ou todos juntos em um `.zip`.
+
+**2. Editor de Molduras**
+Um editor visual (estilo Canva) para criar a moldura do zero: textos, formas, imagens, logos, guias de alinhamento e templates prontos. Dá pra desenhar a área onde o vídeo vai entrar, exportar como PNG transparente e enviar direto para a aba de aplicação, sem precisar sair do site.
+
+Nenhum arquivo — moldura ou vídeo — sai do dispositivo do usuário em nenhum momento.
 
 ## Stack
 
-* HTML + CSS + JavaScript puro (sem framework ou etapa de build)
-* [`@ffmpeg/ffmpeg`](https://github.com/ffmpegwasm/ffmpeg.wasm) `0.11.6` — processamento de vídeo via WebAssembly
-* [`JSZip`](https://stuk.github.io/jszip/) — geração de arquivos `.zip`
-* Deploy estático na [Vercel](https://vercel.com/)
+- HTML + CSS + JavaScript puro, sem build step
+- [`@ffmpeg/ffmpeg`](https://github.com/ffmpegwasm/ffmpeg.wasm) `0.11.6` para o processamento de vídeo via WebAssembly
+- [`Fabric.js`](http://fabricjs.com/) para o editor visual de molduras
+- [`JSZip`](https://stuk.github.io/jszip/) para gerar o `.zip` com os vídeos prontos
+- Deploy estático na [Vercel](https://vercel.com/)
+
+Fabric.js e JSZip só são carregados quando realmente são usados (ao abrir o editor ou ao baixar múltiplos vídeos), então o carregamento inicial da página fica leve.
 
 ## Estrutura do projeto
 
 ```text
 .
-├── index.html       # Interface e estilos
-├── script.js        # Upload, análise da moldura e processamento via FFmpeg
-└── vercel.json      # Configurações de cache e headers necessários
+├── index.html      # App inteiro: interface, estilos e lógica
+└── vercel.json      # Headers de cache e isolamento de origem (necessários para o FFmpeg.wasm)
 ```
 
 ## Rodando localmente
 
-Como o aplicativo utiliza recursos modernos do navegador, recomenda-se servir os arquivos através de um servidor HTTP local:
+O app depende de recursos modernos do navegador (SharedArrayBuffer, WebAssembly), então precisa ser servido por HTTP — abrir o arquivo direto (`file://`) não funciona.
 
 ```bash
 npx serve .
@@ -40,37 +44,28 @@ npx serve .
 python3 -m http.server 8080
 ```
 
-Depois, acesse:
-
-```text
-http://localhost:8080
-```
+Depois acesse `http://localhost:8080`.
 
 ## Deploy na Vercel
 
-O projeto é totalmente estático. Basta importar o repositório para a Vercel sem configurar comandos de build ou diretórios de saída personalizados.
+Projeto totalmente estático. Basta importar o repositório — não é preciso configurar comando de build nem diretório de saída.
 
-O arquivo `vercel.json` já inclui:
+O `vercel.json` já cuida de:
 
-* `Cross-Origin-Opener-Policy` e `Cross-Origin-Embedder-Policy` para melhor compatibilidade e desempenho do FFmpeg.wasm.
-* Cache de longo prazo para arquivos JavaScript e WebAssembly.
-* Cache desabilitado para `index.html`, garantindo que atualizações sejam exibidas imediatamente aos usuários.
+- `Cross-Origin-Opener-Policy` e `Cross-Origin-Embedder-Policy`, exigidos para o FFmpeg.wasm rodar em modo multi-thread (mais rápido).
+- Cache desabilitado em `index.html`, para que atualizações apareçam na hora para quem já visitou o site.
 
-## Requisitos do navegador
+Se o navegador não expuser `SharedArrayBuffer` (por falta desses headers, por exemplo), o app ainda funciona — só processa em modo single-thread, mais lento.
 
-Compatível com versões recentes do:
+## Navegadores suportados
 
-* Google Chrome
-* Microsoft Edge
-* Mozilla Firefox
-
-Navegadores sem suporte a WebAssembly ou muito antigos podem não conseguir executar o processamento.
+Versões recentes de Chrome, Edge e Firefox. Navegadores sem suporte a WebAssembly podem não conseguir processar os vídeos.
 
 ## Limitações conhecidas
 
-* Todo o processamento ocorre na CPU do dispositivo do usuário; vídeos longos ou lotes grandes podem exigir mais tempo para serem concluídos.
-* A moldura deve possuir uma área realmente transparente (canal alpha) para que a detecção automática funcione corretamente.
+- O processamento roda inteiramente na CPU do usuário — vídeos longos ou lotes grandes demoram mais.
+- A moldura precisa ter uma área realmente transparente (canal alpha) para a detecção automática funcionar.
 
 ## Licença
 
-Uso livre para fins pessoais e comerciais. Você pode utilizar, copiar, modificar e distribuir o projeto conforme necessário.
+Uso livre para fins pessoais e comerciais.
