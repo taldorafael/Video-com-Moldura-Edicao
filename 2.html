@@ -1,0 +1,1630 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Moldura Studio — aplique molduras em vídeos direto no navegador</title>
+<meta name="description" content="Encaixe qualquer vídeo dentro de uma moldura PNG e exporte em segundos, sem enviar nada para servidores. Detecção automática da área transparente, ajuste fino e processamento 100% local via FFmpeg.wasm.">
+<meta name="keywords" content="moldura para vídeo, editor de vídeo online, moldura png, ffmpeg wasm, overlay de vídeo, moldura instagram, editor no navegador">
+<meta name="author" content="Moldura Studio">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#2f5fed">
+<meta name="color-scheme" content="light">
+<link rel="canonical" href="/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Moldura Studio">
+<meta property="og:title" content="Moldura Studio — molduras em vídeo, 100% no navegador">
+<meta property="og:description" content="Envie uma moldura PNG e seus vídeos. O Moldura Studio encaixa tudo automaticamente e devolve os arquivos prontos, sem sair do navegador.">
+<meta property="og:locale" content="pt_BR">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Moldura Studio">
+<meta name="twitter:description" content="Aplique molduras em vídeos com processamento 100% local. Sem upload, sem espera, sem marca d'água.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Moldura Studio",
+  "description": "Aplica molduras PNG sobre vídeos inteiramente no navegador, usando FFmpeg.wasm.",
+  "applicationCategory": "MultimediaApplication",
+  "operatingSystem": "Any (navegador com WebAssembly)",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "BRL" },
+  "featureList": [
+    "Detecção automática da área transparente da moldura",
+    "Ajuste manual da área de encaixe do vídeo",
+    "Processamento local via FFmpeg.wasm, sem upload",
+    "Exportação em lote com download em .zip"
+  ]
+}
+</script>
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%232f5fed'/%3E%3Cstop offset='1' stop-color='%237c3aed'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Crect x='16' y='16' width='32' height='32' rx='8' fill='none' stroke='white' stroke-width='5'/%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   RESET & TOKENS
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+:root{
+  --white:#ffffff;
+  --surface:#f6f8ff;
+  --surface-alt:#eef1fd;
+  --ink:#0d1128;
+  --ink-soft:#565b74;
+  --ink-faint:#8b8fa8;
+  --border:#e3e6f5;
+  --border-soft:#edeffa;
+
+  --blue:#2f5fed;
+  --blue-dark:#1c3fc4;
+  --blue-light:#e8edfe;
+  --violet:#7c3aed;
+  --violet-dark:#5b21b6;
+  --violet-light:#f1e9fe;
+
+  --brand: linear-gradient(135deg,#2f5fed 0%,#7c3aed 100%);
+  --brand-soft: linear-gradient(135deg, rgba(47,95,237,.08), rgba(124,58,237,.08));
+  --brand-text: linear-gradient(135deg,#2f5fed 0%,#7c3aed 100%);
+
+  --success:#0e9f6e; --success-bg:#e7f9f1;
+  --error:#e02424; --error-bg:#fdeceb;
+  --warning:#b6690a; --warning-bg:#fff6e2;
+
+  --r-sm:10px; --r-md:16px; --r-lg:24px; --r-xl:28px;
+  --shadow-sm: 0 1px 2px rgba(13,17,40,.06);
+  --shadow: 0 10px 28px rgba(13,17,40,.08);
+  --shadow-lg: 0 28px 70px rgba(13,17,40,.16);
+  --ease: cubic-bezier(.4,0,.2,1);
+  --container: 1180px;
+}
+
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+}
+
+body{
+  font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--ink);
+  background: var(--white);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,h2,h3,h4{ font-family:'Sora', 'Inter', sans-serif; letter-spacing:-0.02em; line-height:1.15; color: var(--ink); }
+.mono{ font-family:'JetBrains Mono', ui-monospace, monospace; }
+
+a{ color: inherit; }
+img, video{ max-width:100%; display:block; }
+button{ font: inherit; cursor:pointer; }
+input, select{ font: inherit; }
+
+.container{ max-width: var(--container); margin: 0 auto; padding: 0 24px; }
+.visually-hidden{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+
+.skip-link{
+  position:absolute; top:-48px; left:12px; z-index:1000;
+  background: var(--ink); color:#fff; padding:10px 18px; border-radius: var(--r-sm);
+  text-decoration:none; font-weight:600; transition: top .2s var(--ease);
+}
+.skip-link:focus{ top:12px; }
+
+:focus-visible{ outline: 2.5px solid var(--blue); outline-offset: 3px; border-radius: 4px; }
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding: 13px 24px; border-radius: 999px; border: 1px solid transparent;
+  font-weight:600; font-size:.95rem; white-space:nowrap;
+  transition: transform .18s var(--ease), box-shadow .18s var(--ease), background .18s var(--ease), border-color .18s var(--ease), opacity .18s var(--ease);
+  text-decoration:none;
+}
+.btn svg{ width:18px; height:18px; flex-shrink:0; }
+.btn-primary{
+  background: var(--brand); color:#fff; box-shadow: 0 10px 24px rgba(76,66,238,.28);
+}
+.btn-primary:hover{ transform: translateY(-2px); box-shadow: 0 16px 32px rgba(76,66,238,.36); }
+.btn-primary:active{ transform: translateY(0); }
+.btn-secondary{
+  background: var(--white); color: var(--ink); border-color: var(--border);
+}
+.btn-secondary:hover{ border-color: var(--blue); color: var(--blue); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+.btn-ghost{ background:transparent; color: var(--ink-soft); border-color: transparent; }
+.btn-ghost:hover{ color: var(--blue); }
+.btn-block{ width:100%; }
+.btn:disabled{ opacity:.5; cursor:not-allowed; transform:none !important; box-shadow:none !important; }
+.btn-sm{ padding: 9px 16px; font-size:.85rem; }
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.site-header{
+  position: sticky; top:0; z-index:200;
+  background: rgba(255,255,255,.82); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border-soft);
+}
+.header-inner{ display:flex; align-items:center; justify-content:space-between; height:72px; }
+.brand{ display:flex; align-items:center; gap:10px; text-decoration:none; }
+.brand-mark{
+  width:38px; height:38px; border-radius:11px; background: var(--brand);
+  display:flex; align-items:center; justify-content:center; box-shadow: 0 6px 16px rgba(76,66,238,.32);
+}
+.brand-mark svg{ width:20px; height:20px; }
+.brand-name{ font-family:'Sora',sans-serif; font-weight:700; font-size:1.08rem; color: var(--ink); }
+
+.main-nav{ display:flex; align-items:center; gap:6px; }
+.main-nav a{
+  text-decoration:none; color: var(--ink-soft); font-weight:600; font-size:.92rem;
+  padding:9px 14px; border-radius:999px; transition: background .18s var(--ease), color .18s var(--ease);
+}
+.main-nav a:hover{ color: var(--blue); background: var(--surface); }
+
+.header-actions{ display:flex; align-items:center; gap:10px; }
+.nav-toggle{
+  display:none; width:42px; height:42px; border-radius:12px; border:1px solid var(--border);
+  background:var(--white); align-items:center; justify-content:center;
+}
+.nav-toggle svg{ width:20px; height:20px; }
+
+.mobile-nav{
+  display:none; flex-direction:column; gap:4px; padding: 10px 24px 20px;
+  border-bottom:1px solid var(--border-soft); background: var(--white);
+}
+.mobile-nav a{ text-decoration:none; color: var(--ink); font-weight:600; padding:12px 8px; border-radius: var(--r-sm); }
+.mobile-nav a:hover{ background: var(--surface); }
+.mobile-nav.open{ display:flex; }
+
+/* ============================================================
+   WARNING BANNER
+   ============================================================ */
+.warning-banner{
+  display:none; background: var(--warning-bg); color:#7a4d08; border-bottom:1px solid #f5dfae;
+  font-size:.85rem; text-align:center; padding: 10px 20px;
+}
+.warning-banner.show{ display:block; }
+.warning-banner strong{ color:#5c3a06; }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero{ position:relative; overflow:hidden; padding: 76px 0 64px; }
+.hero::before{
+  content:""; position:absolute; inset: -20% -10% auto -10%; height:620px;
+  background: radial-gradient(60% 60% at 30% 20%, rgba(47,95,237,.14), transparent 70%),
+              radial-gradient(50% 50% at 80% 10%, rgba(124,58,237,.14), transparent 70%);
+  z-index:-1;
+}
+.hero-grid{ display:grid; grid-template-columns: 1.05fr .95fr; gap:56px; align-items:center; }
+.eyebrow{
+  display:inline-flex; align-items:center; gap:8px; padding:7px 14px 7px 8px; border-radius:999px;
+  background: var(--brand-soft); border:1px solid rgba(124,58,237,.18); font-size:.8rem; font-weight:700; color: var(--violet-dark);
+  margin-bottom:22px;
+}
+.eyebrow .dot{ width:8px; height:8px; border-radius:50%; background: var(--brand); flex-shrink:0; }
+.hero h1{ font-size: clamp(2.1rem, 4.2vw, 3.2rem); margin-bottom:20px; }
+.hero h1 .grad{ background: var(--brand-text); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+.hero p.lead{ font-size:1.12rem; color: var(--ink-soft); max-width:520px; margin-bottom:32px; }
+.hero-cta{ display:flex; gap:14px; flex-wrap:wrap; margin-bottom:36px; }
+.trust-row{ display:flex; flex-wrap:wrap; gap:22px; }
+.trust-item{ display:flex; align-items:center; gap:8px; font-size:.85rem; color: var(--ink-soft); font-weight:600; }
+.trust-item svg{ width:17px; height:17px; color: var(--blue); flex-shrink:0; }
+
+/* Hero visual: signature element — a stylized frame with animated scan detecting the hole */
+.hero-visual{ position:relative; }
+.frame-device{
+  position:relative; background: var(--white); border:1px solid var(--border); border-radius: var(--r-xl);
+  box-shadow: var(--shadow-lg); padding:22px; max-width:420px; margin:0 auto;
+}
+.frame-device-bar{ display:flex; gap:6px; margin-bottom:16px; }
+.frame-device-bar span{ width:9px; height:9px; border-radius:50%; background: var(--border); }
+.frame-stage{
+  position:relative; aspect-ratio: 4/5; border-radius: var(--r-md); overflow:hidden;
+  background: linear-gradient(160deg,#151833,#241a4a);
+}
+.frame-stage .hole{
+  position:absolute; inset:16% 14%; border-radius:14px; overflow:hidden;
+  background: linear-gradient(135deg,#2f5fed,#7c3aed);
+}
+.frame-stage .hole video, .frame-stage .hole .fallback-grad{ width:100%; height:100%; object-fit:cover; }
+.frame-stage .hole::after{
+  content:""; position:absolute; inset:0; background: linear-gradient(180deg, transparent 60%, rgba(0,0,0,.35));
+}
+.frame-stage .scan-line{
+  position:absolute; left:14%; right:14%; height:2px; background: linear-gradient(90deg, transparent, #fff, transparent);
+  box-shadow: 0 0 14px 2px rgba(255,255,255,.7);
+  animation: scan 3.2s ease-in-out infinite;
+}
+@keyframes scan{
+  0%,100%{ top:16%; opacity:0; }
+  10%{ opacity:1; }
+  50%{ top:84%; opacity:1; }
+  60%{ opacity:0; }
+}
+.frame-stage .corner-tag{
+  position:absolute; top:16%; left:14%; transform: translate(-8px,-28px);
+  background: rgba(13,17,40,.85); color:#fff; font-size:.68rem; font-weight:600; padding:4px 8px; border-radius:6px;
+  font-family:'JetBrains Mono',monospace; letter-spacing:.02em;
+}
+.frame-device-caption{ display:flex; justify-content:space-between; align-items:center; margin-top:16px; font-size:.78rem; color: var(--ink-faint); }
+.frame-device-caption .badge-ok{ display:inline-flex; align-items:center; gap:6px; color: var(--success); font-weight:700; }
+.frame-device-caption .badge-ok svg{ width:14px; height:14px; }
+
+.float-chip{
+  position:absolute; background: var(--white); border:1px solid var(--border); box-shadow: var(--shadow);
+  border-radius: var(--r-md); padding:12px 14px; font-size:.78rem; font-weight:700; color: var(--ink);
+  display:flex; align-items:center; gap:8px;
+}
+.float-chip svg{ width:16px; height:16px; color: var(--blue); }
+.chip-1{ top:-6px; right:-18px; animation: floaty 5s ease-in-out infinite; }
+.chip-2{ bottom:8px; left:-30px; animation: floaty 5s ease-in-out infinite 1.5s; }
+@keyframes floaty{ 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-9px);} }
+
+/* ============================================================
+   SECTION SCAFFOLDING
+   ============================================================ */
+section{ padding: 88px 0; }
+.section-head{ max-width:620px; margin: 0 auto 48px; text-align:center; }
+.section-head.left{ margin: 0 0 44px; text-align:left; }
+.section-tag{
+  display:inline-block; font-size:.78rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase;
+  color: var(--blue); margin-bottom:12px;
+}
+.section-head h2{ font-size: clamp(1.7rem, 3vw, 2.3rem); margin-bottom:14px; }
+.section-head p{ color: var(--ink-soft); font-size:1.02rem; }
+.bg-surface{ background: var(--surface); }
+
+/* ============================================================
+   COMO FUNCIONA (steps)
+   ============================================================ */
+.steps{ display:grid; grid-template-columns: repeat(3,1fr); gap:24px; }
+.step-card{
+  background: var(--white); border:1px solid var(--border); border-radius: var(--r-lg); padding:28px 24px;
+  position:relative; transition: transform .2s var(--ease), box-shadow .2s var(--ease);
+}
+.step-card:hover{ transform: translateY(-4px); box-shadow: var(--shadow); }
+.step-num{
+  font-family:'JetBrains Mono',monospace; font-size:.82rem; font-weight:600; color: var(--violet);
+  background: var(--violet-light); display:inline-block; padding:4px 10px; border-radius:8px; margin-bottom:16px;
+}
+.step-card h3{ font-size:1.12rem; margin-bottom:8px; }
+.step-card p{ color: var(--ink-soft); font-size:.92rem; }
+
+/* ============================================================
+   TOOL SECTION
+   ============================================================ */
+.tool-section{ background: linear-gradient(180deg, var(--surface), var(--white) 60%); }
+.tool-shell{
+  background: var(--white); border:1px solid var(--border); border-radius: var(--r-xl);
+  box-shadow: var(--shadow-lg); padding: 8px; overflow:hidden;
+}
+.tool-tabs{ display:flex; gap:4px; padding:10px; }
+.tool-progress-rail{ display:flex; align-items:center; gap:0; padding: 22px 26px 6px; }
+.rail-step{ display:flex; align-items:center; gap:10px; flex:1; }
+.rail-num{
+  width:30px; height:30px; border-radius:50%; background: var(--surface-alt); color: var(--ink-faint);
+  display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.85rem; flex-shrink:0;
+  transition: background .2s var(--ease), color .2s var(--ease);
+  font-family:'JetBrains Mono',monospace;
+}
+.rail-step.active .rail-num, .rail-step.done .rail-num{ background: var(--brand); color:#fff; }
+.rail-label{ font-size:.85rem; font-weight:700; color: var(--ink-faint); }
+.rail-step.active .rail-label, .rail-step.done .rail-label{ color: var(--ink); }
+.rail-line{ height:2px; flex:1; background: var(--border); margin: 0 10px; border-radius:2px; }
+
+.tool-body{ padding: 20px 26px 30px; display:grid; gap:28px; }
+
+.panel{ border:1px solid var(--border-soft); border-radius: var(--r-lg); padding:24px; background: var(--white); }
+.panel-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:18px; flex-wrap:wrap; }
+.panel-head h3{ font-size:1.05rem; display:flex; align-items:center; gap:8px; }
+.panel-head h3 svg{ width:19px; height:19px; color: var(--blue); }
+.panel-hint{ font-size:.83rem; color: var(--ink-faint); }
+
+.dropzone{
+  border: 1.5px dashed var(--border); border-radius: var(--r-md); padding: 34px 20px; text-align:center;
+  background: var(--surface); transition: border-color .18s var(--ease), background .18s var(--ease);
+  cursor:pointer;
+}
+.dropzone:hover, .dropzone.drag-over{ border-color: var(--blue); background: var(--blue-light); }
+.dropzone svg{ width:34px; height:34px; color: var(--blue); margin-bottom:12px; }
+.dropzone p{ font-weight:600; font-size:.94rem; margin-bottom:4px; }
+.dropzone span{ color: var(--ink-faint); font-size:.8rem; }
+.dropzone input[type="file"]{ position:absolute; width:1px; height:1px; opacity:0; overflow:hidden; }
+
+/* frame editor */
+.frame-editor{ display:grid; grid-template-columns: 1.1fr .9fr; gap:24px; align-items:start; }
+.frame-preview-wrap{
+  position:relative; background:
+    repeating-conic-gradient(#f1f2fa 0% 25%, #ffffff 0% 50%) 50% / 18px 18px;
+  border-radius: var(--r-md); border:1px solid var(--border); overflow:hidden; max-height:420px;
+  display:flex; align-items:center; justify-content:center;
+}
+.frame-preview-wrap img{ width:100%; height:auto; display:block; user-select:none; -webkit-user-drag:none; }
+.frame-stage-inner{ position:relative; display:inline-block; }
+.area-box{
+  position:absolute; border:2px solid var(--blue); background: rgba(47,95,237,.14);
+  box-shadow: 0 0 0 2000px rgba(13,17,40,.28);
+  cursor: move; touch-action:none;
+}
+.area-box .handle{
+  position:absolute; width:16px; height:16px; background:#fff; border:2px solid var(--blue); border-radius:50%;
+  touch-action:none;
+}
+.area-box .handle.nw{ top:-9px; left:-9px; cursor:nwse-resize; }
+.area-box .handle.ne{ top:-9px; right:-9px; cursor:nesw-resize; }
+.area-box .handle.sw{ bottom:-9px; left:-9px; cursor:nesw-resize; }
+.area-box .handle.se{ bottom:-9px; right:-9px; cursor:nwse-resize; }
+.area-box .area-tag{
+  position:absolute; top:-30px; left:0; background: var(--blue); color:#fff; font-size:.68rem; font-weight:700;
+  padding:3px 8px; border-radius:6px; font-family:'JetBrains Mono',monospace; white-space:nowrap;
+}
+
+.frame-controls{ display:flex; flex-direction:column; gap:16px; }
+.field-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+.field label{ display:block; font-size:.76rem; font-weight:700; color: var(--ink-faint); text-transform:uppercase; letter-spacing:.04em; margin-bottom:6px; }
+.field input[type="number"]{
+  width:100%; padding:10px 12px; border-radius: var(--r-sm); border:1px solid var(--border); background: var(--white);
+  font-family:'JetBrains Mono',monospace; font-size:.88rem;
+}
+.field input[type="number"]:focus{ border-color: var(--blue); }
+.control-actions{ display:flex; gap:10px; flex-wrap:wrap; }
+.frame-status{ display:flex; gap:8px; align-items:center; font-size:.83rem; color: var(--ink-soft); }
+.frame-status svg{ width:16px; height:16px; color: var(--success); flex-shrink:0; }
+.frame-empty-note{ color: var(--ink-faint); font-size:.85rem; }
+
+/* video list */
+.video-list{ display:flex; flex-direction:column; gap:10px; margin-top:16px; }
+.video-item{
+  display:flex; align-items:center; gap:14px; padding:14px 16px; border:1px solid var(--border-soft);
+  border-radius: var(--r-md); background: var(--white);
+}
+.video-thumb{
+  width:46px; height:46px; border-radius:10px; background: var(--brand-soft); flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+}
+.video-thumb svg{ width:20px; height:20px; color: var(--blue); }
+.video-meta{ flex:1; min-width:0; }
+.video-name{ font-weight:600; font-size:.9rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.video-sub{ font-size:.76rem; color: var(--ink-faint); font-family:'JetBrains Mono',monospace; }
+.video-progress{ height:5px; background: var(--surface-alt); border-radius:6px; overflow:hidden; margin-top:6px; }
+.video-progress .fill{ height:100%; width:0%; background: var(--brand); transition: width .25s var(--ease); }
+.video-status-pill{
+  font-size:.72rem; font-weight:700; padding:4px 10px; border-radius:999px; white-space:nowrap;
+  background: var(--surface-alt); color: var(--ink-faint);
+}
+.video-status-pill.processing{ background: var(--blue-light); color: var(--blue-dark); }
+.video-status-pill.done{ background: var(--success-bg); color: var(--success); }
+.video-status-pill.error{ background: var(--error-bg); color: var(--error); }
+.video-remove{
+  width:30px; height:30px; border-radius:8px; border:1px solid var(--border); background:#fff; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; color: var(--ink-faint);
+}
+.video-remove:hover{ color: var(--error); border-color: var(--error); }
+.video-remove svg{ width:14px; height:14px; }
+
+/* action bar */
+.action-bar{
+  display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  padding:20px 24px; border-radius: var(--r-lg); background: var(--surface); border:1px solid var(--border-soft);
+}
+.action-bar-info{ font-size:.87rem; color: var(--ink-soft); }
+.overall-progress{ display:none; align-items:center; gap:12px; margin-top:10px; }
+.overall-progress.show{ display:flex; }
+.overall-progress .bar{ flex:1; height:6px; border-radius:6px; background: var(--surface-alt); overflow:hidden; }
+.overall-progress .bar .fill{ height:100%; width:0%; background: var(--brand); transition: width .3s var(--ease); }
+.overall-progress .pct{ font-family:'JetBrains Mono',monospace; font-size:.8rem; color: var(--ink-soft); min-width:38px; text-align:right; }
+
+/* results */
+.results-grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap:16px; margin-top:16px; }
+.result-card{ border:1px solid var(--border-soft); border-radius: var(--r-md); overflow:hidden; background:#fff; }
+.result-card video{ width:100%; aspect-ratio: 4/5; object-fit:cover; background:#0d1128; }
+.result-card-body{ padding:12px 14px; }
+.result-card-name{ font-size:.82rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:10px; }
+
+/* empty state */
+.empty-state{ text-align:center; padding:32px 16px; color: var(--ink-faint); }
+.empty-state svg{ width:32px; height:32px; margin-bottom:10px; opacity:.6; }
+
+/* ============================================================
+   FEATURES
+   ============================================================ */
+.features-grid{ display:grid; grid-template-columns: repeat(3,1fr); gap:22px; }
+.feature-card{
+  background: var(--white); border:1px solid var(--border); border-radius: var(--r-lg); padding:26px;
+  transition: transform .2s var(--ease), box-shadow .2s var(--ease), border-color .2s var(--ease);
+}
+.feature-card:hover{ transform: translateY(-4px); box-shadow: var(--shadow); border-color: transparent; }
+.feature-icon{
+  width:44px; height:44px; border-radius:12px; background: var(--brand-soft);
+  display:flex; align-items:center; justify-content:center; margin-bottom:16px;
+}
+.feature-icon svg{ width:22px; height:22px; color: var(--blue); }
+.feature-card h3{ font-size:1.02rem; margin-bottom:8px; }
+.feature-card p{ color: var(--ink-soft); font-size:.9rem; }
+
+/* ============================================================
+   VANTAGENS (comparison)
+   ============================================================ */
+.compare-wrap{ display:grid; grid-template-columns: 1fr 1fr; gap:24px; }
+.compare-card{ border-radius: var(--r-lg); padding:30px 26px; border:1px solid var(--border); }
+.compare-card.them{ background: var(--surface); }
+.compare-card.us{ background: var(--ink); color:#fff; position:relative; overflow:hidden; }
+.compare-card.us::before{
+  content:""; position:absolute; inset:0; background: radial-gradient(60% 60% at 100% 0%, rgba(124,58,237,.35), transparent 70%);
+}
+.compare-card h4{ font-size:1.02rem; margin-bottom:18px; position:relative; z-index:1; }
+.compare-card.us h4{ color:#fff; }
+.compare-list{ list-style:none; display:flex; flex-direction:column; gap:14px; position:relative; z-index:1; }
+.compare-list li{ display:flex; align-items:flex-start; gap:10px; font-size:.9rem; color: var(--ink-soft); }
+.compare-card.us .compare-list li{ color:#dcdcf5; }
+.compare-list svg{ width:18px; height:18px; flex-shrink:0; margin-top:1px; }
+.compare-card.them svg{ color: var(--ink-faint); }
+.compare-card.us svg{ color:#8ef0c0; }
+
+/* ============================================================
+   FAQ
+   ============================================================ */
+.faq-list{ max-width:760px; margin:0 auto; display:flex; flex-direction:column; gap:12px; }
+.faq-item{ border:1px solid var(--border); border-radius: var(--r-md); background:#fff; overflow:hidden; }
+.faq-item summary{
+  list-style:none; cursor:pointer; padding:18px 20px; font-weight:700; font-size:.96rem;
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+}
+.faq-item summary::-webkit-details-marker{ display:none; }
+.faq-item summary .chev{ width:18px; height:18px; color: var(--ink-faint); transition: transform .2s var(--ease); flex-shrink:0; }
+.faq-item[open] summary .chev{ transform: rotate(180deg); }
+.faq-item p{ padding: 0 20px 20px; color: var(--ink-soft); font-size:.9rem; }
+
+/* ============================================================
+   CTA BANNER
+   ============================================================ */
+.cta-banner{
+  border-radius: var(--r-xl); background: var(--ink); color:#fff; padding: 56px 40px; text-align:center;
+  position:relative; overflow:hidden;
+}
+.cta-banner::before{
+  content:""; position:absolute; inset:0; background: radial-gradient(50% 80% at 20% 0%, rgba(47,95,237,.35), transparent 70%), radial-gradient(50% 80% at 90% 100%, rgba(124,58,237,.35), transparent 70%);
+}
+.cta-banner > *{ position:relative; z-index:1; }
+.cta-banner h2{ color:#fff; font-size: clamp(1.5rem,3vw,2rem); margin-bottom:12px; }
+.cta-banner p{ color:#c7c9e8; max-width:480px; margin: 0 auto 26px; }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.site-footer{ background: var(--surface); border-top:1px solid var(--border-soft); padding: 56px 0 28px; }
+.footer-top{ display:grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap:32px; margin-bottom:40px; }
+.footer-brand p{ color: var(--ink-soft); font-size:.88rem; margin-top:12px; max-width:280px; }
+.footer-col h5{ font-size:.8rem; text-transform:uppercase; letter-spacing:.05em; color: var(--ink-faint); margin-bottom:14px; }
+.footer-col ul{ list-style:none; display:flex; flex-direction:column; gap:10px; }
+.footer-col a{ text-decoration:none; color: var(--ink-soft); font-size:.88rem; }
+.footer-col a:hover{ color: var(--blue); }
+.footer-bottom{
+  border-top:1px solid var(--border-soft); padding-top:22px; display:flex; justify-content:space-between;
+  align-items:center; gap:16px; flex-wrap:wrap; font-size:.8rem; color: var(--ink-faint);
+}
+
+/* ============================================================
+   TOASTS
+   ============================================================ */
+.toast-region{ position:fixed; bottom:20px; right:20px; z-index:999; display:flex; flex-direction:column; gap:10px; max-width:340px; }
+.toast{
+  background: var(--ink); color:#fff; padding:13px 16px; border-radius: var(--r-md); font-size:.85rem;
+  display:flex; align-items:center; gap:10px; box-shadow: var(--shadow-lg);
+  animation: toast-in .25s var(--ease);
+}
+.toast svg{ width:18px; height:18px; flex-shrink:0; }
+.toast.success svg{ color:#4ade80; }
+.toast.error svg{ color:#f87171; }
+.toast.info svg{ color:#93c5fd; }
+@keyframes toast-in{ from{ opacity:0; transform: translateY(10px);} to{ opacity:1; transform:translateY(0);} }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 980px){
+  .hero-grid{ grid-template-columns:1fr; }
+  .hero-visual{ order:-1; max-width:420px; margin:0 auto 12px; }
+  .steps{ grid-template-columns:1fr; }
+  .features-grid{ grid-template-columns: 1fr 1fr; }
+  .compare-wrap{ grid-template-columns:1fr; }
+  .frame-editor{ grid-template-columns:1fr; }
+  .footer-top{ grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 720px){
+  .main-nav{ display:none; }
+  .nav-toggle{ display:flex; }
+  section{ padding: 60px 0; }
+  .hero{ padding: 48px 0 40px; }
+  .features-grid{ grid-template-columns: 1fr; }
+  .footer-top{ grid-template-columns: 1fr 1fr; gap:24px; }
+  .tool-progress-rail{ display:none; }
+  .rail-label{ display:none; }
+  .action-bar{ flex-direction:column; align-items:stretch; }
+  .cta-banner{ padding:44px 24px; }
+}
+@media (max-width: 480px){
+  .footer-top{ grid-template-columns: 1fr; }
+  .field-grid{ grid-template-columns:1fr 1fr; }
+}
+</style>
+</head>
+<body>
+<a href="#tool-heading" class="skip-link">Pular para a ferramenta</a>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="#top" class="brand">
+      <span class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><rect x="4" y="4" width="16" height="16" rx="4"/><rect x="8.5" y="8.5" width="7" height="7" rx="1.5"/></svg>
+      </span>
+      <span class="brand-name">Moldura Studio</span>
+    </a>
+    <nav class="main-nav" aria-label="Navegação principal">
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#ferramenta">Ferramenta</a>
+      <a href="#recursos">Recursos</a>
+      <a href="#vantagens">Vantagens</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="header-actions">
+      <a href="#ferramenta" class="btn btn-primary btn-sm">
+        Abrir ferramenta
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mobileNav" aria-label="Abrir menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+  <nav class="mobile-nav" id="mobileNav" aria-label="Navegação móvel">
+    <a href="#como-funciona">Como funciona</a>
+    <a href="#ferramenta">Ferramenta</a>
+    <a href="#recursos">Recursos</a>
+    <a href="#vantagens">Vantagens</a>
+    <a href="#faq">FAQ</a>
+  </nav>
+</header>
+
+<div class="warning-banner" id="warningBanner" role="status">
+  <strong>Aviso:</strong> seu navegador não expõe <code class="mono">SharedArrayBuffer</code>. O processamento ainda funciona, mas pode ficar mais lento — para melhor desempenho, use uma versão recente do Chrome ou Edge.
+</div>
+
+<main id="top">
+
+  <!-- ===================== HERO ===================== -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <span class="eyebrow"><span class="dot"></span>100% local — nada sai do seu dispositivo</span>
+        <h1>Encaixe seus vídeos numa <span class="grad">moldura profissional</span> sem sair do navegador</h1>
+        <p class="lead">Envie um PNG com uma área transparente, solte seus vídeos e receba os arquivos finais em segundos. Toda a renderização acontece localmente, com FFmpeg.wasm — sem upload, sem fila, sem marca d'água.</p>
+        <div class="hero-cta">
+          <a href="#ferramenta" class="btn btn-primary">
+            Começar agora
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <a href="#como-funciona" class="btn btn-secondary">Ver como funciona</a>
+        </div>
+        <div class="trust-row">
+          <span class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M12 2 4 6v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-4Z"/><path d="m9 12 2 2 4-4"/></svg>Sem upload de arquivos</span>
+          <span class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M13 2 3 14h8l-1 8 10-12h-8l1-8Z"/></svg>Processamento rápido no dispositivo</span>
+          <span class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Vários vídeos em lote</span>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="frame-device">
+          <div class="frame-device-bar"><span></span><span></span><span></span></div>
+          <div class="frame-stage">
+            <div class="hole"><div class="fallback-grad"></div></div>
+            <div class="scan-line" aria-hidden="true"></div>
+            <div class="corner-tag mono" aria-hidden="true">alpha: 0%</div>
+          </div>
+          <div class="frame-device-caption">
+            <span>moldura-evento.png</span>
+            <span class="badge-ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 13 4 4L19 7"/></svg>área detectada</span>
+          </div>
+        </div>
+        <div class="float-chip chip-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M4 7h16M4 12h10M4 17h7"/></svg>1080×1350 px</div>
+        <div class="float-chip chip-2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>MP4 · WEBM · MOV</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== COMO FUNCIONA ===================== -->
+  <section id="como-funciona" class="bg-surface">
+    <div class="container">
+      <div class="section-head">
+        <span class="section-tag">Fluxo de 3 passos</span>
+        <h2>Do PNG ao vídeo pronto em poucos cliques</h2>
+        <p>O processo é sequencial e direto — sem curva de aprendizado.</p>
+      </div>
+      <div class="steps">
+        <div class="step-card">
+          <span class="step-num">01</span>
+          <h3>Envie a moldura</h3>
+          <p>Solte um PNG com área transparente. A detecção automática encontra o recorte; você pode ajustar arrastando a caixa.</p>
+        </div>
+        <div class="step-card">
+          <span class="step-num">02</span>
+          <h3>Solte os vídeos</h3>
+          <p>Adicione um ou vários arquivos MP4, MOV ou WEBM. Cada um recebe sua própria barra de progresso.</p>
+        </div>
+        <div class="step-card">
+          <span class="step-num">03</span>
+          <h3>Baixe o resultado</h3>
+          <p>Exporte individualmente ou baixe todos os vídeos processados de uma vez em um único arquivo .zip.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FERRAMENTA ===================== -->
+  <section id="ferramenta" class="tool-section">
+    <div class="container">
+      <div class="section-head">
+        <span class="section-tag">Ferramenta</span>
+        <h2 id="tool-heading">Aplique a moldura nos seus vídeos</h2>
+        <p>Tudo roda localmente no seu navegador — nenhum arquivo é enviado a servidores.</p>
+      </div>
+
+      <div class="tool-shell">
+        <div class="tool-progress-rail" aria-hidden="true">
+          <div class="rail-step done" id="railStep1"><span class="rail-num">1</span><span class="rail-label">Moldura</span></div>
+          <div class="rail-line"></div>
+          <div class="rail-step" id="railStep2"><span class="rail-num">2</span><span class="rail-label">Vídeos</span></div>
+          <div class="rail-line"></div>
+          <div class="rail-step" id="railStep3"><span class="rail-num">3</span><span class="rail-label">Resultado</span></div>
+        </div>
+
+        <div class="tool-body">
+          <!-- PANEL: FRAME -->
+          <div class="panel" id="framePanel">
+            <div class="panel-head">
+              <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 3v18M16 3v18"/></svg>1. Moldura (PNG)</h3>
+              <span class="panel-hint">Área transparente = onde o vídeo aparece</span>
+            </div>
+
+            <div id="frameDropzone" class="dropzone" role="button" tabindex="0" aria-label="Selecionar arquivo de moldura em PNG">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V4M12 4 7 9M12 4l5 5"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+              <p>Arraste sua moldura aqui ou clique para escolher</p>
+              <span>PNG com fundo transparente · até 20&nbsp;MB</span>
+              <input type="file" id="frameInput" accept="image/png" aria-hidden="true">
+            </div>
+
+            <div id="frameEditor" class="frame-editor" style="display:none; margin-top:20px;">
+              <div class="frame-preview-wrap">
+                <div class="frame-stage-inner" id="frameStageInner">
+                  <img id="framePreviewImg" alt="Pré-visualização da moldura enviada, com a área do vídeo demarcada">
+                  <div class="area-box" id="areaBox" tabindex="0" aria-label="Área do vídeo. Arraste para mover, use as alças para redimensionar.">
+                    <span class="area-tag mono" id="areaTag">0×0</span>
+                    <span class="handle nw" data-handle="nw"></span>
+                    <span class="handle ne" data-handle="ne"></span>
+                    <span class="handle sw" data-handle="sw"></span>
+                    <span class="handle se" data-handle="se"></span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="frame-controls">
+                <div class="frame-status">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 13 4 4L19 7"/></svg>
+                  <span id="frameStatusText">Área transparente detectada automaticamente</span>
+                </div>
+                <div class="field-grid">
+                  <div class="field"><label for="fieldX">Posição X (px)</label><input type="number" id="fieldX" min="0"></div>
+                  <div class="field"><label for="fieldY">Posição Y (px)</label><input type="number" id="fieldY" min="0"></div>
+                  <div class="field"><label for="fieldW">Largura (px)</label><input type="number" id="fieldW" min="4"></div>
+                  <div class="field"><label for="fieldH">Altura (px)</label><input type="number" id="fieldH" min="4"></div>
+                </div>
+                <div class="control-actions">
+                  <button class="btn btn-secondary btn-sm" id="resetAreaBtn" type="button">Redetectar área</button>
+                  <button class="btn btn-ghost btn-sm" id="changeFrameBtn" type="button">Trocar moldura</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PANEL: VIDEOS -->
+          <div class="panel" id="videosPanel">
+            <div class="panel-head">
+              <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>2. Vídeos</h3>
+              <span class="panel-hint">MP4, MOV ou WEBM · vários de uma vez</span>
+            </div>
+
+            <div id="videoDropzone" class="dropzone" role="button" tabindex="0" aria-label="Selecionar vídeos para processar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V4M12 4 7 9M12 4l5 5"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+              <p>Arraste um ou vários vídeos aqui</p>
+              <span>MP4 · MOV · WEBM</span>
+              <input type="file" id="videoInput" accept="video/mp4,video/quicktime,video/webm,video/x-m4v" multiple aria-hidden="true">
+            </div>
+
+            <div id="videoList" class="video-list" aria-live="polite"></div>
+            <p class="empty-state" id="videoEmptyState">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg><br>
+              Nenhum vídeo adicionado ainda
+            </p>
+          </div>
+
+          <!-- ACTION BAR -->
+          <div class="action-bar">
+            <div>
+              <div class="action-bar-info" id="actionBarInfo">Envie uma moldura e ao menos um vídeo para começar.</div>
+              <div class="overall-progress" id="overallProgress">
+                <div class="bar"><div class="fill" id="overallProgressFill"></div></div>
+                <span class="pct mono" id="overallProgressPct">0%</span>
+              </div>
+            </div>
+            <button class="btn btn-primary" id="processBtn" disabled>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 3v18l15-9L5 3Z"/></svg>
+              Processar vídeos
+            </button>
+          </div>
+
+          <!-- RESULTS -->
+          <div class="panel" id="resultsPanel" style="display:none;">
+            <div class="panel-head">
+              <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 15V3M6 9l6 6 6-6"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>3. Resultado</h3>
+              <button class="btn btn-secondary btn-sm" id="downloadAllBtn" style="display:none;">Baixar tudo (.zip)</button>
+            </div>
+            <div class="results-grid" id="resultsGrid"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== RECURSOS ===================== -->
+  <section id="recursos">
+    <div class="container">
+      <div class="section-head">
+        <span class="section-tag">Recursos</span>
+        <h2>Feito para quem processa vídeo em volume</h2>
+        <p>Cada detalhe foi pensado para reduzir cliques e evitar retrabalho.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2 4 6v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-4Z"/></svg></div>
+          <h3>Privacidade real</h3>
+          <p>Nenhum vídeo ou imagem sai do seu dispositivo. Todo o processamento acontece no navegador, via WebAssembly.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 3H5a2 2 0 0 0-2 2v4M15 3h4a2 2 0 0 1 2 2v4M9 21H5a2 2 0 0 1-2-2v-4M15 21h4a2 2 0 0 0 2-2v-4"/></svg></div>
+          <h3>Detecção automática</h3>
+          <p>Analisamos o canal alfa do PNG e localizamos a área transparente sozinhos — sem precisar medir nada manualmente.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 21v-7M4 10V3M12 21v-11M12 6V3M20 21v-5M20 12V3"/><path d="M1 14h6M9 10h6M17 16h6"/></svg></div>
+          <h3>Ajuste fino manual</h3>
+          <p>Arraste e redimensione a área de encaixe diretamente na prévia, ou digite as coordenadas exatas em pixels.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
+          <h3>Processamento em lote</h3>
+          <p>Adicione quantos vídeos quiser e acompanhe o progresso individual de cada um em tempo real.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 8v13H3V8M1 3h22v5H1z"/><path d="M10 12h4"/></svg></div>
+          <h3>Exportação em .zip</h3>
+          <p>Baixe cada vídeo separadamente ou todos de uma vez, já organizados em um único arquivo compactado.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
+          <h3>Sem espera de fila</h3>
+          <p>Sem servidores compartilhados, sem fila de processamento — a velocidade depende só do seu dispositivo.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== VANTAGENS ===================== -->
+  <section id="vantagens" class="bg-surface">
+    <div class="container">
+      <div class="section-head">
+        <span class="section-tag">Vantagens</span>
+        <h2>Por que rodar tudo no navegador muda o jogo</h2>
+        <p>Comparado a editores online tradicionais que dependem de servidor.</p>
+      </div>
+      <div class="compare-wrap">
+        <div class="compare-card them">
+          <h4>Editores online tradicionais</h4>
+          <ul class="compare-list">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6 6 18M6 6l12 12"/></svg>Upload do vídeo original para um servidor externo</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6 6 18M6 6l12 12"/></svg>Tempo de espera em fila de processamento</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6 6 18M6 6l12 12"/></svg>Limites de uso, planos pagos ou marca d'água</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6 6 18M6 6l12 12"/></svg>Arquivo fica armazenado em servidores de terceiros</li>
+          </ul>
+        </div>
+        <div class="compare-card us">
+          <h4>Moldura Studio</h4>
+          <ul class="compare-list">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="m5 13 4 4L19 7"/></svg>Processamento local, o arquivo nunca sai do dispositivo</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="m5 13 4 4L19 7"/></svg>Começa a processar assim que o FFmpeg.wasm carrega</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="m5 13 4 4L19 7"/></svg>Uso livre, sem marca d'água nos vídeos exportados</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="m5 13 4 4L19 7"/></svg>Nenhum dado armazenado além do que fica no seu navegador</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FAQ ===================== -->
+  <section id="faq">
+    <div class="container">
+      <div class="section-head">
+        <span class="section-tag">FAQ</span>
+        <h2>Perguntas frequentes</h2>
+      </div>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>Meus vídeos são enviados para algum servidor?<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m6 9 6 6 6-6"/></svg></summary>
+          <p>Não. Todo o processamento acontece no seu navegador usando FFmpeg.wasm. Os arquivos de moldura e vídeo nunca saem do seu dispositivo.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Que formato a moldura precisa ter?<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m6 9 6 6 6-6"/></svg></summary>
+          <p>Um arquivo PNG. Para a detecção automática funcionar, a área onde o vídeo vai aparecer precisa ter transparência real (canal alfa). Sem transparência, oferecemos uma área central que pode ser ajustada manualmente.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Posso ajustar a área onde o vídeo aparece?<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m6 9 6 6 6-6"/></svg></summary>
+          <p>Sim. Depois da detecção automática, arraste a caixa na prévia para mover ou redimensionar, ou digite as coordenadas exatas em pixels nos campos ao lado.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Quantos vídeos posso processar de uma vez?<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m6 9 6 6 6-6"/></svg></summary>
+          <p>Não há limite fixo. Como o processamento usa a CPU do seu dispositivo, lotes muito grandes ou vídeos longos podem levar mais tempo para concluir.</p>
+        </details>
+        <details class="faq-item">
+          <summary>A ferramenta funciona em qualquer navegador?<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m6 9 6 6 6-6"/></svg></summary>
+          <p>Funciona em versões recentes de Chrome, Edge e Firefox com suporte a WebAssembly. Navegadores muito antigos podem não conseguir executar o processamento.</p>
+        </details>
+        <details class="faq-item">
+          <summary>É realmente gratuito?<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m6 9 6 6 6-6"/></svg></summary>
+          <p>Sim, sem custo e sem marca d'água nos vídeos exportados. Você pode usar para fins pessoais e comerciais.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CTA FINAL ===================== -->
+  <section>
+    <div class="container">
+      <div class="cta-banner">
+        <h2>Pronto para aplicar sua moldura?</h2>
+        <p>Envie o PNG, solte os vídeos e receba os arquivos prontos em segundos — sem sair desta página.</p>
+        <a href="#ferramenta" class="btn btn-primary">
+          Abrir a ferramenta
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="#top" class="brand">
+          <span class="brand-mark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><rect x="4" y="4" width="16" height="16" rx="4"/><rect x="8.5" y="8.5" width="7" height="7" rx="1.5"/></svg>
+          </span>
+          <span class="brand-name">Moldura Studio</span>
+        </a>
+        <p>Molduras profissionais em vídeo, processadas inteiramente no seu navegador. Sem upload, sem servidor.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Produto</h5>
+        <ul>
+          <li><a href="#como-funciona">Como funciona</a></li>
+          <li><a href="#ferramenta">Ferramenta</a></li>
+          <li><a href="#recursos">Recursos</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Suporte</h5>
+        <ul>
+          <li><a href="#faq">Perguntas frequentes</a></li>
+          <li><a href="#vantagens">Vantagens</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Tecnologia</h5>
+        <ul>
+          <li><a href="https://ffmpeg.org/" target="_blank" rel="noopener">FFmpeg.wasm</a></li>
+          <li><a href="https://stuk.github.io/jszip/" target="_blank" rel="noopener">JSZip</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; <span id="year"></span> Moldura Studio. Uso livre para fins pessoais e comerciais.</span>
+      <span>Processamento local via FFmpeg.wasm</span>
+    </div>
+  </div>
+</footer>
+
+<div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="false"></div>
+
+<script>
+(() => {
+  'use strict';
+
+  /* =========================================================
+     STATE
+     ========================================================= */
+  const state = {
+    frameFile: null,
+    frameImage: null,
+    frameInfo: null,      // { frameWidth, frameHeight, videoX, videoY, videoWidth, videoHeight }
+    videos: [],            // { id, file, name, size, duration, status, progress, outputBlob, outputUrl }
+    ffmpeg: null,
+    fetchFile: null,
+    ffmpegLoaded: false,
+    ffmpegLoading: null,
+    processing: false,
+  };
+
+  const FFMPEG_SRC = 'https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js';
+  const JSZIP_SRC = 'https://unpkg.com/jszip@3.10.1/dist/jszip.min.js';
+
+  /* =========================================================
+     DOM REFS
+     ========================================================= */
+  const el = (id) => document.getElementById(id);
+  const refs = {
+    navToggle: el('navToggle'),
+    mobileNav: el('mobileNav'),
+    warningBanner: el('warningBanner'),
+
+    frameDropzone: el('frameDropzone'),
+    frameInput: el('frameInput'),
+    frameEditor: el('frameEditor'),
+    framePreviewImg: el('framePreviewImg'),
+    frameStageInner: el('frameStageInner'),
+    areaBox: el('areaBox'),
+    areaTag: el('areaTag'),
+    frameStatusText: el('frameStatusText'),
+    resetAreaBtn: el('resetAreaBtn'),
+    changeFrameBtn: el('changeFrameBtn'),
+    fieldX: el('fieldX'), fieldY: el('fieldY'), fieldW: el('fieldW'), fieldH: el('fieldH'),
+
+    videoDropzone: el('videoDropzone'),
+    videoInput: el('videoInput'),
+    videoList: el('videoList'),
+    videoEmptyState: el('videoEmptyState'),
+
+    processBtn: el('processBtn'),
+    actionBarInfo: el('actionBarInfo'),
+    overallProgress: el('overallProgress'),
+    overallProgressFill: el('overallProgressFill'),
+    overallProgressPct: el('overallProgressPct'),
+
+    resultsPanel: el('resultsPanel'),
+    resultsGrid: el('resultsGrid'),
+    downloadAllBtn: el('downloadAllBtn'),
+
+    railStep1: el('railStep1'), railStep2: el('railStep2'), railStep3: el('railStep3'),
+
+    toastRegion: el('toastRegion'),
+  };
+
+  el('year').textContent = new Date().getFullYear();
+
+  /* =========================================================
+     TOASTS
+     ========================================================= */
+  const ICONS = {
+    success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m5 13 4 4L19 7"/></svg>',
+    error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>',
+    info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg>',
+  };
+  function toast(message, type = 'info') {
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.innerHTML = `${ICONS[type] || ICONS.info}<span>${message}</span>`;
+    refs.toastRegion.appendChild(t);
+    setTimeout(() => {
+      t.style.transition = 'opacity .25s ease';
+      t.style.opacity = '0';
+      setTimeout(() => t.remove(), 260);
+    }, 4200);
+  }
+
+  /* =========================================================
+     MOBILE NAV
+     ========================================================= */
+  refs.navToggle.addEventListener('click', () => {
+    const open = refs.mobileNav.classList.toggle('open');
+    refs.navToggle.setAttribute('aria-expanded', String(open));
+  });
+  refs.mobileNav.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => {
+    refs.mobileNav.classList.remove('open');
+    refs.navToggle.setAttribute('aria-expanded', 'false');
+  }));
+
+  /* =========================================================
+     BROWSER SUPPORT CHECK
+     ========================================================= */
+  function checkBrowserSupport() {
+    if (typeof SharedArrayBuffer === 'undefined') {
+      refs.warningBanner.classList.add('show');
+    }
+    if (typeof WebAssembly === 'undefined') {
+      toast('Seu navegador não suporta WebAssembly. Atualize para uma versão recente do Chrome, Edge ou Firefox.', 'error');
+    }
+  }
+  checkBrowserSupport();
+
+  /* =========================================================
+     GENERIC DROPZONE WIRING
+     ========================================================= */
+  function wireDropzone(zone, input, onFiles) {
+    zone.addEventListener('click', () => input.click());
+    zone.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); input.click(); }
+    });
+    ['dragenter', 'dragover'].forEach((evt) => zone.addEventListener(evt, (e) => {
+      e.preventDefault(); zone.classList.add('drag-over');
+    }));
+    ['dragleave', 'drop'].forEach((evt) => zone.addEventListener(evt, (e) => {
+      e.preventDefault(); zone.classList.remove('drag-over');
+    }));
+    zone.addEventListener('drop', (e) => onFiles(e.dataTransfer.files));
+    input.addEventListener('change', (e) => { onFiles(e.target.files); e.target.value = ''; });
+  }
+
+  /* =========================================================
+     FRAME: UPLOAD, ANALYZE, PREVIEW
+     ========================================================= */
+  wireDropzone(refs.frameDropzone, refs.frameInput, (files) => {
+    const file = Array.from(files || []).find((f) => f.type === 'image/png' || /\.png$/i.test(f.name));
+    if (!file) { toast('Envie um arquivo PNG.', 'error'); return; }
+    handleFrameFile(file);
+  });
+  refs.changeFrameBtn.addEventListener('click', () => refs.frameInput.click());
+
+  function loadImage(file) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = URL.createObjectURL(file);
+    });
+  }
+
+  function analyzeFrame(img) {
+    const canvas = document.createElement('canvas');
+    canvas.width = img.naturalWidth || img.width;
+    canvas.height = img.naturalHeight || img.height;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+    let minX = canvas.width, maxX = 0, minY = canvas.height, maxY = 0, hasTransparent = false;
+    for (let y = 0; y < canvas.height; y++) {
+      for (let x = 0; x < canvas.width; x++) {
+        const alpha = data[(y * canvas.width + x) * 4 + 3];
+        if (alpha < 10) {
+          hasTransparent = true;
+          if (x < minX) minX = x;
+          if (x > maxX) maxX = x;
+          if (y < minY) minY = y;
+          if (y > maxY) maxY = y;
+        }
+      }
+    }
+
+    if (!hasTransparent || minX >= maxX || minY >= maxY) {
+      const margin = 0.1;
+      return {
+        frameWidth: canvas.width, frameHeight: canvas.height, autoDetected: false,
+        videoX: Math.floor(canvas.width * margin), videoY: Math.floor(canvas.height * margin),
+        videoWidth: Math.floor(canvas.width * (1 - 2 * margin)), videoHeight: Math.floor(canvas.height * (1 - 2 * margin)),
+      };
+    }
+    return {
+      frameWidth: canvas.width, frameHeight: canvas.height, autoDetected: true,
+      videoX: minX, videoY: minY, videoWidth: maxX - minX, videoHeight: maxY - minY,
+    };
+  }
+
+  async function handleFrameFile(file) {
+    try {
+      const img = await loadImage(file);
+      state.frameFile = file;
+      state.frameImage = img;
+      state.frameInfo = analyzeFrame(img);
+
+      refs.framePreviewImg.src = img.src;
+      refs.framePreviewImg.alt = `Moldura enviada: ${file.name}`;
+      refs.frameDropzone.style.display = 'none';
+      refs.frameEditor.style.display = 'grid';
+
+      refs.frameStatusText.textContent = state.frameInfo.autoDetected
+        ? 'Área transparente detectada automaticamente'
+        : 'Nenhuma transparência real encontrada — ajuste a área manualmente';
+
+      refs.framePreviewImg.onload = () => { syncFieldsFromInfo(); renderAreaBox(); };
+      if (refs.framePreviewImg.complete) { syncFieldsFromInfo(); renderAreaBox(); }
+
+      setRailStep(2);
+      updateActionBar();
+      toast('Moldura carregada com sucesso.', 'success');
+    } catch (err) {
+      console.error(err);
+      toast('Não foi possível ler essa imagem. Tente outro PNG.', 'error');
+    }
+  }
+
+  function clampFrameInfo() {
+    const fi = state.frameInfo;
+    if (!fi) return;
+    fi.videoWidth = Math.max(8, Math.min(fi.videoWidth, fi.frameWidth));
+    fi.videoHeight = Math.max(8, Math.min(fi.videoHeight, fi.frameHeight));
+    fi.videoX = Math.max(0, Math.min(fi.videoX, fi.frameWidth - fi.videoWidth));
+    fi.videoY = Math.max(0, Math.min(fi.videoY, fi.frameHeight - fi.videoHeight));
+  }
+
+  function renderAreaBox() {
+    const fi = state.frameInfo;
+    if (!fi) return;
+    const rect = refs.framePreviewImg.getBoundingClientRect();
+    const scaleX = rect.width / fi.frameWidth;
+    const scaleY = rect.height / fi.frameHeight;
+    refs.areaBox.style.left = `${fi.videoX * scaleX}px`;
+    refs.areaBox.style.top = `${fi.videoY * scaleY}px`;
+    refs.areaBox.style.width = `${fi.videoWidth * scaleX}px`;
+    refs.areaBox.style.height = `${fi.videoHeight * scaleY}px`;
+    refs.areaTag.textContent = `${Math.round(fi.videoWidth)}×${Math.round(fi.videoHeight)}`;
+  }
+
+  function syncFieldsFromInfo() {
+    const fi = state.frameInfo;
+    if (!fi) return;
+    refs.fieldX.value = Math.round(fi.videoX);
+    refs.fieldY.value = Math.round(fi.videoY);
+    refs.fieldW.value = Math.round(fi.videoWidth);
+    refs.fieldH.value = Math.round(fi.videoHeight);
+  }
+
+  [['fieldX', 'videoX'], ['fieldY', 'videoY'], ['fieldW', 'videoWidth'], ['fieldH', 'videoHeight']].forEach(([fieldId, key]) => {
+    refs[fieldId].addEventListener('change', () => {
+      if (!state.frameInfo) return;
+      const v = parseInt(refs[fieldId].value, 10);
+      if (!isNaN(v)) state.frameInfo[key] = v;
+      clampFrameInfo();
+      syncFieldsFromInfo();
+      renderAreaBox();
+    });
+  });
+
+  refs.resetAreaBtn.addEventListener('click', () => {
+    if (!state.frameImage) return;
+    state.frameInfo = analyzeFrame(state.frameImage);
+    syncFieldsFromInfo();
+    renderAreaBox();
+    refs.frameStatusText.textContent = state.frameInfo.autoDetected
+      ? 'Área redetectada automaticamente'
+      : 'Nenhuma transparência real encontrada — ajuste a área manualmente';
+    toast('Área redefinida.', 'info');
+  });
+
+  window.addEventListener('resize', () => { if (state.frameInfo) renderAreaBox(); });
+
+  /* Drag + resize of the area box */
+  (function setupAreaBoxInteraction() {
+    let mode = null; // 'move' | 'nw' | 'ne' | 'sw' | 'se'
+    let startPointer = { x: 0, y: 0 };
+    let startInfo = null;
+
+    function toFramePx(dxPx, dyPx) {
+      const rect = refs.framePreviewImg.getBoundingClientRect();
+      const scaleX = rect.width / state.frameInfo.frameWidth;
+      const scaleY = rect.height / state.frameInfo.frameHeight;
+      return { dx: dxPx / scaleX, dy: dyPx / scaleY };
+    }
+
+    function onPointerDown(e, m) {
+      if (!state.frameInfo) return;
+      mode = m;
+      startPointer = { x: e.clientX, y: e.clientY };
+      startInfo = { ...state.frameInfo };
+      e.preventDefault();
+      e.stopPropagation();
+      window.addEventListener('pointermove', onPointerMove);
+      window.addEventListener('pointerup', onPointerUp);
+    }
+
+    function onPointerMove(e) {
+      if (!mode) return;
+      const { dx, dy } = toFramePx(e.clientX - startPointer.x, e.clientY - startPointer.y);
+      const fi = state.frameInfo;
+      if (mode === 'move') {
+        fi.videoX = startInfo.videoX + dx;
+        fi.videoY = startInfo.videoY + dy;
+      } else {
+        if (mode.includes('n')) { fi.videoY = startInfo.videoY + dy; fi.videoHeight = startInfo.videoHeight - dy; }
+        if (mode.includes('s')) { fi.videoHeight = startInfo.videoHeight + dy; }
+        if (mode.includes('w')) { fi.videoX = startInfo.videoX + dx; fi.videoWidth = startInfo.videoWidth - dx; }
+        if (mode.includes('e')) { fi.videoWidth = startInfo.videoWidth + dx; }
+      }
+      clampFrameInfo();
+      renderAreaBox();
+      syncFieldsFromInfo();
+    }
+
+    function onPointerUp() {
+      mode = null;
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerup', onPointerUp);
+    }
+
+    refs.areaBox.addEventListener('pointerdown', (e) => {
+      if (e.target.classList.contains('handle')) return;
+      onPointerDown(e, 'move');
+    });
+    refs.areaBox.querySelectorAll('.handle').forEach((h) => {
+      h.addEventListener('pointerdown', (e) => onPointerDown(e, h.dataset.handle));
+    });
+
+    // Keyboard nudge for accessibility
+    refs.areaBox.addEventListener('keydown', (e) => {
+      if (!state.frameInfo) return;
+      const step = e.shiftKey ? 10 : 2;
+      const fi = state.frameInfo;
+      let handled = true;
+      if (e.key === 'ArrowLeft') fi.videoX -= step;
+      else if (e.key === 'ArrowRight') fi.videoX += step;
+      else if (e.key === 'ArrowUp') fi.videoY -= step;
+      else if (e.key === 'ArrowDown') fi.videoY += step;
+      else handled = false;
+      if (handled) {
+        e.preventDefault();
+        clampFrameInfo();
+        renderAreaBox();
+        syncFieldsFromInfo();
+      }
+    });
+  })();
+
+  function generateFrameWithHole(img, frameInfo) {
+    return new Promise((resolve, reject) => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = frameInfo.frameWidth;
+        canvas.height = frameInfo.frameHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, frameInfo.frameWidth, frameInfo.frameHeight);
+        ctx.clearRect(frameInfo.videoX, frameInfo.videoY, frameInfo.videoWidth, frameInfo.videoHeight);
+        canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('Falha ao gerar a moldura com a área transparente'))), 'image/png');
+      } catch (err) { reject(err); }
+    });
+  }
+
+  /* =========================================================
+     VIDEOS: UPLOAD & LIST
+     ========================================================= */
+  wireDropzone(refs.videoDropzone, refs.videoInput, (files) => {
+    const accepted = Array.from(files || []).filter((f) => /video\/(mp4|quicktime|webm|x-m4v)/.test(f.type) || /\.(mp4|mov|webm|m4v)$/i.test(f.name));
+    if (!accepted.length) { toast('Envie arquivos MP4, MOV ou WEBM.', 'error'); return; }
+    accepted.forEach(addVideo);
+  });
+
+  let videoIdCounter = 0;
+  function addVideo(file) {
+    const id = `v${++videoIdCounter}_${Date.now()}`;
+    const item = { id, file, name: file.name, size: file.size, duration: null, status: 'pending', progress: 0 };
+    state.videos.push(item);
+    renderVideoItem(item);
+    updateActionBar();
+    setRailStep(2);
+
+    const url = URL.createObjectURL(file);
+    const probe = document.createElement('video');
+    probe.preload = 'metadata';
+    probe.src = url;
+    probe.onloadedmetadata = () => {
+      item.duration = probe.duration;
+      const sub = document.querySelector(`[data-id="${id}"] .video-sub`);
+      if (sub) sub.textContent = formatMeta(item);
+      URL.revokeObjectURL(url);
+    };
+  }
+
+  function formatBytes(bytes) {
+    if (!bytes) return '0 MB';
+    const mb = bytes / (1024 * 1024);
+    return mb >= 1 ? `${mb.toFixed(1)} MB` : `${(bytes / 1024).toFixed(0)} KB`;
+  }
+  function formatDuration(sec) {
+    if (!sec || !isFinite(sec)) return '';
+    const m = Math.floor(sec / 60), s = Math.round(sec % 60);
+    return ` · ${m}:${String(s).padStart(2, '0')}`;
+  }
+  function formatMeta(item) {
+    return `${formatBytes(item.size)}${formatDuration(item.duration)}`;
+  }
+
+  function renderVideoItem(item) {
+    refs.videoEmptyState.style.display = 'none';
+    const row = document.createElement('div');
+    row.className = 'video-item';
+    row.dataset.id = item.id;
+    row.innerHTML = `
+      <div class="video-thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
+      <div class="video-meta">
+        <div class="video-name">${escapeHtml(item.name)}</div>
+        <div class="video-sub">${formatMeta(item)}</div>
+        <div class="video-progress"><div class="fill"></div></div>
+      </div>
+      <span class="video-status-pill">Pendente</span>
+      <button class="video-remove" type="button" aria-label="Remover ${escapeHtml(item.name)}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>`;
+    row.querySelector('.video-remove').addEventListener('click', () => removeVideo(item.id));
+    refs.videoList.appendChild(row);
+  }
+
+  function removeVideo(id) {
+    state.videos = state.videos.filter((v) => v.id !== id);
+    const row = document.querySelector(`.video-item[data-id="${id}"]`);
+    if (row) row.remove();
+    if (!state.videos.length) refs.videoEmptyState.style.display = 'block';
+    updateActionBar();
+  }
+
+  function setVideoStatus(id, status) {
+    const row = document.querySelector(`.video-item[data-id="${id}"]`);
+    if (!row) return;
+    const pill = row.querySelector('.video-status-pill');
+    pill.className = `video-status-pill ${status === 'processing' ? 'processing' : status === 'done' ? 'done' : status === 'error' ? 'error' : ''}`;
+    pill.textContent = status === 'processing' ? 'Processando…' : status === 'done' ? 'Concluído' : status === 'error' ? 'Erro' : 'Pendente';
+  }
+
+  function setVideoProgress(id, pct) {
+    const row = document.querySelector(`.video-item[data-id="${id}"]`);
+    if (!row) return;
+    row.querySelector('.video-progress .fill').style.width = `${pct}%`;
+  }
+
+  function escapeHtml(str) {
+    const d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
+
+  /* =========================================================
+     ACTION BAR / RAIL STATE
+     ========================================================= */
+  function setRailStep(n) {
+    [refs.railStep1, refs.railStep2, refs.railStep3].forEach((s, i) => {
+      s.classList.toggle('done', i + 1 < n);
+      s.classList.toggle('active', i + 1 === n);
+    });
+  }
+
+  function updateActionBar() {
+    const hasFrame = !!state.frameFile;
+    const hasVideos = state.videos.length > 0;
+    refs.processBtn.disabled = !(hasFrame && hasVideos) || state.processing;
+    if (!hasFrame) refs.actionBarInfo.textContent = 'Envie uma moldura e ao menos um vídeo para começar.';
+    else if (!hasVideos) refs.actionBarInfo.textContent = 'Moldura pronta — adicione ao menos um vídeo.';
+    else refs.actionBarInfo.textContent = `${state.videos.length} vídeo${state.videos.length > 1 ? 's' : ''} pronto${state.videos.length > 1 ? 's' : ''} para processar.`;
+  }
+
+  /* =========================================================
+     FFMPEG LOADING
+     ========================================================= */
+  function loadScript(src) {
+    return new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = src; s.onload = resolve; s.onerror = () => reject(new Error(`Falha ao carregar ${src}`));
+      document.head.appendChild(s);
+    });
+  }
+
+  async function ensureFFmpeg() {
+    if (state.ffmpegLoaded) return;
+    if (state.ffmpegLoading) return state.ffmpegLoading;
+    state.ffmpegLoading = (async () => {
+      try {
+        if (!window.FFmpeg) await loadScript(FFMPEG_SRC);
+        const { createFFmpeg, fetchFile } = window.FFmpeg;
+        state.ffmpeg = createFFmpeg({
+          log: false,
+          progress: (p) => {
+            const pct = Math.min(100, Math.max(0, (p.ratio || 0) * 100));
+            const current = state.videos.find((v) => v.status === 'processing');
+            if (current) { current.progress = pct; setVideoProgress(current.id, pct); }
+          },
+        });
+        await state.ffmpeg.load();
+        state.fetchFile = fetchFile;
+        state.ffmpegLoaded = true;
+      } catch (err) {
+        console.error(err);
+        toast('Não foi possível carregar o motor de processamento. Verifique sua conexão e tente novamente.', 'error');
+        throw err;
+      }
+    })();
+    return state.ffmpegLoading;
+  }
+
+  /* =========================================================
+     PROCESS VIDEOS
+     ========================================================= */
+  async function processVideo(video, frameBlob) {
+    const ffmpeg = state.ffmpeg;
+    const fetchFile = state.fetchFile;
+    const inputName = `in_${video.id}.mp4`;
+    const frameName = `frame_${video.id}.png`;
+    const outputName = `out_${video.id}.mp4`;
+
+    await ffmpeg.FS('writeFile', inputName, await fetchFile(video.file));
+    await ffmpeg.FS('writeFile', frameName, await fetchFile(frameBlob));
+
+    const fi = state.frameInfo;
+    const duration = video.duration && isFinite(video.duration) ? video.duration : 3600;
+
+    const command = [
+      '-i', inputName,
+      '-loop', '1',
+      '-i', frameName,
+      '-t', String(duration),
+      '-filter_complex',
+      `[0:v]scale=${Math.round(fi.videoWidth)}:${Math.round(fi.videoHeight)}:force_original_aspect_ratio=decrease,` +
+      `pad=${Math.round(fi.videoWidth)}:${Math.round(fi.videoHeight)}:(ow-iw)/2:(oh-ih)/2:black,` +
+      `pad=${Math.round(fi.frameWidth)}:${Math.round(fi.frameHeight)}:${Math.round(fi.videoX)}:${Math.round(fi.videoY)}:black[video];` +
+      `[1:v]scale=${Math.round(fi.frameWidth)}:${Math.round(fi.frameHeight)},format=rgba[frame];` +
+      `[video][frame]overlay=0:0:format=auto:eof_action=pass[out]`,
+      '-map', '[out]',
+      '-map', '0:a?',
+      '-c:a', 'copy',
+      '-c:v', 'libx264',
+      '-preset', 'ultrafast',
+      '-crf', '23',
+      '-pix_fmt', 'yuv420p',
+      '-movflags', '+faststart',
+      outputName,
+    ];
+
+    await ffmpeg.run(...command);
+    const data = ffmpeg.FS('readFile', outputName);
+    const blob = new Blob([data.buffer], { type: 'video/mp4' });
+    video.outputBlob = blob;
+    video.outputUrl = URL.createObjectURL(blob);
+
+    try {
+      ffmpeg.FS('unlink', inputName);
+      ffmpeg.FS('unlink', frameName);
+      ffmpeg.FS('unlink', outputName);
+    } catch (e) { /* silencioso */ }
+
+    setVideoProgress(video.id, 100);
+  }
+
+  refs.processBtn.addEventListener('click', async () => {
+    if (!state.frameFile || !state.videos.length || state.processing) return;
+
+    try {
+      refs.processBtn.disabled = true;
+      refs.processBtn.textContent = 'Carregando motor…';
+      await ensureFFmpeg();
+    } catch (e) {
+      refs.processBtn.disabled = false;
+      refs.processBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 3v18l15-9L5 3Z"/></svg> Processar vídeos';
+      return;
+    }
+
+    let frameBlob;
+    try {
+      frameBlob = await generateFrameWithHole(state.frameImage, state.frameInfo);
+    } catch (err) {
+      toast('Erro ao preparar a moldura. Ajuste a área e tente novamente.', 'error');
+      refs.processBtn.disabled = false;
+      return;
+    }
+
+    state.processing = true;
+    setRailStep(3);
+    refs.overallProgress.classList.add('show');
+    refs.resultsPanel.style.display = 'block';
+    refs.resultsGrid.innerHTML = '';
+    refs.downloadAllBtn.style.display = 'none';
+
+    const total = state.videos.length;
+    let completed = 0;
+
+    for (const video of state.videos) {
+      if (video.status === 'done') { completed++; continue; }
+      setVideoStatus(video.id, 'processing');
+      refs.processBtn.textContent = `Processando ${completed + 1} de ${total}…`;
+      try {
+        await processVideo(video, frameBlob);
+        video.status = 'done';
+        setVideoStatus(video.id, 'done');
+        addResultCard(video);
+        toast(`"${video.name}" processado com sucesso.`, 'success');
+      } catch (err) {
+        console.error(err);
+        video.status = 'error';
+        setVideoStatus(video.id, 'error');
+        toast(`Erro ao processar "${video.name}".`, 'error');
+      }
+      completed++;
+      const pct = Math.round((completed / total) * 100);
+      refs.overallProgressFill.style.width = `${pct}%`;
+      refs.overallProgressPct.textContent = `${pct}%`;
+    }
+
+    state.processing = false;
+    refs.processBtn.disabled = false;
+    refs.processBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 3v18l15-9L5 3Z"/></svg> Processar novamente';
+
+    const successCount = state.videos.filter((v) => v.status === 'done').length;
+    if (successCount > 0) refs.downloadAllBtn.style.display = 'inline-flex';
+    toast('Processamento concluído.', 'success');
+  });
+
+  function addResultCard(video) {
+    const card = document.createElement('div');
+    card.className = 'result-card';
+    card.innerHTML = `
+      <video src="${video.outputUrl}" muted loop playsinline controls preload="metadata"></video>
+      <div class="result-card-body">
+        <div class="result-card-name">${escapeHtml(video.name)}</div>
+        <button class="btn btn-secondary btn-sm btn-block" type="button">Baixar vídeo</button>
+      </div>`;
+    card.querySelector('button').addEventListener('click', () => downloadBlob(video.outputBlob, downloadName(video.name)));
+    refs.resultsGrid.appendChild(card);
+  }
+
+  function downloadName(originalName) {
+    const base = originalName.replace(/\.[^/.]+$/, '');
+    return `${base}-com-moldura.mp4`;
+  }
+
+  function downloadBlob(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 30000);
+  }
+
+  refs.downloadAllBtn.addEventListener('click', async () => {
+    const done = state.videos.filter((v) => v.status === 'done' && v.outputBlob);
+    if (!done.length) return;
+    refs.downloadAllBtn.disabled = true;
+    refs.downloadAllBtn.textContent = 'Compactando…';
+    try {
+      if (!window.JSZip) await loadScript(JSZIP_SRC);
+      const zip = new window.JSZip();
+      done.forEach((v) => zip.file(downloadName(v.name), v.outputBlob));
+      const content = await zip.generateAsync({ type: 'blob' });
+      downloadBlob(content, `videos-com-moldura-${Date.now()}.zip`);
+    } catch (err) {
+      console.error(err);
+      toast('Não foi possível gerar o arquivo .zip.', 'error');
+    } finally {
+      refs.downloadAllBtn.disabled = false;
+      refs.downloadAllBtn.textContent = 'Baixar tudo (.zip)';
+    }
+  });
+
+  updateActionBar();
+})();
+</script>
+</body>
+</html>
