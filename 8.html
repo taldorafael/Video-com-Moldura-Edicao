@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Editor Video Texto</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ===================== TOPBAR ===================== -->
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-logo">EVT</div>
+    <span class="brand-name">Editor Video Texto</span>
+  </div>
+
+  <div class="topbar-actions">
+    <button id="btnImportJson" class="btn btn-ghost" title="Importar JSON">
+      <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 19h16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Importar JSON
+    </button>
+    <input type="file" id="inputImportJson" accept=".json" hidden>
+
+    <button id="btnDownloadJson" class="btn btn-ghost" title="Baixar JSON">
+      <svg viewBox="0 0 24 24"><path d="M12 21V9m0 12l-4-4m4 4l4-4M4 5h16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      JSON
+    </button>
+
+    <button id="btnDownloadSrt" class="btn btn-ghost" title="Baixar SRT">
+      <svg viewBox="0 0 24 24"><path d="M12 21V9m0 12l-4-4m4 4l4-4M4 5h16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      SRT
+    </button>
+
+    <button id="btnExportVideo" class="btn btn-primary" title="Exportar vídeo MP4 com legendas">
+      <svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Exportar MP4
+    </button>
+
+    <button id="btnClearProject" class="btn btn-danger" title="Limpar projeto">
+      <svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0l-1 14a2 2 0 01-2 2H7a2 2 0 01-2-2L4 6h16z" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Limpar
+    </button>
+  </div>
+</header>
+
+<!-- ===================== MAIN LAYOUT ===================== -->
+<main class="app-layout">
+
+  <!-- ============ LEFT PANEL: UPLOAD + LEGENDAS LIST ============ -->
+  <aside class="panel panel-left">
+
+    <div id="dropZone" class="drop-zone">
+      <svg viewBox="0 0 24 24" class="drop-icon"><path d="M12 16V4m0 0L7 9m5-5l5 5M4 20h16" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <p class="drop-title">Arraste seu vídeo aqui</p>
+      <p class="drop-sub">ou clique para selecionar</p>
+      <button id="btnUploadVideo" class="btn btn-primary btn-block">Selecionar vídeo</button>
+      <input type="file" id="inputVideo" accept="video/*" hidden>
+    </div>
+
+    <div class="panel-section">
+      <div class="section-header">
+        <h3>Legendas</h3>
+        <button id="btnAddCaption" class="btn btn-mini" title="Adicionar legenda">+ Nova</button>
+      </div>
+
+      <div class="generate-row">
+        <select id="selectLanguage" class="select">
+          <option value="auto">Detectar idioma</option>
+          <option value="pt">Português</option>
+          <option value="en">Inglês</option>
+          <option value="es">Espanhol</option>
+        </select>
+        <button id="btnGenerateCaptions" class="btn btn-primary btn-block">
+          <svg viewBox="0 0 24 24"><path d="M12 1v6m0 10v6m-9-9h6m10 0h6M4.2 4.2l4.2 4.2m7.2 7.2l4.2 4.2M4.2 19.8l4.2-4.2m7.2-7.2l4.2-4.2" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+          Gerar legenda
+        </button>
+      </div>
+
+      <div id="progressWrap" class="progress-wrap hidden">
+        <div class="progress-label"><span id="progressText">Preparando...</span><span id="progressPct">0%</span></div>
+        <div class="progress-bar"><div id="progressFill" class="progress-fill"></div></div>
+      </div>
+
+      <div id="captionList" class="caption-list">
+        <p class="empty-hint">Nenhuma legenda ainda. Gere automaticamente ou adicione manualmente.</p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============ CENTER: PLAYER + TIMELINE ============ -->
+  <section class="panel panel-center">
+
+    <div class="player-wrap">
+      <div id="videoStage" class="video-stage">
+        <video id="videoPlayer" class="video-el"></video>
+        <div id="captionOverlay" class="caption-overlay"></div>
+        <div id="dragHint" class="drag-hint hidden">Arraste para posicionar a legenda</div>
+      </div>
+    </div>
+
+    <div class="transport">
+      <button id="btnPlayPause" class="btn-icon" title="Reproduzir / Pausar">
+        <svg id="iconPlay" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+        <svg id="iconPause" viewBox="0 0 24 24" class="hidden"><path d="M7 5h4v14H7zM13 5h4v14h-4z" fill="currentColor"/></svg>
+      </button>
+      <span id="timeCurrent" class="time-label">00:00.000</span>
+      <input id="seekBar" type="range" min="0" max="1000" value="0" class="seek-bar">
+      <span id="timeDuration" class="time-label">00:00.000</span>
+      <button id="btnMute" class="btn-icon" title="Mudo">
+        <svg viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z" fill="currentColor"/><path id="volPath" d="M15.5 8.5a5 5 0 010 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+      </button>
+      <input id="volumeBar" type="range" min="0" max="100" value="100" class="volume-bar">
+    </div>
+
+    <div class="timeline-wrap">
+      <div class="timeline-toolbar">
+        <span class="timeline-title">Timeline</span>
+        <div class="zoom-controls">
+          <button id="btnZoomOut" class="btn-icon-sm">−</button>
+          <button id="btnZoomIn" class="btn-icon-sm">+</button>
+        </div>
+      </div>
+      <div id="timelineScroll" class="timeline-scroll">
+        <div id="timelineRuler" class="timeline-ruler"></div>
+        <div id="timelineTrack" class="timeline-track">
+          <div id="playhead" class="playhead"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RIGHT PANEL: STYLE EDITOR ============ -->
+  <aside class="panel panel-right">
+    <div class="section-header">
+      <h3>Editor de legenda</h3>
+    </div>
+
+    <div id="editorEmpty" class="empty-hint">Selecione uma legenda para editar seu estilo e conteúdo.</div>
+
+    <div id="editorForm" class="editor-form hidden">
+
+      <label class="field-label">Texto</label>
+      <textarea id="fieldText" class="text-area" rows="3" placeholder="Digite o texto da legenda..."></textarea>
+
+      <div class="field-row">
+        <div class="field-col">
+          <label class="field-label">Início (s)</label>
+          <input id="fieldStart" type="number" step="0.01" class="input-num">
+        </div>
+        <div class="field-col">
+          <label class="field-label">Fim (s)</label>
+          <input id="fieldEnd" type="number" step="0.01" class="input-num">
+        </div>
+      </div>
+
+      <div class="field-row">
+        <button id="btnDuplicateCaption" class="btn btn-ghost btn-block">Duplicar</button>
+        <button id="btnDeleteCaption" class="btn btn-danger btn-block">Excluir</button>
+      </div>
+
+      <hr class="divider">
+
+      <label class="field-label">Fonte</label>
+      <select id="fieldFont" class="select">
+        <option value="'Inter', sans-serif">Inter</option>
+        <option value="'Poppins', sans-serif">Poppins</option>
+        <option value="'Montserrat', sans-serif">Montserrat</option>
+        <option value="'Roboto', sans-serif">Roboto</option>
+        <option value="'Georgia', serif">Georgia</option>
+        <option value="'Courier New', monospace">Courier New</option>
+        <option value="'Impact', sans-serif">Impact</option>
+      </select>
+
+      <label class="field-label">Tamanho <span id="fontSizeVal">28</span>px</label>
+      <input id="fieldFontSize" type="range" min="12" max="80" value="28" class="range-input">
+
+      <div class="field-row">
+        <div class="field-col">
+          <label class="field-label">Cor do texto</label>
+          <input id="fieldColor" type="color" value="#ffffff" class="color-input">
+        </div>
+        <div class="field-col">
+          <label class="field-label">Cor do fundo</label>
+          <input id="fieldBgColor" type="color" value="#000000" class="color-input">
+        </div>
+      </div>
+
+      <label class="field-label">Opacidade do fundo <span id="bgOpacityVal">60</span>%</label>
+      <input id="fieldBgOpacity" type="range" min="0" max="100" value="60" class="range-input">
+
+      <div class="field-row">
+        <div class="field-col">
+          <label class="field-label">Cor do contorno</label>
+          <input id="fieldStrokeColor" type="color" value="#000000" class="color-input">
+        </div>
+        <div class="field-col">
+          <label class="field-label">Espessura contorno <span id="strokeWidthVal">2</span>px</label>
+          <input id="fieldStrokeWidth" type="range" min="0" max="10" value="2" class="range-input">
+        </div>
+      </div>
+
+      <label class="field-label">Sombra <span id="shadowVal">4</span>px</label>
+      <input id="fieldShadow" type="range" min="0" max="20" value="4" class="range-input">
+
+      <label class="field-label">Transparência texto <span id="opacityVal">100</span>%</label>
+      <input id="fieldOpacity" type="range" min="0" max="100" value="100" class="range-input">
+
+      <label class="field-label">Alinhamento</label>
+      <div class="align-group">
+        <button class="btn-align" data-align="left" title="Esquerda">
+          <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h12M3 18h18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+        </button>
+        <button class="btn-align active" data-align="center" title="Centro">
+          <svg viewBox="0 0 24 24"><path d="M3 6h18M6 12h12M3 18h18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+        </button>
+        <button class="btn-align" data-align="right" title="Direita">
+          <svg viewBox="0 0 24 24"><path d="M3 6h18M9 12h12M3 18h18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
+      <label class="field-label">Animação</label>
+      <select id="fieldAnimation" class="select">
+        <option value="none">Nenhuma</option>
+        <option value="fade">Fade</option>
+        <option value="pop">Pop</option>
+        <option value="zoom">Zoom</option>
+        <option value="bounce">Bounce</option>
+        <option value="slide">Slide</option>
+        <option value="scale">Scale</option>
+        <option value="blur">Blur</option>
+        <option value="typewriter">Typewriter</option>
+        <option value="karaoke">Karaoke (palavra por palavra)</option>
+      </select>
+
+      <p class="field-hint">Dica: arraste a legenda diretamente sobre o vídeo para posicioná-la livremente.</p>
+    </div>
+  </aside>
+
+</main>
+
+<!-- ===================== MODAL: LOADING MODELO ===================== -->
+<div id="modelModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <div class="spinner"></div>
+    <h3 id="modelModalTitle">Baixando modelo de transcrição...</h3>
+    <p id="modelModalSub" class="modal-sub">Isso acontece apenas uma vez. O modelo ficará em cache no navegador.</p>
+    <div class="progress-bar"><div id="modelProgressFill" class="progress-fill"></div></div>
+  </div>
+</div>
+
+<div id="toastContainer" class="toast-container"></div>
+
+<!-- ===================== LIBS via CDN ===================== -->
+<script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
+<script src="https://unpkg.com/@ffmpeg/util@0.12.1/dist/umd/index.js"></script>
+<script type="module" src="script.js"></script>
+</body>
+</html>
