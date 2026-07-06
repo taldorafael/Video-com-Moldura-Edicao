@@ -45,34 +45,45 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg-primary: #09090b;
-      --bg-secondary: #131316;
-      --bg-tertiary: #1a1a1f;
-      --bg-card: #16161a;
-      --border-color: #27272a;
-      --border-hover: #3f3f46;
-      --text-primary: #fafafa;
-      --text-secondary: #a1a1aa;
-      --text-muted: #71717a;
-      --accent: #10b981;
-      --accent-hover: #059669;
-      --accent-glow: rgba(16, 185, 129, 0.15);
-      --danger: #ef4444;
-      --warning: #f59e0b;
-      --radius: 12px;
-      --radius-sm: 8px;
-      --radius-lg: 16px;
-      --shadow: 0 4px 24px rgba(0,0,0,0.3);
-      --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    /* ============================================
+       RESET & BASE
+       ============================================ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-    html { scroll-behavior: smooth; }
+    :root {
+      --bg-primary: #0a0a0a;
+      --bg-secondary: #121212;
+      --bg-tertiary: #1a1a1a;
+      --bg-elevated: #1f1f1f;
+      --border-color: #2a2a2a;
+      --border-hover: #3a3a3a;
+      --text-primary: #ffffff;
+      --text-secondary: #a0a0a0;
+      --text-muted: #666666;
+      --accent-primary: #10b981;
+      --accent-hover: #059669;
+      --accent-secondary: #3b82f6;
+      --accent-warning: #f59e0b;
+      --accent-error: #ef4444;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --transition: all 0.2s ease;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: var(--bg-primary);
       color: var(--text-primary);
       line-height: 1.6;
@@ -80,212 +91,260 @@
       overflow-x: hidden;
     }
 
+    /* ============================================
+       SKIP LINK (Acessibilidade)
+       ============================================ */
     .skip-link {
       position: absolute;
       top: -40px;
       left: 0;
-      background: var(--accent);
-      color: white;
+      background: var(--accent-primary);
+      color: var(--text-primary);
       padding: 8px 16px;
       text-decoration: none;
-      z-index: 1000;
+      border-radius: var(--radius-sm);
+      z-index: 10000;
+      transition: var(--transition);
     }
 
-    .skip-link:focus { top: 0; }
+    .skip-link:focus {
+      top: 8px;
+    }
 
+    /* ============================================
+       HEADER
+       ============================================ */
     .site-header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      padding: 16px 24px;
       position: sticky;
       top: 0;
       z-index: 100;
-      background: rgba(9, 9, 11, 0.85);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border-color);
-      padding: 0 24px;
+      backdrop-filter: blur(10px);
     }
 
     .header-inner {
-      max-width: 1200px;
+      max-width: 1400px;
       margin: 0 auto;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 64px;
+      gap: 16px;
     }
 
     .logo {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       text-decoration: none;
       color: var(--text-primary);
+      transition: var(--transition);
+    }
+
+    .logo:hover {
+      opacity: 0.8;
     }
 
     .logo-icon {
       width: 36px;
       height: 36px;
-      background: linear-gradient(135deg, var(--accent), #065f46);
-      border-radius: var(--radius-sm);
       display: flex;
       align-items: center;
       justify-content: center;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
     }
 
-    .logo-icon svg { width: 20px; height: 20px; color: white; }
+    .logo-icon svg {
+      width: 20px;
+      height: 20px;
+    }
 
     .logo-text {
-      font-weight: 700;
       font-size: 1.1rem;
+      font-weight: 700;
       letter-spacing: -0.02em;
     }
 
     .header-badge {
-      font-size: 0.7rem;
-      font-weight: 600;
-      padding: 3px 8px;
+      background: var(--accent-primary);
+      color: var(--text-primary);
+      padding: 6px 12px;
       border-radius: 20px;
-      background: var(--accent-glow);
-      color: var(--accent);
-      border: 1px solid rgba(16, 185, 129, 0.2);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
 
+    /* ============================================
+       WARNING BANNER
+       ============================================ */
     .warning-banner {
-      background: linear-gradient(135deg, #451a03, #1c0a00);
-      border: 1px solid rgba(245, 158, 11, 0.3);
-      color: #fbbf24;
-      padding: 14px 24px;
-      font-size: 0.85rem;
+      background: var(--accent-warning);
+      color: var(--bg-primary);
+      padding: 12px 24px;
       text-align: center;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .warning-banner.hidden {
       display: none;
     }
 
-    .warning-banner:not(.hidden) { display: block; }
-    .warning-banner strong { color: #fde68a; }
-
+    /* ============================================
+       MAIN CONTAINER
+       ============================================ */
     .app-container {
-      max-width: 1200px;
+      max-width: 1400px;
       margin: 0 auto;
-      padding: 32px 24px 80px;
+      padding: 32px 24px;
     }
 
+    /* ============================================
+       HERO SECTION
+       ============================================ */
     .hero {
       text-align: center;
-      padding: 48px 0 40px;
+      padding: 48px 24px;
+      margin-bottom: 48px;
     }
 
     .hero h1 {
-      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-size: clamp(2rem, 5vw, 3.5rem);
       font-weight: 800;
-      letter-spacing: -0.03em;
-      line-height: 1.15;
+      line-height: 1.2;
       margin-bottom: 16px;
+      letter-spacing: -0.03em;
     }
 
-    .hero h1 .highlight {
-      background: linear-gradient(135deg, var(--accent), #34d399);
+    .hero .highlight {
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
     .hero p {
+      font-size: 1.1rem;
       color: var(--text-secondary);
-      font-size: 1.05rem;
-      max-width: 560px;
-      margin: 0 auto;
+      max-width: 600px;
+      margin: 0 auto 32px;
     }
 
     .privacy-badges {
-      
       display: flex;
-      justify-content: center;
-      gap: 16px;
-      margin-top: 24px;
       flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
     }
 
     .privacy-badge {
       display: flex;
       align-items: center;
-      gap: 6px;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      padding: 6px 12px;
-      background: var(--bg-secondary);
+      gap: 8px;
+      background: var(--bg-elevated);
       border: 1px solid var(--border-color);
-      border-radius: 20px;
+      padding: 10px 16px;
+      border-radius: 24px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      transition: var(--transition);
+    }
+
+    .privacy-badge:hover {
+      border-color: var(--accent-primary);
+      color: var(--text-primary);
     }
 
     .privacy-badge svg {
-      width: 14px;
-      height: 14px;
-      color: var(--accent);
+      width: 18px;
+      height: 18px;
+      color: var(--accent-primary);
     }
 
+    /* ============================================
+       WORKFLOW PANELS
+       ============================================ */
     .workflow {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
       gap: 24px;
-      margin-top: 16px;
-    }
-
-    @media (max-width: 768px) {
-      .workflow { grid-template-columns: 1fr; }
+      margin-bottom: 32px;
     }
 
     .panel {
-      background: var(--bg-card);
+      background: var(--bg-secondary);
       border: 1px solid var(--border-color);
       border-radius: var(--radius-lg);
       overflow: hidden;
-      transition: border-color var(--transition);
+      transition: var(--transition);
     }
 
-    .panel:hover { border-color: var(--border-hover); }
+    .panel:hover {
+      border-color: var(--border-hover);
+    }
 
     .panel-header {
-      padding: 20px 24px;
-      border-bottom: 1px solid var(--border-color);
+      background: var(--bg-tertiary);
+      padding: 16px 20px;
       display: flex;
       align-items: center;
       gap: 12px;
+      border-bottom: 1px solid var(--border-color);
     }
 
     .panel-step {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: var(--accent);
-      border: 1.5px solid var(--accent);
+      width: 32px;
+      height: 32px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.75rem;
+      background: var(--accent-primary);
+      color: var(--text-primary);
+      border-radius: 50%;
       font-weight: 700;
-      color: white;
-      flex-shrink: 0;
+      font-size: 0.9rem;
     }
 
     .panel-title {
-      font-size: 0.95rem;
+      font-size: 1.1rem;
       font-weight: 600;
     }
 
-    .panel-body { padding: 24px; }
+    .panel-body {
+      padding: 24px;
+    }
 
+    /* ============================================
+       DROP ZONES
+       ============================================ */
     .drop-zone {
       border: 2px dashed var(--border-color);
-      border-radius: var(--radius);
-      padding: 40px 24px;
+      border-radius: var(--radius-md);
+      padding: 48px 24px;
       text-align: center;
       cursor: pointer;
-      transition: all var(--transition);
+      transition: var(--transition);
       position: relative;
     }
 
-    .drop-zone:hover,
+    .drop-zone:hover {
+      border-color: var(--accent-primary);
+      background: var(--bg-elevated);
+    }
+
     .drop-zone.drag-over {
-      border-color: var(--accent);
-      background: var(--accent-glow);
+      border-color: var(--accent-primary);
+      background: rgba(16, 185, 129, 0.05);
+    }
+
+    .drop-zone.hidden {
+      display: none;
     }
 
     .drop-zone-icon {
@@ -293,19 +352,22 @@
       height: 48px;
       margin: 0 auto 16px;
       color: var(--text-muted);
-      transition: color var(--transition);
+      transition: var(--transition);
     }
 
-    .drop-zone:hover .drop-zone-icon { color: var(--accent); }
+    .drop-zone:hover .drop-zone-icon {
+      color: var(--accent-primary);
+    }
 
     .drop-zone-title {
+      font-size: 1rem;
       font-weight: 600;
-      font-size: 0.95rem;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
+      color: var(--text-primary);
     }
 
     .drop-zone-hint {
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       color: var(--text-muted);
     }
 
@@ -316,253 +378,234 @@
       cursor: pointer;
     }
 
+    /* ============================================
+       FRAME PREVIEW & EDITOR
+       ============================================ */
     .frame-preview-area {
+      margin-top: 20px;
+    }
+
+    .frame-preview-area.hidden {
       display: none;
-      text-align: center;
-    }
-
-    .frame-preview-area:not(.hidden) { display: block; }
-
-    .frame-preview-wrap {
-      position: relative;
-      display: inline-block;
-      margin-bottom: 16px;
-    }
-
-    .frame-preview-wrap img {
-      max-width: 100%;
-      max-height: 200px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border-color);
-      background: repeating-conic-gradient(#1a1a1f 0% 25%, #27272a 0% 50%) 50% / 16px 16px;
     }
 
     .frame-editor-wrap {
       position: relative;
       display: inline-block;
-      margin-bottom: 16px;
       max-width: 100%;
-      user-select: none;
-      -webkit-user-select: none;
-      touch-action: none;
+      margin: 0 auto;
+      background: repeating-conic-gradient(#2a2a2a 0% 25%, #1a1a1a 0% 50%) 50% / 20px 20px;
+      border-radius: var(--radius-md);
+      overflow: hidden;
     }
 
-    .frame-editor-wrap img {
+    #frame-preview {
       display: block;
       max-width: 100%;
-      max-height: 340px;
-      width: auto;
       height: auto;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border-color);
-      background: repeating-conic-gradient(#1a1a1f 0% 25%, #27272a 0% 50%) 50% / 16px 16px;
+      user-select: none;
       pointer-events: none;
     }
 
     .area-box {
       position: absolute;
-      border: 2px dashed var(--accent);
-      background: rgba(16, 185, 129, 0.14);
-      box-sizing: border-box;
+      border: 2px solid var(--accent-primary);
+      background: rgba(16, 185, 129, 0.1);
       cursor: move;
-      min-width: 16px;
-      min-height: 16px;
+      transition: background 0.2s;
     }
 
-    .area-box::before {
-      content: 'Área do vídeo';
-      position: absolute;
-      top: -22px;
-      left: 0;
-      font-size: 0.65rem;
-      font-weight: 600;
-      color: var(--accent);
-      background: var(--bg-primary);
-      padding: 2px 6px;
-      border-radius: 4px;
-      white-space: nowrap;
-      pointer-events: none;
+    .area-box:hover {
+      background: rgba(16, 185, 129, 0.2);
     }
 
     .area-handle {
       position: absolute;
-      width: 14px;
-      height: 14px;
-      background: var(--accent);
+      width: 12px;
+      height: 12px;
+      background: var(--accent-primary);
       border: 2px solid var(--bg-primary);
       border-radius: 50%;
-      z-index: 2;
+      cursor: nwse-resize;
     }
 
-    .area-handle.nw { top: 0; left: 0; transform: translate(-50%, -50%); cursor: nwse-resize; }
-    .area-handle.ne { top: 0; right: 0; transform: translate(50%, -50%); cursor: nesw-resize; }
-    .area-handle.sw { bottom: 0; left: 0; transform: translate(-50%, 50%); cursor: nesw-resize; }
-    .area-handle.se { bottom: 0; right: 0; transform: translate(50%, 50%); cursor: nwse-resize; }
+    .area-handle.nw { top: -6px; left: -6px; cursor: nwse-resize; }
+    .area-handle.ne { top: -6px; right: -6px; cursor: nesw-resize; }
+    .area-handle.sw { bottom: -6px; left: -6px; cursor: nesw-resize; }
+    .area-handle.se { bottom: -6px; right: -6px; cursor: nwse-resize; }
+
+    .frame-meta {
+      margin-top: 12px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
 
     .area-controls {
-      text-align: left;
+      margin-top: 20px;
+      padding: 16px;
       background: var(--bg-tertiary);
+      border-radius: var(--radius-md);
       border: 1px solid var(--border-color);
-      border-radius: var(--radius-sm);
-      padding: 14px 16px;
-      margin-bottom: 16px;
     }
 
     .area-controls-title {
-      font-size: 0.78rem;
+      font-size: 0.9rem;
       font-weight: 600;
-      color: var(--text-secondary);
-      margin-bottom: 10px;
+      margin-bottom: 12px;
+      color: var(--text-primary);
     }
 
     .area-controls-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 12px;
+      margin-bottom: 12px;
     }
 
     .area-controls-grid label {
       display: flex;
       flex-direction: column;
       gap: 4px;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    .area-controls-grid input[type="number"] {
-      background: var(--bg-primary);
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      padding: 7px 9px;
-      color: var(--text-primary);
       font-size: 0.85rem;
-      font-family: inherit;
-      width: 100%;
-      transition: border-color var(--transition);
+      color: var(--text-secondary);
     }
 
-    .area-controls-grid input[type="number"]:focus {
+    .area-controls-grid input {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      transition: var(--transition);
+    }
+
+    .area-controls-grid input:focus {
       outline: none;
-      border-color: var(--accent);
+      border-color: var(--accent-primary);
     }
 
     .area-controls-actions {
       display: flex;
       gap: 8px;
-      margin-top: 12px;
+      margin-bottom: 12px;
       flex-wrap: wrap;
     }
 
     .btn-secondary-sm {
-      background: none;
+      background: var(--bg-elevated);
       border: 1px solid var(--border-color);
-      color: var(--text-secondary);
-      padding: 7px 12px;
-      border-radius: 6px;
-      font-size: 0.75rem;
+      color: var(--text-primary);
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
       font-weight: 500;
       cursor: pointer;
-      transition: all var(--transition);
+      transition: var(--transition);
     }
 
     .btn-secondary-sm:hover {
-      border-color: var(--accent);
-      color: var(--accent);
+      background: var(--bg-tertiary);
+      border-color: var(--accent-primary);
     }
 
     .area-hint {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      margin-top: 10px;
-      line-height: 1.4;
-    }
-
-    .frame-meta {
       font-size: 0.8rem;
-      color: var(--text-secondary);
-      margin-bottom: 12px;
+      color: var(--text-muted);
+      line-height: 1.5;
     }
 
     .btn-remove-frame {
-      background: none;
-      border: 1px solid var(--border-color);
-      color: var(--text-secondary);
-      padding: 8px 16px;
+      margin-top: 16px;
+      background: var(--accent-error);
+      color: var(--text-primary);
+      border: none;
+      padding: 10px 20px;
       border-radius: var(--radius-sm);
-      font-size: 0.8rem;
+      font-size: 0.9rem;
+      font-weight: 600;
       cursor: pointer;
-      transition: all var(--transition);
+      transition: var(--transition);
+      width: 100%;
     }
 
     .btn-remove-frame:hover {
-      border-color: var(--danger);
-      color: var(--danger);
+      background: #dc2626;
     }
 
-    .video-queue { display: none; }
-    .video-queue:not(.hidden) { display: block; }
+    /* ============================================
+       VIDEO QUEUE
+       ============================================ */
+    .video-queue {
+      margin-top: 20px;
+    }
+
+    .video-queue.hidden {
+      display: none;
+    }
 
     .queue-header {
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       margin-bottom: 16px;
     }
 
     .queue-count {
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       color: var(--text-secondary);
     }
 
-    .queue-count strong { color: var(--text-primary); }
-
-    .btn-clear-queue {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      font-size: 0.8rem;
-      cursor: pointer;
-      padding: 4px 8px;
-      border-radius: 4px;
-      transition: all var(--transition);
+    .queue-count strong {
+      color: var(--accent-primary);
+      font-weight: 700;
     }
 
-    .btn-clear-queue:hover { color: var(--danger); }
+    .btn-clear-queue {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-clear-queue:hover {
+      border-color: var(--accent-error);
+      color: var(--accent-error);
+    }
 
     .video-list {
       list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      max-height: 320px;
-      overflow-y: auto;
-      padding-right: 4px;
+      gap: 12px;
     }
 
-    .video-list::-webkit-scrollbar { width: 4px; }
-    .video-list::-webkit-scrollbar-track { background: transparent; }
-    .video-list::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
-
     .video-entry {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px;
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 12px;
-      background: var(--bg-tertiary);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-sm);
-      transition: all var(--transition);
+      transition: var(--transition);
     }
 
-    .video-entry:hover { border-color: var(--border-hover); }
+    .video-entry:hover {
+      border-color: var(--border-hover);
+    }
 
     .video-thumb {
-      width: 56px;
-      height: 40px;
-      border-radius: 6px;
+      width: 80px;
+      height: 60px;
+      border-radius: var(--radius-sm);
       overflow: hidden;
+      background: var(--bg-elevated);
       flex-shrink: 0;
-      background: var(--bg-primary);
     }
 
     .video-thumb video {
@@ -577,116 +620,140 @@
     }
 
     .video-name {
-      font-size: 0.82rem;
-      font-weight: 500;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 4px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
     .video-meta-line {
-      font-size: 0.72rem;
+      font-size: 0.8rem;
       color: var(--text-muted);
-      margin-top: 2px;
+      margin-bottom: 8px;
     }
 
     .video-progress-bar {
-      height: 3px;
-      background: var(--border-color);
+      height: 4px;
+      background: var(--bg-elevated);
       border-radius: 2px;
-      margin-top: 6px;
       overflow: hidden;
     }
 
     .video-progress-bar .fill {
       height: 100%;
+      background: var(--accent-primary);
       width: 0%;
-      background: var(--accent);
-      border-radius: 2px;
-      transition: width 300ms ease;
+      transition: width 0.3s ease;
     }
 
     .video-status-badge {
-      font-size: 0.68rem;
-      font-weight: 600;
-      padding: 3px 8px;
+      padding: 4px 10px;
       border-radius: 12px;
-      white-space: nowrap;
-      flex-shrink: 0;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
 
-    .status-pending { background: var(--bg-primary); color: var(--text-muted); }
-    .status-active { background: rgba(16, 185, 129, 0.1); color: var(--accent); }
-    .status-complete { background: rgba(16, 185, 129, 0.15); color: #34d399; }
-    .status-failed { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+    .status-pending {
+      background: var(--bg-elevated);
+      color: var(--text-muted);
+    }
+
+    .status-active {
+      background: var(--accent-secondary);
+      color: var(--text-primary);
+    }
+
+    .status-complete {
+      background: var(--accent-primary);
+      color: var(--text-primary);
+    }
+
+    .status-failed {
+      background: var(--accent-error);
+      color: var(--text-primary);
+    }
 
     .btn-remove-video {
-      background: none;
+      background: transparent;
       border: none;
       color: var(--text-muted);
       cursor: pointer;
-      padding: 4px;
-      border-radius: 4px;
-      
-      transition: all var(--transition);
-      flex-shrink: 0;
+      padding: 8px;
+      border-radius: var(--radius-sm);
+      transition: var(--transition);
     }
 
-    .btn-remove-video:hover { color: var(--danger); }
-    .btn-remove-video svg { width: 16px; height: 16px; }
+    .btn-remove-video:hover {
+      background: var(--bg-elevated);
+      color: var(--accent-error);
+    }
 
-    .bottom-section { margin-top: 24px; }
+    .btn-remove-video svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* ============================================
+       BOTTOM SECTION
+       ============================================ */
+    .bottom-section {
+      margin-top: 32px;
+    }
 
     .action-bar {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      padding: 24px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
+      text-align: center;
+      margin-bottom: 32px;
     }
 
     .btn-process {
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-hover));
+      color: var(--text-primary);
+      border: none;
+      padding: 16px 32px;
+      border-radius: var(--radius-md);
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      padding: 14px 32px;
-      background: var(--accent);
-      color: white;
-      border: none;
-      border-radius: var(--radius);
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all var(--transition);
+      gap: 12px;
+      box-shadow: var(--shadow-md);
     }
 
     .btn-process:hover:not(:disabled) {
-      background: var(--accent-hover);
-      transform: translateY(-1px);
-      box-shadow: 0 8px 24px var(--accent-glow);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
     }
 
     .btn-process:disabled {
-      opacity: 0.4;
+      opacity: 0.5;
       cursor: not-allowed;
-      transform: none;
     }
 
-    .btn-process svg { width: 18px; height: 18px; }
+    .btn-process svg {
+      width: 24px;
+      height: 24px;
+    }
 
+    /* ============================================
+       PROGRESS SECTION
+       ============================================ */
     .overall-progress {
-      display: none;
-      margin-top: 24px;
-      background: var(--bg-card);
+      background: var(--bg-secondary);
       border: 1px solid var(--border-color);
       border-radius: var(--radius-lg);
       padding: 24px;
+      margin-bottom: 24px;
     }
 
-    .overall-progress:not(.hidden) { display: block; }
+    .overall-progress.hidden {
+      display: none;
+    }
 
     .progress-header {
       display: flex;
@@ -695,708 +762,399 @@
       margin-bottom: 12px;
     }
 
-    .progress-label { font-size: 0.85rem; font-weight: 500; }
+    .progress-label {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
 
     .progress-percentage {
-      font-size: 0.85rem;
+      font-size: 1.1rem;
       font-weight: 700;
-      color: var(--accent);
+      color: var(--accent-primary);
     }
 
     .progress-track-main {
       height: 8px;
-      background: var(--bg-tertiary);
+      background: var(--bg-elevated);
       border-radius: 4px;
       overflow: hidden;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
     }
 
-    .progress-track-main .bar {
+    .bar {
       height: 100%;
+      background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
       width: 0%;
-      background: linear-gradient(90deg, var(--accent), #34d399);
+      transition: width 0.3s ease;
       border-radius: 4px;
-      transition: width 400ms ease;
     }
 
     .progress-details {
-      font-size: 0.78rem;
+      font-size: 0.85rem;
       color: var(--text-muted);
     }
 
+    /* ============================================
+       RESULTS SECTION
+       ============================================ */
     .results-panel {
-      display: none;
-      margin-top: 24px;
-      background: var(--bg-card);
+      background: var(--bg-secondary);
       border: 1px solid var(--border-color);
       border-radius: var(--radius-lg);
-      overflow: hidden;
+      padding: 24px;
     }
 
-    .results-panel:not(.hidden) { display: block; }
+    .results-panel.hidden {
+      display: none;
+    }
 
     .results-header {
-      padding: 20px 24px;
-      border-bottom: 1px solid var(--border-color);
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
       flex-wrap: wrap;
       gap: 12px;
     }
 
     .results-title {
-      font-size: 0.95rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .results-title .count {
-      background: var(--accent-glow);
-      color: var(--accent);
-      font-size: 0.72rem;
-      padding: 2px 8px;
-      border-radius: 10px;
-    }
-
-    .btn-download-all {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 20px;
-      background: var(--accent);
-      color: white;
-      border: none;
-      border-radius: var(--radius-sm);
-      font-size: 0.82rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all var(--transition);
-    }
-
-    .btn-download-all:hover { background: var(--accent-hover); }
-    .btn-download-all svg { width: 16px; height: 16px; }
-
-    .results-list {
-      list-style: none;
-      padding: 16px 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      max-height: 300px;
-      overflow-y: auto;
-    }
-
-    .result-entry {
+      font-size: 1.2rem;
+      font-weight: 700;
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 12px;
-      background: var(--bg-tertiary);
+    }
+
+    .results-title .count {
+      background: var(--accent-primary);
+      color: var(--text-primary);
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .btn-download-all {
+      background: var(--accent-secondary);
+      color: var(--text-primary);
+      border: none;
+      padding: 10px 20px;
       border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-download-all:hover {
+      background: #2563eb;
+    }
+
+    .btn-download-all.hidden {
+      display: none;
+    }
+
+    .btn-download-all svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .results-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .result-entry {
+      background: var(--bg-tertiary);
       border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: var(--transition);
+    }
+
+    .result-entry:hover {
+      border-color: var(--accent-primary);
     }
 
     .result-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: var(--accent-glow);
+      width: 40px;
+      height: 40px;
       display: flex;
       align-items: center;
       justify-content: center;
+      background: var(--accent-primary);
+      border-radius: 50%;
+      color: var(--text-primary);
       flex-shrink: 0;
     }
 
-    .result-icon svg { width: 18px; height: 18px; color: var(--accent); }
+    .result-icon svg {
+      width: 20px;
+      height: 20px;
+    }
 
-    .result-info { flex: 1; min-width: 0; }
+    .result-info {
+      flex: 1;
+      min-width: 0;
+    }
 
     .result-name {
-      font-size: 0.82rem;
-      font-weight: 500;
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 4px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
     .result-size {
-      font-size: 0.72rem;
+      font-size: 0.85rem;
       color: var(--text-muted);
-      margin-top: 2px;
     }
 
     .btn-download-single {
+      background: var(--accent-primary);
+      color: var(--text-primary);
+      border: none;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 8px 14px;
-      background: var(--bg-primary);
-      border: 1px solid var(--border-color);
-      color: var(--text-secondary);
-      border-radius: var(--radius-sm);
-      font-size: 0.78rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all var(--transition);
-      flex-shrink: 0;
+      gap: 8px;
     }
 
     .btn-download-single:hover {
-      border-color: var(--accent);
-      color: var(--accent);
+      background: var(--accent-hover);
     }
 
-    .btn-download-single svg { width: 14px; height: 14px; }
+    .btn-download-single svg {
+      width: 16px;
+      height: 16px;
+    }
 
+    /* ============================================
+       FOOTER
+       ============================================ */
     .site-footer {
-      text-align: center;
-      padding: 32px 24px;
+      background: var(--bg-secondary);
       border-top: 1px solid var(--border-color);
+      padding: 24px;
+      text-align: center;
       margin-top: 48px;
     }
 
     .footer-text {
-      font-size: 0.78rem;
+      font-size: 0.9rem;
       color: var(--text-muted);
     }
 
     .footer-text a {
-      color: var(--text-secondary);
+      color: var(--accent-primary);
       text-decoration: none;
+      transition: var(--transition);
     }
 
-    .footer-text a:hover { color: var(--accent); }
+    .footer-text a:hover {
+      text-decoration: underline;
+    }
 
+    /* ============================================
+       TOAST NOTIFICATIONS
+       ============================================ */
     .toast-area {
       position: fixed;
       bottom: 24px;
       right: 24px;
-      z-index: 9999;
+      z-index: 10000;
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      pointer-events: none;
+      gap: 12px;
+      max-width: 400px;
     }
 
     .toast-msg {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 12px 18px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-sm);
-      font-size: 0.82rem;
-      box-shadow: var(--shadow);
-      pointer-events: auto;
-      animation: toastSlideIn 300ms ease forwards;
-      max-width: 360px;
+      gap: 12px;
+      box-shadow: var(--shadow-lg);
+      animation: slideIn 0.3s ease;
     }
 
-    .toast-msg.success { border-left: 3px solid var(--accent); }
-    .toast-msg.error { border-left: 3px solid var(--danger); }
-    .toast-msg.info { border-left: 3px solid #3b82f6; }
-
-    .toast-msg svg { width: 16px; height: 16px; flex-shrink: 0; }
-    .toast-msg.success svg { color: var(--accent); }
-    .toast-msg.error svg { color: var(--danger); }
-    .toast-msg.info svg { color: #3b82f6; }
-
-    .toast-msg.hiding { animation: toastSlideOut 300ms ease forwards; }
-
-    @keyframes toastSlideIn {
-      from { opacity: 0; transform: translateX(40px); }
-      to { opacity: 1; transform: translateX(0); }
+    .toast-msg.hiding {
+      animation: slideOut 0.3s ease forwards;
     }
 
-    @keyframes toastSlideOut {
-      from { opacity: 1; transform: translateX(0); }
-      to { opacity: 0; transform: translateX(40px); }
+    .toast-msg svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
     }
 
+    .toast-msg.success svg {
+      color: var(--accent-primary);
+    }
+
+    .toast-msg.error svg {
+      color: var(--accent-error);
+    }
+
+    .toast-msg.info svg {
+      color: var(--accent-secondary);
+    }
+
+    .toast-msg span {
+      font-size: 0.9rem;
+      color: var(--text-primary);
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+    }
+
+    /* ============================================
+       UTILITIES
+       ============================================ */
+    .hidden {
+      display: none !important;
+    }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (max-width: 768px) {
+      .workflow {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding: 32px 16px;
+      }
+
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .app-container {
+        padding: 24px 16px;
+      }
+
+      .panel-body {
+        padding: 16px;
+      }
+
+      .drop-zone {
+        padding: 32px 16px;
+      }
+
+      .area-controls-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .btn-process {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .results-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .btn-download-all {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .toast-area {
+        left: 16px;
+        right: 16px;
+        bottom: 16px;
+        max-width: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .logo-text {
+        font-size: 1rem;
+      }
+
+      .header-badge {
+        font-size: 0.7rem;
+        padding: 4px 10px;
+      }
+
+      .video-entry {
+        flex-wrap: wrap;
+      }
+
+      .video-thumb {
+        width: 100%;
+        height: 120px;
+      }
+
+      .result-entry {
+        flex-wrap: wrap;
+      }
+
+      .btn-download-single {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    /* ============================================
+       SPINNER
+       ============================================ */
     .spinner {
+      display: inline-block;
       width: 16px;
       height: 16px;
-      border: 2px solid transparent;
-      border-top-color: currentColor;
+      border: 2px solid rgba(255, 255, 255, 0.3);
       border-radius: 50%;
-      animation: spin 0.6s linear infinite;
+      border-top-color: var(--text-primary);
+      animation: spin 0.8s linear infinite;
     }
 
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .hidden { display: none !important; }
-
-    @media (max-width: 640px) {
-      .app-container { padding: 20px 16px 60px; }
-      .hero { padding: 32px 0 24px; }
-      .panel-body { padding: 16px; }
-      .drop-zone { padding: 28px 16px; }
-      .action-bar { flex-direction: column; padding: 20px; }
-      .btn-process { width: 100%; justify-content: center; }
-      .toast-area { left: 16px; right: 16px; bottom: 16px; }
-      .toast-msg { max-width: 100%; }
-    }
-
-    /* =====================================================
-       NOVO: ABAS (TABS)
-       Alterna entre "Aplicar Moldura em Vídeo" (fluxo original,
-       100% preservado) e o novo "Editor de Molduras".
-       ===================================================== */
-    .tabs-nav {
-      max-width: 1200px;
-      margin: 24px auto 0;
-      padding: 0 24px;
-      display: flex;
-      gap: 8px;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .tab-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 18px;
-      background: none;
-      border: none;
-      border-bottom: 2px solid transparent;
-      color: var(--text-secondary);
-      font-family: inherit;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all var(--transition);
-      margin-bottom: -1px;
-    }
-
-    .tab-btn:hover { color: var(--text-primary); }
-
-    .tab-btn.active {
-      color: var(--accent);
-      border-bottom-color: var(--accent);
-    }
-
-    .tab-btn svg { width: 16px; height: 16px; }
-
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
-
-    /* =====================================================
-       NOVO: EDITOR DE MOLDURAS — layout estilo Canva/Adobe
-       Express. Sidebar esquerda (ferramentas) + canvas central
-       + painel de propriedades à direita. Fabric.js cuida de
-       toda a manipulação visual (seleção, arraste, resize,
-       rotação) dos elementos do canvas.
-       ===================================================== */
-    .editor-shell {
-      display: grid;
-      grid-template-columns: 260px 1fr 280px;
-      gap: 16px;
-      max-width: 1500px;
-      margin: 24px auto 0;
-      padding: 0 24px 80px;
-      min-height: 640px;
-    }
-
-    @media (max-width: 1100px) {
-      .editor-shell { grid-template-columns: 220px 1fr 260px; }
-    }
-
-    @media (max-width: 900px) {
-      .editor-shell { grid-template-columns: 1fr; }
-      .editor-sidebar, .editor-properties { max-height: none; position: static; }
-    }
-
-    .editor-sidebar, .editor-properties {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      padding: 16px;
-      overflow-y: auto;
-      max-height: 82vh;
-      position: sticky;
-      top: 80px;
-      align-self: start;
-    }
-
-    .editor-section { margin-bottom: 20px; }
-    .editor-section:last-child { margin-bottom: 0; }
-
-    .editor-section-title {
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--text-muted);
-      margin-bottom: 10px;
-    }
-
-    .editor-tool-btn {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      width: 100%;
-      padding: 10px 12px;
-      background: var(--bg-tertiary);
-      border: 1px solid var(--border-color);
-      color: var(--text-primary);
-      border-radius: var(--radius-sm);
-      font-family: inherit;
-      font-size: 0.83rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all var(--transition);
-      margin-bottom: 8px;
-      text-align: left;
-    }
-
-    .editor-tool-btn:last-child { margin-bottom: 0; }
-    .editor-tool-btn:hover { border-color: var(--accent); color: var(--accent); }
-    .editor-tool-btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-    .editor-tool-btn.primary:hover { background: var(--accent-hover); color: #fff; }
-    .editor-tool-btn.active { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
-    .editor-tool-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
-
-    .editor-tool-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-
-    .editor-tool-grid .editor-tool-btn { margin-bottom: 0; justify-content: center; }
-
-    .format-select, .prop-select, .prop-input {
-      width: 100%;
-      background: var(--bg-primary);
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      padding: 8px 10px;
-      color: var(--text-primary);
-      font-size: 0.82rem;
-      font-family: inherit;
-    }
-
-    .format-select:focus, .prop-select:focus, .prop-input:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-
-    .editor-canvas-area {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    .editor-toolbar {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 10px 14px;
-      border-bottom: 1px solid var(--border-color);
-      flex-wrap: wrap;
-    }
-
-    .editor-toolbar-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 7px 10px;
-      background: none;
-      border: 1px solid var(--border-color);
-      color: var(--text-secondary);
-      border-radius: 6px;
-      font-family: inherit;
-      font-size: 0.75rem;
-      cursor: pointer;
-      transition: all var(--transition);
-    }
-
-    .editor-toolbar-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
-    .editor-toolbar-btn.active { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
-    .editor-toolbar-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-    .editor-toolbar-btn svg { width: 14px; height: 14px; }
-    .editor-toolbar-spacer { flex: 1; }
-    .editor-toolbar-divider { width: 1px; height: 20px; background: var(--border-color); margin: 0 4px; }
-
-    .editor-canvas-viewport {
-      flex: 1;
-      overflow: auto;
-      background: var(--bg-primary);
-      padding: 40px;
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-    }
-
-    .editor-canvas-rulers {
-      display: grid;
-      grid-template-columns: 18px 1fr;
-      grid-template-rows: 18px 1fr;
-      margin: auto;
-    }
-
-    .ruler-corner { background: var(--bg-tertiary); }
-    .ruler-h, .ruler-v {
-      background: var(--bg-tertiary);
-      background-image: repeating-linear-gradient(90deg, var(--border-hover) 0 1px, transparent 1px 20px);
-    }
-    .ruler-v { background-image: repeating-linear-gradient(180deg, var(--border-hover) 0 1px, transparent 1px 20px); }
-
-    .editor-canvas-stage {
-      position: relative;
-      background: repeating-conic-gradient(#1a1a1f 0% 25%, #27272a 0% 50%) 50% / 20px 20px;
-      box-shadow: 0 0 0 1px var(--border-color), var(--shadow);
-      line-height: 0;
-    }
-
-    .editor-canvas-stage.show-grid::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background-image:
-        repeating-linear-gradient(0deg, rgba(16,185,129,0.25) 0 1px, transparent 1px 40px),
-        repeating-linear-gradient(90deg, rgba(16,185,129,0.25) 0 1px, transparent 1px 40px);
-    }
-
-    .layers-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      max-height: 220px;
-      overflow-y: auto;
-    }
-
-    .layer-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 10px;
-      background: var(--bg-tertiary);
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      font-size: 0.78rem;
-      cursor: pointer;
-      transition: all var(--transition);
-    }
-
-    .layer-item:hover { border-color: var(--border-hover); }
-    .layer-item.selected { border-color: var(--accent); color: var(--accent); }
-    .layer-item svg { width: 14px; height: 14px; flex-shrink: 0; }
-    .layer-item span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-    .prop-row { margin-bottom: 12px; }
-    .prop-row:last-child { margin-bottom: 0; }
-    .prop-label {
-      display: block;
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      margin-bottom: 5px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-    }
-
-    .prop-row-inline { display: flex; gap: 8px; }
-    .prop-row-inline .prop-row { flex: 1; margin-bottom: 0; }
-
-    .prop-btn-toggle-group { display: flex; gap: 6px; }
-    .prop-btn-toggle {
-      flex: 1;
-      padding: 7px;
-      background: var(--bg-primary);
-      border: 1px solid var(--border-color);
-      color: var(--text-secondary);
-      border-radius: 6px;
-      cursor: pointer;
-      font-family: inherit;
-      font-weight: 700;
-      font-size: 0.8rem;
-      transition: all var(--transition);
-    }
-    .prop-btn-toggle.active { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
-
-    .prop-color-input {
-      width: 100%;
-      height: 34px;
-      padding: 2px;
-      background: var(--bg-primary);
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    .editor-empty-props {
-      text-align: center;
-      color: var(--text-muted);
-      font-size: 0.8rem;
-      padding: 20px 8px;
-    }
-
-    .video-area-tag {
-      display: inline-block;
-      font-size: 0.65rem;
-      font-weight: 700;
-      color: var(--accent);
-      background: var(--accent-glow);
-      padding: 2px 8px;
-      border-radius: 10px;
-      margin-top: 4px;
-    }
-
-    .editor-loading {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 60px 20px;
-      color: var(--text-muted);
-      font-size: 0.85rem;
-    }
-  
-
-    /* =========================================================
-       PROFESSIONAL POLISH LAYER
-       Acessibilidade, responsividade, micro-interações e refino.
-       ========================================================= */
-
-    /* Selection */
-    ::selection { background: var(--accent); color: #000; }
-    ::-moz-selection { background: var(--accent); color: #000; }
-
-    /* Custom scrollbars */
-    * { scrollbar-width: thin; scrollbar-color: var(--border-hover) transparent; }
-    *::-webkit-scrollbar { width: 10px; height: 10px; }
-    *::-webkit-scrollbar-track { background: transparent; }
-    *::-webkit-scrollbar-thumb {
-      background: var(--border-hover);
-      border-radius: 10px;
-      border: 2px solid var(--bg-primary);
-    }
-    *::-webkit-scrollbar-thumb:hover { background: var(--accent); }
-
-    /* Accessible focus rings */
-    :focus { outline: none; }
-    :focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 2px;
-      border-radius: 6px;
-    }
-    button:focus-visible,
-    a:focus-visible,
-    input:focus-visible,
-    select:focus-visible,
-    textarea:focus-visible {
-      box-shadow: 0 0 0 3px var(--accent-glow);
-    }
-
-    /* Utility */
-    .hidden { display: none !important; }
-    .sr-only {
-      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-      overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
-    }
-
-    /* Link hover in footer */
-    .site-footer a {
-      color: var(--accent);
-      text-decoration: none;
-      transition: color var(--transition);
-    }
-    .site-footer a:hover { color: #34d399; text-decoration: underline; }
-
-    /* Input placeholders */
-    input::placeholder, textarea::placeholder { color: var(--text-muted); }
-
-    /* Number input arrows cleanup */
-    input[type="number"]::-webkit-inner-spin-button,
-    input[type="number"]::-webkit-outer-spin-button { opacity: 0.6; }
-
-    /* Buttons: subtle press */
-    button { transition: transform var(--transition), background var(--transition), color var(--transition), border-color var(--transition), box-shadow var(--transition); }
-    button:not(:disabled):active { transform: translateY(1px); }
-    button:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    /* Hero refinement: subtle radial glow */
-    .hero { position: relative; }
-    .hero::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(600px circle at 50% 20%, var(--accent-glow), transparent 60%);
-      pointer-events: none;
-      z-index: -1;
-    }
-
-    /* Tabs nav polish */
-    .tabs-nav {
-      position: sticky;
-      top: 64px;
-      z-index: 50;
-      background: rgba(9, 9, 11, 0.85);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    /* Editor shell responsive */
-    @media (max-width: 1024px) {
-      .editor-shell {
-        grid-template-columns: 1fr !important;
-      }
-      .editor-sidebar,
-      .editor-properties {
-        max-height: none !important;
-        border-right: none;
-        border-bottom: 1px solid var(--border-color);
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
       }
     }
-
-    @media (max-width: 640px) {
-      .header-inner { height: 56px; }
-      .logo-text { font-size: 0.95rem; }
-      .app-container { padding: 20px 16px 60px; }
-      .hero { padding: 32px 0 24px; }
-      .panel-body { padding: 18px; }
-      .tab-btn { font-size: 0.8rem; padding: 12px 14px; }
-    }
-
-    /* Toasts stack container fallback */
-    .toast-area {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      z-index: 9999;
-      pointer-events: none;
-    }
-    .toast-area > * { pointer-events: auto; }
-
-    /* Reduced motion */
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: 0.001ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.001ms !important;
-        scroll-behavior: auto !important;
-      }
-    }
-
-    /* Print */
-    @media print {
-      .site-header, .tabs-nav, .site-footer, .toast-area,
-      .drop-zone, .action-bar, .warning-banner { display: none !important; }
-      body { background: white; color: black; }
-    }
-
   </style>
 </head>
 <body>
@@ -1422,24 +1180,7 @@
     <strong>Atenção:</strong> <span id="warning-banner-text">Seu navegador não expôs SharedArrayBuffer, então o processamento vai rodar em modo single-thread (mais lento, porém funcional). Para acelerar, use Chrome/Edge/Firefox recentes servidos via HTTPS ou localhost.</span>
   </div>
 
-  <!-- ===================================================
-       NOVO: NAVEGAÇÃO POR ABAS
-       Aba 1 = fluxo original (aplicar moldura pronta em vídeos)
-       Aba 2 = novo Editor de Molduras (criação visual estilo Canva)
-       =================================================== -->
-  <nav class="tabs-nav" role="tablist" aria-label="Seções do app">
-    <button class="tab-btn active" id="tab-btn-apply" role="tab" aria-selected="true" aria-controls="tab-panel-apply" data-tab="apply">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-      Aplicar Moldura em Vídeo
-    </button>
-    <button class="tab-btn" id="tab-btn-editor" role="tab" aria-selected="false" aria-controls="tab-panel-editor" data-tab="editor">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
-      Editor de Molduras
-    </button>
-  </nav>
-
   <main class="app-container" id="main">
-  <div class="tab-panel active" id="tab-panel-apply" role="tabpanel" aria-labelledby="tab-btn-apply">
 
     <section class="hero">
       <h1>Coloque uma <span class="highlight">moldura</span> nos seus vídeos</h1>
@@ -1567,7 +1308,7 @@
             Vídeos prontos
             <span class="count" id="results-count">0</span>
           </div>
-          <button class="btn-download-all" id="download-all-btn">
+          <button class="btn-download-all hidden" id="download-all-btn">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
               <polyline points="7 10 12 15 17 10"/>
@@ -1580,175 +1321,7 @@
       </div>
     </div>
 
-  </div><!-- /#tab-panel-apply -->
-  </main>
-
-  <!-- ===================================================
-       NOVO: PAINEL DA ABA "EDITOR DE MOLDURAS"
-       Editor visual estilo Canva construído sobre Fabric.js.
-       Fica oculto (tab-panel sem .active) até o usuário clicar
-       na aba — o Fabric.js só é carregado nesse momento.
-       =================================================== -->
-  <div class="tab-panel" id="tab-panel-editor" role="tabpanel" aria-labelledby="tab-btn-editor">
-    <div class="editor-shell">
-
-      <!-- ============ SIDEBAR ESQUERDA: FERRAMENTAS ============ -->
-      <aside class="editor-sidebar">
-
-        <div class="editor-section">
-          <div class="editor-section-title">Formato do canvas</div>
-          <select class="format-select" id="ed-format-select">
-            <option value="1080x1080">Quadrado (1080x1080)</option>
-            <option value="1080x1080">Instagram Quadrado (1080x1080)</option>
-            <option value="1080x1350">Instagram Retrato (1080x1350)</option>
-            <option value="1080x1920">Instagram Story (1080x1920)</option>
-            <option value="1080x1920">Instagram Reels (1080x1920)</option>
-            <option value="1200x630">Facebook Post (1200x630)</option>
-            <option value="820x312">Facebook Capa (820x312)</option>
-            <option value="1280x720">YouTube Thumbnail (1280x720)</option>
-            <option value="1920x1080">16:9 (1920x1080)</option>
-            <option value="1080x1440">3:4 (1080x1440)</option>
-            <option value="1080x720">3:2 (1080x720)</option>
-          </select>
-        </div>
-
-        <div class="editor-section">
-          <div class="editor-section-title">Adicionar</div>
-          <button class="editor-tool-btn" id="ed-add-image-btn" type="button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-            Adicionar Imagem
-          </button>
-          <input type="file" id="ed-image-input" accept=".png,.jpg,.jpeg,.webp,.svg,image/*" class="hidden">
-
-          <button class="editor-tool-btn" id="ed-add-logo-btn" type="button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-            Adicionar Logo
-          </button>
-          <input type="file" id="ed-logo-input" accept=".png,.jpg,.jpeg,.webp,.svg,image/*" class="hidden">
-
-          <button class="editor-tool-btn" id="ed-add-text-btn" type="button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
-            Adicionar Texto
-          </button>
-        </div>
-
-        <div class="editor-section">
-          <div class="editor-section-title">Moldura vazada (área do vídeo)</div>
-          <button class="editor-tool-btn primary" id="ed-add-videoarea-btn" type="button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" stroke-dasharray="4 3"/></svg>
-            Criar Área do Vídeo
-          </button>
-          <div class="editor-tool-grid" style="margin-top:8px;">
-            <button class="editor-tool-btn" id="ed-videoarea-square-btn" type="button" style="justify-content:center;">Quadrada</button>
-            <button class="editor-tool-btn" id="ed-videoarea-custom-btn" type="button" style="justify-content:center;">Livre</button>
-          </div>
-        </div>
-
-        <div class="editor-section">
-          <div class="editor-section-title">Elementos</div>
-          <div class="editor-tool-grid">
-            <button class="editor-tool-btn" id="ed-el-rect-btn" type="button" title="Retângulo">▭ Retân.</button>
-            <button class="editor-tool-btn" id="ed-el-circle-btn" type="button" title="Círculo">◯ Círculo</button>
-            <button class="editor-tool-btn" id="ed-el-line-btn" type="button" title="Linha">／ Linha</button>
-            <button class="editor-tool-btn" id="ed-el-gradient-btn" type="button" title="Gradiente">▤ Gradiente</button>
-            <button class="editor-tool-btn" id="ed-el-star-btn" type="button" title="Ícone estrela">★ Ícone</button>
-            <button class="editor-tool-btn" id="ed-el-triangle-btn" type="button" title="Triângulo">△ Triân.</button>
-          </div>
-        </div>
-
-        <div class="editor-section">
-          <div class="editor-section-title">Templates prontos</div>
-          <button class="editor-tool-btn" id="ed-template-futebol-btn" type="button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>
-            Template Futebol
-          </button>
-        </div>
-
-        <div class="editor-section">
-          <div class="editor-section-title">Guias</div>
-          <div class="editor-tool-grid">
-            <button class="editor-tool-btn" id="ed-toggle-grid-btn" type="button" style="justify-content:center;">Grid</button>
-            <button class="editor-tool-btn active" id="ed-toggle-snap-btn" type="button" style="justify-content:center;">Snap</button>
-          </div>
-        </div>
-
-        <div class="editor-section">
-          <div class="editor-section-title">Projeto</div>
-          <button class="editor-tool-btn" id="ed-save-project-btn" type="button">💾 Salvar Projeto (.json)</button>
-          <button class="editor-tool-btn" id="ed-open-project-btn" type="button">📂 Abrir Projeto (.json)</button>
-          <input type="file" id="ed-open-project-input" accept=".json" class="hidden">
-        </div>
-
-        <div class="editor-section">
-          <div class="editor-section-title">Usar no aplicador de vídeo</div>
-          <button class="editor-tool-btn primary" id="ed-use-in-applier-btn" type="button">➡️ Enviar moldura para Aba 1</button>
-        </div>
-
-      </aside>
-
-      <!-- ============ CANVAS CENTRAL ============ -->
-      <section class="editor-canvas-area">
-        <div class="editor-toolbar">
-          <button class="editor-toolbar-btn" id="ed-undo-btn" type="button" title="Desfazer (Ctrl+Z)" disabled>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/></svg>
-            Desfazer
-          </button>
-          <button class="editor-toolbar-btn" id="ed-redo-btn" type="button" title="Refazer (Ctrl+Y)" disabled>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 15-6.7L21 13"/></svg>
-            Refazer
-          </button>
-          <div class="editor-toolbar-divider"></div>
-          <button class="editor-toolbar-btn" id="ed-front-btn" type="button" title="Trazer para frente">⬆ Frente</button>
-          <button class="editor-toolbar-btn" id="ed-forward-btn" type="button" title="Subir camada">↑ Subir</button>
-          <button class="editor-toolbar-btn" id="ed-backward-btn" type="button" title="Descer camada">↓ Descer</button>
-          <button class="editor-toolbar-btn" id="ed-back-btn" type="button" title="Enviar para trás">⬇ Trás</button>
-          <div class="editor-toolbar-divider"></div>
-          <button class="editor-toolbar-btn" id="ed-duplicate-btn" type="button" title="Duplicar">⧉ Duplicar</button>
-          <button class="editor-toolbar-btn" id="ed-delete-btn" type="button" title="Apagar">🗑 Apagar</button>
-          <div class="editor-toolbar-spacer"></div>
-          <span id="ed-canvas-size-label" style="font-size:0.75rem;color:var(--text-muted);"></span>
-        </div>
-
-        <div class="editor-canvas-viewport">
-          <div class="editor-canvas-rulers">
-            <div class="ruler-corner"></div>
-            <div class="ruler-h" id="ed-ruler-h"></div>
-            <div class="ruler-v" id="ed-ruler-v"></div>
-            <div class="editor-canvas-stage" id="ed-canvas-stage">
-              <canvas id="ed-fabric-canvas"></canvas>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ============ PAINEL DIREITA: PROPRIEDADES + CAMADAS ============ -->
-      <aside class="editor-properties">
-        <div class="editor-section">
-          <div class="editor-section-title">Propriedades</div>
-          <div id="ed-props-body">
-            <div class="editor-empty-props">Selecione um elemento no canvas para editar suas propriedades.</div>
-          </div>
-        </div>
-
-        <div class="editor-section">
-          <div class="editor-section-title">Camadas</div>
-          <ul class="layers-list" id="ed-layers-list"></ul>
-        </div>
-
-        <div class="editor-section">
-          <div class="editor-section-title">Exportar</div>
-          <div class="editor-tool-grid">
-            <button class="editor-tool-btn" id="ed-export-png-transparent-btn" type="button" style="justify-content:center;">PNG transp.</button>
-            <button class="editor-tool-btn" id="ed-export-png-btn" type="button" style="justify-content:center;">PNG</button>
-            <button class="editor-tool-btn" id="ed-export-jpg-btn" type="button" style="justify-content:center;">JPG</button>
-            <button class="editor-tool-btn" id="ed-export-webp-btn" type="button" style="justify-content:center;">WEBP</button>
-            <button class="editor-tool-btn" id="ed-export-svg-btn" type="button" style="justify-content:center;">SVG</button>
-          </div>
-        </div>
-      </aside>
-
-    </div>
-  </div><!-- /#tab-panel-editor -->
+  </div>
 
   <footer class="site-footer">
     <p class="footer-text">
@@ -1765,27 +1338,6 @@
       if (typeof SharedArrayBuffer === 'undefined') {
         alert.hidden = false;
       }
-    })();
-
-    // Tabs
-    (function() {
-      const tabs = document.querySelectorAll('.tab');
-      const panels = document.querySelectorAll('.tab-panel');
-
-      tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-          tabs.forEach(t => {
-            t.setAttribute('aria-selected', 'false');
-          });
-          panels.forEach(p => {
-            p.setAttribute('aria-hidden', 'true');
-          });
-
-          tab.setAttribute('aria-selected', 'true');
-          const panel = document.getElementById(tab.getAttribute('aria-controls'));
-          panel.setAttribute('aria-hidden', 'false');
-        });
-      });
     })();
 
     // Dropzone visual feedback
@@ -1935,9 +1487,6 @@ function loadImageFromFile(file) {
 
 // =====================================================
 // ANALISAR MOLDURA - Detectar área transparente
-// Recebe uma <img> já carregada (evita recarregar o arquivo toda vez).
-// Se a imagem não tiver transparência real, cai num retângulo central
-// (margem de 10%) que o usuário pode ajustar manualmente depois.
 // =====================================================
 function analyzeFrame(img) {
   const canvas = document.createElement('canvas');
@@ -1989,10 +1538,6 @@ function analyzeFrame(img) {
 
 // =====================================================
 // GERAR MOLDURA COM "FURO" TRANSPARENTE
-// Sempre parte da imagem ORIGINAL (nunca de uma versão já furada) e recorta
-// uma área 100% transparente exatamente na posição/tamanho definidos pelo
-// usuário no editor — independente da moldura já ter alpha real ali ou não.
-// É esse arquivo (não o PNG original) que é usado no FFmpeg e na prévia.
 // =====================================================
 function generateFrameWithHole(img, frameInfo) {
   return new Promise((resolve, reject) => {
@@ -2015,7 +1560,7 @@ function generateFrameWithHole(img, frameInfo) {
 }
 
 // =====================================================
-// ATUALIZAR PRÉVIA VISUAL (mostra o furo de verdade na tela)
+// ATUALIZAR PRÉVIA VISUAL
 // =====================================================
 function refreshFramePreviewWithHole() {
   return new Promise((resolve) => {
@@ -2053,14 +1598,11 @@ function checkSharedArrayBuffer() {
 }
 
 // =====================================================
-// FFmpeg - CARREGAR (VERSÃO 0.11.6 ESTÁVEL)
+// FFmpeg - CARREGAR
 // =====================================================
 async function loadFFmpeg() {
   if (state.ffmpegLoaded) return;
 
-  // O core padrão do @ffmpeg/ffmpeg 0.11.6 é single-thread e NÃO exige
-  // SharedArrayBuffer para funcionar — por isso apenas avisamos o usuário
-  // (banner informativo) em vez de bloquear o carregamento do FFmpeg.
   checkSharedArrayBuffer();
 
   try {
@@ -2101,11 +1643,6 @@ async function loadFFmpeg() {
 // UPLOAD DE MOLDURA
 // =====================================================
 function setupFrameUpload() {
-  // O input#frame-input já cobre 100% da área da dropzone (posicionado em
-  // cima, transparente) e por isso já abre o seletor de arquivo sozinho ao
-  // ser clicado. NÃO adicionamos um clique extra no container, senão o
-  // seletor de arquivo abre duas vezes por clique.
-  
   elements.frameInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file) handleFrameFile(file);
@@ -2371,10 +1908,6 @@ function startAreaDrag(startEvent, mode) {
 // UPLOAD DE VÍDEOS
 // =====================================================
 function setupVideosUpload() {
-  // Mesmo caso do input da moldura: o input#videos-input já cobre toda a
-  // área da dropzone e abre o seletor sozinho, então nada de click() extra
-  // aqui — isso é o que causava o seletor abrindo duas vezes.
-  
   elements.videosInput.addEventListener('change', (e) => {
     handleVideoFiles(Array.from(e.target.files));
     elements.videosInput.value = '';
@@ -2549,10 +2082,6 @@ elements.processAllBtn.addEventListener('click', async () => {
     return;
   }
 
-  // Gera, a partir da moldura ORIGINAL, uma versão com um furo 100%
-  // transparente exatamente na área que o usuário definiu no editor —
-  // isso garante que o vídeo apareça ali mesmo que o PNG enviado não
-  // tivesse transparência real nenhuma.
   let frameForProcessing = state.frameFile;
   if (state.frameOriginalImage && state.frameInfo) {
     try {
@@ -2636,10 +2165,6 @@ async function processVideo(video, frameSource) {
   
   let command;
   
-  // IMPORTANTE: a moldura (PNG com centro transparente) precisa ficar
-  // POR CIMA do vídeo no overlay, senão o vídeo (opaco) cobre a arte da
-  // moldura por inteiro e ela nunca aparece. O vídeo é a camada de baixo,
-  // encaixado dentro da área transparente; a moldura é a camada de cima.
   if (!frameInfo) {
     command = [
       '-i', inputName,
@@ -2867,684 +2392,6 @@ function init() {
 }
 
 init();
-  </script>
-
-  <script>
-  // =====================================================
-  // TROCA DE ABAS + EDITOR DE MOLDURAS (Fabric.js)
-  // =====================================================
-  (function () {
-    'use strict';
-
-    // ---------- Troca de abas ----------
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    const tabPanels = document.querySelectorAll('.tab-panel');
-    let editorInitialized = false;
-
-    tabButtons.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const target = btn.dataset.tab;
-        tabButtons.forEach((b) => {
-          const active = b.dataset.tab === target;
-          b.classList.toggle('active', active);
-          b.setAttribute('aria-selected', active ? 'true' : 'false');
-        });
-        tabPanels.forEach((p) => {
-          p.classList.toggle('active', p.id === `tab-panel-${target}`);
-        });
-        if (target === 'editor' && !editorInitialized) {
-          initEditor().catch((err) => {
-            console.error('Erro ao iniciar editor:', err);
-            if (typeof showToast === 'function') showToast('Erro ao carregar o editor', 'error');
-          });
-        }
-      });
-    });
-
-    // ---------- Utilidades ----------
-    function loadScriptOnce(src) {
-      return new Promise((resolve, reject) => {
-        if (document.querySelector(`script[data-src="${src}"]`)) return resolve();
-        const s = document.createElement('script');
-        s.src = src;
-        s.dataset.src = src;
-        s.onload = () => resolve();
-        s.onerror = () => reject(new Error('Falha ao carregar ' + src));
-        document.head.appendChild(s);
-      });
-    }
-
-    function toast(msg, type) {
-      if (typeof showToast === 'function') showToast(msg, type || 'info');
-    }
-
-    // ---------- Estado do editor ----------
-    const ed = {
-      canvas: null,
-      width: 1080,
-      height: 1080,
-      viewScale: 1,
-      snap: true,
-      grid: false,
-      history: [],
-      historyIndex: -1,
-      historyLock: false,
-      videoAreaObj: null,
-    };
-
-    async function initEditor() {
-      editorInitialized = true;
-      toast('Carregando editor...', 'info');
-      try {
-        await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js');
-      } catch (e) {
-        toast('Não foi possível carregar o Fabric.js', 'error');
-        editorInitialized = false;
-        return;
-      }
-
-      const stage = document.getElementById('ed-canvas-stage');
-      const canvasEl = document.getElementById('ed-fabric-canvas');
-      canvasEl.width = ed.width;
-      canvasEl.height = ed.height;
-
-      ed.canvas = new fabric.Canvas('ed-fabric-canvas', {
-        backgroundColor: '#ffffff',
-        preserveObjectStacking: true,
-      });
-      ed.canvas.setDimensions({ width: ed.width, height: ed.height });
-
-      // fit to viewport
-      fitCanvasToViewport();
-      window.addEventListener('resize', fitCanvasToViewport);
-
-      wireEditorControls();
-      wireSelectionEvents();
-      wireKeyboard();
-      pushHistory();
-      updateLayers();
-      updatePropsPanel();
-      updateSizeLabel();
-      toast('Editor pronto!', 'success');
-    }
-
-    function fitCanvasToViewport() {
-      if (!ed.canvas) return;
-      const viewport = document.querySelector('.editor-canvas-viewport');
-      if (!viewport) return;
-      const availW = viewport.clientWidth - 80;
-      const availH = viewport.clientHeight - 80;
-      const scale = Math.min(availW / ed.width, availH / ed.height, 1);
-      ed.viewScale = scale;
-      const stage = document.getElementById('ed-canvas-stage');
-      const upperCanvas = ed.canvas.upperCanvasEl;
-      const lowerCanvas = ed.canvas.lowerCanvasEl;
-      const displayW = ed.width * scale;
-      const displayH = ed.height * scale;
-      [lowerCanvas, upperCanvas].forEach((c) => {
-        if (!c) return;
-        c.style.width = displayW + 'px';
-        c.style.height = displayH + 'px';
-      });
-      stage.style.width = displayW + 'px';
-      stage.style.height = displayH + 'px';
-    }
-
-    function updateSizeLabel() {
-      const label = document.getElementById('ed-canvas-size-label');
-      if (label) label.textContent = `${ed.width} × ${ed.height}px`;
-    }
-
-    // ---------- Histórico ----------
-    function pushHistory() {
-      if (!ed.canvas || ed.historyLock) return;
-      const json = JSON.stringify(ed.canvas.toJSON(['isVideoArea', 'name']));
-      ed.history = ed.history.slice(0, ed.historyIndex + 1);
-      ed.history.push(json);
-      if (ed.history.length > 50) ed.history.shift();
-      ed.historyIndex = ed.history.length - 1;
-      refreshUndoRedoButtons();
-    }
-    function refreshUndoRedoButtons() {
-      const u = document.getElementById('ed-undo-btn');
-      const r = document.getElementById('ed-redo-btn');
-      if (u) u.disabled = ed.historyIndex <= 0;
-      if (r) r.disabled = ed.historyIndex >= ed.history.length - 1;
-    }
-    function restoreHistory(idx) {
-      if (idx < 0 || idx >= ed.history.length) return;
-      ed.historyLock = true;
-      ed.canvas.loadFromJSON(ed.history[idx], () => {
-        ed.canvas.renderAll();
-        ed.historyLock = false;
-        ed.historyIndex = idx;
-        // re-find video area
-        ed.videoAreaObj = ed.canvas.getObjects().find((o) => o.isVideoArea) || null;
-        updateLayers();
-        updatePropsPanel();
-        refreshUndoRedoButtons();
-      });
-    }
-    function undo() { restoreHistory(ed.historyIndex - 1); }
-    function redo() { restoreHistory(ed.historyIndex + 1); }
-
-    // ---------- Adicionar objetos ----------
-    function addImageFromFile(file, opts = {}) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        fabric.Image.fromURL(e.target.result, (img) => {
-          const maxSide = Math.min(ed.width, ed.height) * 0.6;
-          const scale = Math.min(maxSide / img.width, maxSide / img.height, 1);
-          img.set({
-            left: ed.width / 2,
-            top: ed.height / 2,
-            originX: 'center',
-            originY: 'center',
-            scaleX: scale,
-            scaleY: scale,
-            name: opts.name || file.name,
-          });
-          ed.canvas.add(img).setActiveObject(img);
-          ed.canvas.renderAll();
-        }, { crossOrigin: 'anonymous' });
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function addText() {
-      const t = new fabric.IText('Digite aqui', {
-        left: ed.width / 2, top: ed.height / 2,
-        originX: 'center', originY: 'center',
-        fontFamily: 'Inter', fontSize: 64, fill: '#111111', fontWeight: '700',
-        name: 'Texto',
-      });
-      ed.canvas.add(t).setActiveObject(t);
-      ed.canvas.renderAll();
-    }
-
-    function addRect() {
-      const r = new fabric.Rect({
-        left: ed.width / 2, top: ed.height / 2,
-        originX: 'center', originY: 'center',
-        width: 300, height: 200,
-        fill: '#10b981', stroke: '', strokeWidth: 0,
-        name: 'Retângulo',
-      });
-      ed.canvas.add(r).setActiveObject(r);
-    }
-    function addCircle() {
-      const c = new fabric.Circle({
-        left: ed.width / 2, top: ed.height / 2,
-        originX: 'center', originY: 'center',
-        radius: 120, fill: '#3b82f6',
-        name: 'Círculo',
-      });
-      ed.canvas.add(c).setActiveObject(c);
-    }
-    function addLine() {
-      const l = new fabric.Line([ed.width / 2 - 150, ed.height / 2, ed.width / 2 + 150, ed.height / 2], {
-        stroke: '#111111', strokeWidth: 6, name: 'Linha',
-      });
-      ed.canvas.add(l).setActiveObject(l);
-    }
-    function addTriangle() {
-      const t = new fabric.Triangle({
-        left: ed.width / 2, top: ed.height / 2,
-        originX: 'center', originY: 'center',
-        width: 240, height: 220, fill: '#f59e0b', name: 'Triângulo',
-      });
-      ed.canvas.add(t).setActiveObject(t);
-    }
-    function addStar() {
-      const points = [];
-      const spikes = 5;
-      const outer = 130, inner = 55;
-      for (let i = 0; i < spikes * 2; i++) {
-        const rad = i * Math.PI / spikes - Math.PI / 2;
-        const r = i % 2 === 0 ? outer : inner;
-        points.push({ x: Math.cos(rad) * r, y: Math.sin(rad) * r });
-      }
-      const s = new fabric.Polygon(points, {
-        left: ed.width / 2, top: ed.height / 2,
-        originX: 'center', originY: 'center',
-        fill: '#eab308', name: 'Estrela',
-      });
-      ed.canvas.add(s).setActiveObject(s);
-    }
-    function addGradient() {
-      const r = new fabric.Rect({
-        left: ed.width / 2, top: ed.height / 2,
-        originX: 'center', originY: 'center',
-        width: 500, height: 300, name: 'Gradiente',
-      });
-      r.set('fill', new fabric.Gradient({
-        type: 'linear',
-        coords: { x1: 0, y1: 0, x2: 500, y2: 0 },
-        colorStops: [
-          { offset: 0, color: '#8b5cf6' },
-          { offset: 1, color: '#10b981' },
-        ],
-      }));
-      ed.canvas.add(r).setActiveObject(r);
-    }
-
-    function addVideoArea(shape) {
-      // Remove existente
-      if (ed.videoAreaObj) {
-        ed.canvas.remove(ed.videoAreaObj);
-        ed.videoAreaObj = null;
-      }
-      let w = Math.round(ed.width * 0.6);
-      let h = shape === 'square' ? w : Math.round(ed.height * 0.6);
-      const r = new fabric.Rect({
-        left: ed.width / 2, top: ed.height / 2,
-        originX: 'center', originY: 'center',
-        width: w, height: h,
-        fill: 'rgba(16,185,129,0.15)',
-        stroke: '#10b981', strokeWidth: 4, strokeDashArray: [12, 8],
-        name: '🎬 Área do Vídeo',
-      });
-      r.isVideoArea = true;
-      ed.videoAreaObj = r;
-      ed.canvas.add(r).setActiveObject(r);
-      toast('Área do vídeo criada — arraste/redimensione ao gosto', 'success');
-    }
-
-    // ---------- Seleção & propriedades ----------
-    function wireSelectionEvents() {
-      ed.canvas.on('object:added', () => { updateLayers(); pushHistory(); });
-      ed.canvas.on('object:removed', () => { updateLayers(); pushHistory(); });
-      ed.canvas.on('object:modified', () => { pushHistory(); updatePropsPanel(); });
-      ed.canvas.on('selection:created', updatePropsPanel);
-      ed.canvas.on('selection:updated', updatePropsPanel);
-      ed.canvas.on('selection:cleared', updatePropsPanel);
-      ed.canvas.on('object:moving', snapToGrid);
-      ed.canvas.on('object:scaling', snapToGrid);
-    }
-
-    function snapToGrid(e) {
-      if (!ed.snap) return;
-      const g = 10;
-      const o = e.target;
-      o.set({ left: Math.round(o.left / g) * g, top: Math.round(o.top / g) * g });
-    }
-
-    function updatePropsPanel() {
-      const body = document.getElementById('ed-props-body');
-      if (!body) return;
-      const obj = ed.canvas && ed.canvas.getActiveObject();
-      if (!obj) {
-        body.innerHTML = '<div class="editor-empty-props">Selecione um elemento no canvas para editar suas propriedades.</div>';
-        return;
-      }
-      const isText = obj.type === 'i-text' || obj.type === 'text' || obj.type === 'textbox';
-      const hasFill = 'fill' in obj && typeof obj.fill === 'string';
-      const hasStroke = 'stroke' in obj;
-      let html = '';
-      if (obj.isVideoArea) {
-        html += `<div class="prop-row"><span class="video-area-tag">ÁREA DO VÍDEO</span></div>`;
-      }
-      html += `
-        <div class="prop-row-inline">
-          <div class="prop-row"><label class="prop-label">X</label><input class="prop-input" type="number" data-prop="left" value="${Math.round(obj.left)}"></div>
-          <div class="prop-row"><label class="prop-label">Y</label><input class="prop-input" type="number" data-prop="top" value="${Math.round(obj.top)}"></div>
-        </div>
-        <div class="prop-row-inline">
-          <div class="prop-row"><label class="prop-label">Largura</label><input class="prop-input" type="number" data-prop="width" value="${Math.round(obj.getScaledWidth())}"></div>
-          <div class="prop-row"><label class="prop-label">Altura</label><input class="prop-input" type="number" data-prop="height" value="${Math.round(obj.getScaledHeight())}"></div>
-        </div>
-        <div class="prop-row"><label class="prop-label">Rotação (°)</label><input class="prop-input" type="number" data-prop="angle" value="${Math.round(obj.angle || 0)}"></div>
-        <div class="prop-row"><label class="prop-label">Opacidade</label><input class="prop-input" type="range" min="0" max="1" step="0.05" data-prop="opacity" value="${obj.opacity ?? 1}"></div>
-      `;
-      if (hasFill) {
-        html += `<div class="prop-row"><label class="prop-label">Preenchimento</label><input class="prop-color-input" type="color" data-prop="fill" value="${toHex(obj.fill)}"></div>`;
-      }
-      if (hasStroke) {
-        html += `
-          <div class="prop-row"><label class="prop-label">Contorno</label><input class="prop-color-input" type="color" data-prop="stroke" value="${toHex(obj.stroke || '#000000')}"></div>
-          <div class="prop-row"><label class="prop-label">Espessura</label><input class="prop-input" type="number" min="0" step="1" data-prop="strokeWidth" value="${obj.strokeWidth || 0}"></div>
-        `;
-      }
-      if (isText) {
-        html += `
-          <div class="prop-row"><label class="prop-label">Texto</label><input class="prop-input" data-prop="text" value="${(obj.text || '').replace(/"/g, '&quot;')}"></div>
-          <div class="prop-row"><label class="prop-label">Fonte</label>
-            <select class="prop-select" data-prop="fontFamily">
-              ${['Inter','Arial','Georgia','Times New Roman','Courier New','Impact','Verdana','Trebuchet MS'].map(f=>`<option${obj.fontFamily===f?' selected':''}>${f}</option>`).join('')}
-            </select>
-          </div>
-          <div class="prop-row-inline">
-            <div class="prop-row"><label class="prop-label">Tamanho</label><input class="prop-input" type="number" data-prop="fontSize" value="${obj.fontSize||32}"></div>
-            <div class="prop-row"><label class="prop-label">Peso</label>
-              <select class="prop-select" data-prop="fontWeight">
-                ${['400','500','600','700','800'].map(w=>`<option${String(obj.fontWeight)===w?' selected':''}>${w}</option>`).join('')}
-              </select>
-            </div>
-          </div>
-          <div class="prop-row">
-            <label class="prop-label">Alinhamento</label>
-            <div class="prop-btn-toggle-group">
-              ${['left','center','right'].map(a=>`<button type="button" class="prop-btn-toggle${obj.textAlign===a?' active':''}" data-textalign="${a}">${a==='left'?'⯇':(a==='center'?'☰':'⯈')}</button>`).join('')}
-            </div>
-          </div>
-        `;
-      }
-      body.innerHTML = html;
-
-      body.querySelectorAll('[data-prop]').forEach((inp) => {
-        inp.addEventListener('input', () => {
-          const prop = inp.dataset.prop;
-          let val = inp.type === 'number' || inp.type === 'range' ? parseFloat(inp.value) : inp.value;
-          if (prop === 'width') { obj.set({ scaleX: val / obj.width }); }
-          else if (prop === 'height') { obj.set({ scaleY: val / obj.height }); }
-          else { obj.set(prop, val); }
-          if (prop === 'text' && obj.setCoords) obj.setCoords();
-          ed.canvas.renderAll();
-        });
-        inp.addEventListener('change', () => pushHistory());
-      });
-      body.querySelectorAll('[data-textalign]').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          obj.set('textAlign', btn.dataset.textalign);
-          ed.canvas.renderAll();
-          updatePropsPanel(); pushHistory();
-        });
-      });
-    }
-
-    function toHex(color) {
-      if (!color || typeof color !== 'string') return '#000000';
-      if (color.startsWith('#')) return color.length === 7 ? color : '#000000';
-      const m = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
-      if (m) return '#' + [1,2,3].map(i=>parseInt(m[i]).toString(16).padStart(2,'0')).join('');
-      return '#000000';
-    }
-
-    // ---------- Camadas ----------
-    function updateLayers() {
-      const list = document.getElementById('ed-layers-list');
-      if (!list || !ed.canvas) return;
-      list.innerHTML = '';
-      const objs = ed.canvas.getObjects().slice().reverse();
-      const active = ed.canvas.getActiveObject();
-      objs.forEach((o) => {
-        const li = document.createElement('li');
-        li.className = 'layer-item' + (o === active ? ' selected' : '');
-        li.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg><span>${o.name || o.type}</span>`;
-        li.addEventListener('click', () => {
-          ed.canvas.setActiveObject(o);
-          ed.canvas.renderAll();
-          updateLayers(); updatePropsPanel();
-        });
-        list.appendChild(li);
-      });
-    }
-
-    // ---------- Teclado ----------
-    function wireKeyboard() {
-      document.addEventListener('keydown', (e) => {
-        const panelActive = document.getElementById('tab-panel-editor').classList.contains('active');
-        if (!panelActive) return;
-        const target = e.target;
-        if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return;
-        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); undo(); }
-        else if ((e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === 'y' || (e.shiftKey && e.key.toLowerCase() === 'z'))) { e.preventDefault(); redo(); }
-        else if (e.key === 'Delete' || e.key === 'Backspace') {
-          const obj = ed.canvas.getActiveObject();
-          if (obj) { ed.canvas.remove(obj); ed.canvas.discardActiveObject(); ed.canvas.renderAll(); }
-        } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'd') {
-          e.preventDefault(); duplicateActive();
-        }
-      });
-    }
-
-    function duplicateActive() {
-      const obj = ed.canvas.getActiveObject();
-      if (!obj) return;
-      obj.clone((cloned) => {
-        cloned.set({ left: (obj.left || 0) + 20, top: (obj.top || 0) + 20 });
-        if (obj.isVideoArea) cloned.isVideoArea = false; // apenas uma área
-        ed.canvas.add(cloned).setActiveObject(cloned);
-        ed.canvas.renderAll();
-      }, ['isVideoArea','name']);
-    }
-
-    // ---------- Controles / botões ----------
-    function wireEditorControls() {
-      // Formato
-      document.getElementById('ed-format-select').addEventListener('change', (e) => {
-        const [w, h] = e.target.value.split('x').map(Number);
-        ed.width = w; ed.height = h;
-        ed.canvas.setDimensions({ width: w, height: h });
-        fitCanvasToViewport();
-        updateSizeLabel();
-        pushHistory();
-      });
-
-      // Adicionar imagem/logo
-      const imgInput = document.getElementById('ed-image-input');
-      document.getElementById('ed-add-image-btn').addEventListener('click', () => imgInput.click());
-      imgInput.addEventListener('change', (e) => { if (e.target.files[0]) addImageFromFile(e.target.files[0]); e.target.value = ''; });
-
-      const logoInput = document.getElementById('ed-logo-input');
-      document.getElementById('ed-add-logo-btn').addEventListener('click', () => logoInput.click());
-      logoInput.addEventListener('change', (e) => { if (e.target.files[0]) addImageFromFile(e.target.files[0], { name: 'Logo' }); e.target.value = ''; });
-
-      // Texto
-      document.getElementById('ed-add-text-btn').addEventListener('click', addText);
-
-      // Área do vídeo
-      document.getElementById('ed-add-videoarea-btn').addEventListener('click', () => addVideoArea('rect'));
-      document.getElementById('ed-videoarea-square-btn').addEventListener('click', () => addVideoArea('square'));
-      document.getElementById('ed-videoarea-custom-btn').addEventListener('click', () => addVideoArea('rect'));
-
-      // Elementos
-      document.getElementById('ed-el-rect-btn').addEventListener('click', addRect);
-      document.getElementById('ed-el-circle-btn').addEventListener('click', addCircle);
-      document.getElementById('ed-el-line-btn').addEventListener('click', addLine);
-      document.getElementById('ed-el-gradient-btn').addEventListener('click', addGradient);
-      document.getElementById('ed-el-star-btn').addEventListener('click', addStar);
-      document.getElementById('ed-el-triangle-btn').addEventListener('click', addTriangle);
-
-      // Templates
-      document.getElementById('ed-template-futebol-btn').addEventListener('click', loadFutebolTemplate);
-
-      // Guias
-      const gridBtn = document.getElementById('ed-toggle-grid-btn');
-      gridBtn.addEventListener('click', () => {
-        ed.grid = !ed.grid;
-        gridBtn.classList.toggle('active', ed.grid);
-        document.getElementById('ed-canvas-stage').classList.toggle('show-grid', ed.grid);
-      });
-      const snapBtn = document.getElementById('ed-toggle-snap-btn');
-      snapBtn.addEventListener('click', () => {
-        ed.snap = !ed.snap;
-        snapBtn.classList.toggle('active', ed.snap);
-      });
-
-      // Projeto salvar/carregar
-      document.getElementById('ed-save-project-btn').addEventListener('click', saveProject);
-      const openInput = document.getElementById('ed-open-project-input');
-      document.getElementById('ed-open-project-btn').addEventListener('click', () => openInput.click());
-      openInput.addEventListener('change', (e) => { if (e.target.files[0]) loadProject(e.target.files[0]); e.target.value = ''; });
-
-      // Enviar para aplicador
-      document.getElementById('ed-use-in-applier-btn').addEventListener('click', sendToApplier);
-
-      // Toolbar
-      document.getElementById('ed-undo-btn').addEventListener('click', undo);
-      document.getElementById('ed-redo-btn').addEventListener('click', redo);
-      document.getElementById('ed-front-btn').addEventListener('click', () => { const o=ed.canvas.getActiveObject(); if(o){ ed.canvas.bringToFront(o); pushHistory(); updateLayers(); }});
-      document.getElementById('ed-forward-btn').addEventListener('click', () => { const o=ed.canvas.getActiveObject(); if(o){ ed.canvas.bringForward(o); pushHistory(); updateLayers(); }});
-      document.getElementById('ed-backward-btn').addEventListener('click', () => { const o=ed.canvas.getActiveObject(); if(o){ ed.canvas.sendBackwards(o); pushHistory(); updateLayers(); }});
-      document.getElementById('ed-back-btn').addEventListener('click', () => { const o=ed.canvas.getActiveObject(); if(o){ ed.canvas.sendToBack(o); pushHistory(); updateLayers(); }});
-      document.getElementById('ed-duplicate-btn').addEventListener('click', duplicateActive);
-      document.getElementById('ed-delete-btn').addEventListener('click', () => {
-        const o = ed.canvas.getActiveObject();
-        if (o) { ed.canvas.remove(o); ed.canvas.discardActiveObject(); ed.canvas.renderAll(); }
-      });
-
-      // Exportar
-      document.getElementById('ed-export-png-transparent-btn').addEventListener('click', () => exportImage('png', true));
-      document.getElementById('ed-export-png-btn').addEventListener('click', () => exportImage('png', false));
-      document.getElementById('ed-export-jpg-btn').addEventListener('click', () => exportImage('jpeg', false));
-      document.getElementById('ed-export-webp-btn').addEventListener('click', () => exportImage('webp', false));
-      document.getElementById('ed-export-svg-btn').addEventListener('click', exportSVG);
-    }
-
-    // ---------- Templates ----------
-    function loadFutebolTemplate() {
-      ed.canvas.clear();
-      ed.canvas.backgroundColor = '#0b3d1e';
-      // Faixa superior
-      const top = new fabric.Rect({ left: 0, top: 0, width: ed.width, height: 140, fill: '#10b981', name: 'Faixa Topo' });
-      const title = new fabric.IText('⚽ GOL!', {
-        left: ed.width / 2, top: 70, originX: 'center', originY: 'center',
-        fontFamily: 'Impact', fontSize: 82, fill: '#ffffff', name: 'Título',
-      });
-      // Faixa inferior
-      const bot = new fabric.Rect({ left: 0, top: ed.height - 120, width: ed.width, height: 120, fill: '#111111', name: 'Faixa Base' });
-      const subtitle = new fabric.IText('SEU TIME • #VAMOS', {
-        left: ed.width / 2, top: ed.height - 60, originX: 'center', originY: 'center',
-        fontFamily: 'Inter', fontWeight: '800', fontSize: 42, fill: '#10b981', name: 'Legenda',
-      });
-      // Área do vídeo
-      const areaW = Math.round(ed.width * 0.8);
-      const areaH = Math.round(ed.height - 320);
-      const area = new fabric.Rect({
-        left: ed.width / 2, top: ed.height / 2, originX: 'center', originY: 'center',
-        width: areaW, height: areaH,
-        fill: 'rgba(16,185,129,0.15)', stroke: '#10b981', strokeWidth: 4, strokeDashArray: [12, 8],
-        name: '🎬 Área do Vídeo',
-      });
-      area.isVideoArea = true;
-      ed.videoAreaObj = area;
-      ed.canvas.add(top, area, title, bot, subtitle);
-      ed.canvas.renderAll();
-      pushHistory();
-      toast('Template Futebol carregado', 'success');
-    }
-
-    // ---------- Salvar / Carregar ----------
-    function saveProject() {
-      const data = {
-        width: ed.width, height: ed.height,
-        canvas: ed.canvas.toJSON(['isVideoArea', 'name']),
-      };
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-      downloadBlob(blob, `moldura-${Date.now()}.json`);
-    }
-    function loadProject(file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        try {
-          const data = JSON.parse(e.target.result);
-          ed.width = data.width || 1080; ed.height = data.height || 1080;
-          ed.canvas.setDimensions({ width: ed.width, height: ed.height });
-          ed.canvas.loadFromJSON(data.canvas, () => {
-            ed.canvas.renderAll();
-            ed.videoAreaObj = ed.canvas.getObjects().find((o) => o.isVideoArea) || null;
-            fitCanvasToViewport(); updateSizeLabel(); updateLayers(); pushHistory();
-            toast('Projeto carregado', 'success');
-          });
-        } catch (err) { console.error(err); toast('Arquivo inválido', 'error'); }
-      };
-      reader.readAsText(file);
-    }
-
-    // ---------- Exportar ----------
-    function exportImage(format, transparent) {
-      if (transparent) {
-        // Renderiza sem o retângulo da área do vídeo → fica hole real transparente.
-        renderPNGWithHole().then((blob) => downloadBlob(blob, `moldura-${Date.now()}.png`));
-        return;
-      }
-      const wasBg = ed.canvas.backgroundColor;
-      if (format === 'jpeg') ed.canvas.backgroundColor = ed.canvas.backgroundColor || '#ffffff';
-      const dataUrl = ed.canvas.toDataURL({ format, quality: 0.95, multiplier: 1 });
-      ed.canvas.backgroundColor = wasBg;
-      dataUrlToBlob(dataUrl).then((blob) => downloadBlob(blob, `moldura-${Date.now()}.${format === 'jpeg' ? 'jpg' : format}`));
-    }
-    function exportSVG() {
-      const svg = ed.canvas.toSVG();
-      const blob = new Blob([svg], { type: 'image/svg+xml' });
-      downloadBlob(blob, `moldura-${Date.now()}.svg`);
-    }
-
-    function renderPNGWithHole() {
-      return new Promise((resolve) => {
-        const va = ed.videoAreaObj;
-        const originalBg = ed.canvas.backgroundColor;
-        let hidden = false;
-        if (va) { va.visible = false; hidden = true; }
-        ed.canvas.backgroundColor = null;
-        ed.canvas.renderAll();
-        const dataUrl = ed.canvas.toDataURL({ format: 'png', multiplier: 1 });
-        if (hidden) va.visible = true;
-        ed.canvas.backgroundColor = originalBg;
-        ed.canvas.renderAll();
-
-        // Se existe uma área, força um clear real no bounding box (garante alpha 0)
-        const img = new Image();
-        img.onload = () => {
-          const c = document.createElement('canvas');
-          c.width = ed.width; c.height = ed.height;
-          const ctx = c.getContext('2d');
-          ctx.drawImage(img, 0, 0);
-          if (va) {
-            const b = va.getBoundingRect(true, true);
-            ctx.clearRect(Math.round(b.left), Math.round(b.top), Math.round(b.width), Math.round(b.height));
-          }
-          c.toBlob((blob) => resolve(blob), 'image/png');
-        };
-        img.src = dataUrl;
-      });
-    }
-
-    // ---------- Enviar para aba 1 ----------
-    async function sendToApplier() {
-      if (!ed.videoAreaObj) {
-        toast('Crie uma "Área do Vídeo" no editor primeiro', 'error');
-        return;
-      }
-      const blob = await renderPNGWithHole();
-      const file = new File([blob], `moldura-editor-${Date.now()}.png`, { type: 'image/png' });
-
-      // Trocar para aba 1
-      document.getElementById('tab-btn-apply').click();
-
-      // Alimentar o fluxo existente
-      if (typeof handleFrameFile === 'function') {
-        await handleFrameFile(file);
-        // Ajusta a área do vídeo baseando na bounding box no editor
-        const b = ed.videoAreaObj.getBoundingRect(true, true);
-        if (state && state.frameInfo) {
-          state.frameInfo.videoX = Math.max(0, Math.round(b.left));
-          state.frameInfo.videoY = Math.max(0, Math.round(b.top));
-          state.frameInfo.videoWidth = Math.round(b.width);
-          state.frameInfo.videoHeight = Math.round(b.height);
-          if (typeof clampFrameInfo === 'function') clampFrameInfo();
-          if (typeof syncAreaInputs === 'function') syncAreaInputs();
-          if (typeof refreshFramePreviewWithHole === 'function') await refreshFramePreviewWithHole();
-        }
-        toast('Moldura enviada para a Aba 1!', 'success');
-      } else {
-        toast('Fluxo do aplicador não encontrado', 'error');
-      }
-    }
-
-    // ---------- Helpers download ----------
-    function downloadBlob(blob, filename) {
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = filename;
-      document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 30000);
-    }
-    function dataUrlToBlob(dataUrl) {
-      return fetch(dataUrl).then((r) => r.blob());
-    }
-  })();
   </script>
 
 </body>
