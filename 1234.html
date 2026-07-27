@@ -841,7 +841,7 @@ input[type="checkbox"]{ accent-color: var(--accent-2); width:18px; height:18px; 
 </div>
 
 <script>
-  // =====================================================
+// =====================================================
 // Video Frame Studio — Criar OU Enviar
 // Canvas base = 1080x1942
 // =====================================================
@@ -872,7 +872,9 @@ const defaultTemplate = {
   profile: { x: 386, y: 162, w: 308, h: 308 },
   username: { x: 390, y: 500 },
   caption: { x: 100, y: 560, w: 880 },
-  video: { x: 77, y: 638, w: 926, h: 1269 }
+  video: { x: 77, y: 638, w: 926, h: 1269 },
+  checkmark: true,
+  videoRadius: 0
 };
 
 const state = {
@@ -887,7 +889,8 @@ const state = {
   videos: [],
   processing: false,
   videoIdCounter: 0,
-  draggedVideoId: null
+  draggedVideoId: null,
+  areaRadius: 0
 };
 
 const $ = (id) => document.getElementById(id);
@@ -898,7 +901,6 @@ const elements = {
   modeUpload: $('mode-upload'),
   modeCreate: $('mode-create'),
   panelVideos: $('panel-videos'),
-  bottomSection: $('bottom-section'),
 
   // upload
   frameDropArea: $('frame-drop-area'),
@@ -917,6 +919,9 @@ const elements = {
   areaH: $('area-h'),
   areaAutoBtn: $('area-auto-btn'),
   areaResetBtn: $('area-reset-btn'),
+  areaRadius: $('area-radius'),
+  areaRadiusValue: $('area-radius-value'),
+  uploadCornerGroup: $('upload-corner-group'),
 
   // create
   previewContainer: $('template-preview-container'),
@@ -947,6 +952,10 @@ const elements = {
   exportTemplateBtn: $('export-template-btn'),
   importTemplateBtn: $('import-template-btn'),
   importTemplateInput: $('import-template-input'),
+  checkmarkToggle: $('template-checkmark-toggle'),
+  templateVideoRadius: $('template-video-radius'),
+  templateVideoRadiusValue: $('template-video-radius-value'),
+  createCornerGroup: $('create-corner-group'),
 
   // videos
   videosDropArea: $('videos-drop-area'),
@@ -966,7 +975,17 @@ const elements = {
   resultsCount: $('results-count'),
   downloadAllBtn: $('download-all-btn'),
   toastContainer: $('toast-container'),
-  warningBanner: $('warning-banner')
+  warningBanner: $('warning-banner'),
+
+  // modal
+  previewModal: $('video-preview-modal'),
+  closePreviewModal: $('close-preview-modal'),
+  previewModalTitle: $('preview-modal-title'),
+  previewStageVideo: $('preview-stage-video'),
+  previewStageFrame: $('preview-stage-frame'),
+  previewPlayBtn: $('preview-play-btn'),
+  previewPlayIcon: $('preview-play-icon'),
+  previewTimeLabel: $('preview-time-label')
 };
 
 // =====================================================
@@ -1057,6 +1076,12 @@ function downloadFile(url, filename) {
   document.body.removeChild(a);
 }
 
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
 // =====================================================
 // TABS
 // =====================================================
@@ -1068,7 +1093,6 @@ function setMode(mode) {
   });
   elements.modeUpload.classList.toggle('active', mode === 'upload');
   elements.modeCreate.classList.toggle('active', mode === 'create');
-
   document.body.classList.toggle('create-mode', mode === 'create');
   elements.workflow.classList.toggle('create-mode', mode === 'create');
 }
@@ -1114,12 +1138,14 @@ function updateCreatePreview() {
     elements.previewProfileImg.style.display = 'block';
   } else {
     elements.previewProfileImg.removeAttribute('src');
+    elements.previewProfileImg.style.display = 'none';
   }
 
   const unamePreviewSize = Math.max(9, Math.round((t.usernameSize || 42) * s));
   const captionPreviewSize = Math.max(9, Math.round((t.captionSize || 48) * s));
 
-  elements.previewUsername.innerHTML = escapeHtml(t.usernameText || '') + '<span class="check">✓</span>';
+  const checkHtml = t.checkmark !== false ? '<span class="check">✓</span>' : '';
+  elements.previewUsername.innerHTML = escapeHtml(t.usernameText || '') + checkHtml;
   elements.previewUsername.style.left = (t.username.x * s) + 'px';
   elements.previewUsername.style.top = (t.username.y * s) + 'px';
   elements.previewUsername.style.color = textColor;
@@ -1141,17 +1167,13 @@ function updateCreatePreview() {
   elements.previewVideoArea.style.top = (t.video.y * s) + 'px';
   elements.previewVideoArea.style.width = (t.video.w * s) + 'px';
   elements.previewVideoArea.style.height = (t.video.h * s) + 'px';
+  const radius = t.videoRadius || 0;
+  elements.previewVideoArea.style.borderRadius = (radius * s) + 'px';
 
   elements.createAreaX.value = Math.round(t.video.x);
   elements.createAreaY.value = Math.round(t.video.y);
   elements.createAreaW.value = Math.round(t.video.w);
   elements.createAreaH.value = Math.round(t.video.h);
-}
-
-function escapeHtml(str) {
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
 }
 
 function clampCreateVideoArea() {
@@ -1194,18 +1216,33 @@ async function restoreTemplateFromStorage() {
 
 function applyTemplateToInputs() {
   const t = state.template;
-  elements.usernameInput.value = t.usernameText;
-  elements.captionInput.value = t.captionText;
-  elements.bgInput.value = t.bg === 'transparent' ? '#ffffff' : t.bg;
+  elements.usernameInput.value = t.usernameText || '';
+  elements.captionInput.value = t.captionText || '';
+  elements.bgInput.value = t.bg === 'transparent' ? '#ffffff' : (t.bg || '#ffffff');
   elements.bgTransparent.checked = t.bg === 'transparent';
-  elements.usernameFont.value = t.usernameFont;
-  elements.captionFont.value = t.captionFont;
-  elements.usernameSize.value = t.usernameSize;
-  elements.captionSize.value = t.captionSize;
-  elements.textColorMode.value = t.textColorMode;
+  elements.usernameFont.value = t.usernameFont || 'Inter, sans-serif';
+  elements.captionFont.value = t.captionFont || 'Inter, sans-serif';
+  elements.usernameSize.value = t.usernameSize || 42;
+  elements.captionSize.value = t.captionSize || 48;
+  elements.textColorMode.value = t.textColorMode || 'auto';
   elements.textColorCustom.value = t.textColorCustom || '#111111';
-  const shapeInput = document.querySelector(`input[name="profile-shape"][value="${t.profileShape}"]`);
+  if (elements.checkmarkToggle) elements.checkmarkToggle.checked = t.checkmark !== false;
+  if (elements.templateVideoRadius) {
+    elements.templateVideoRadius.value = t.videoRadius || 0;
+    if (elements.templateVideoRadiusValue) elements.templateVideoRadiusValue.textContent = (t.videoRadius || 0) + 'px';
+  }
+  const shapeInput = document.querySelector(`input[name="profile-shape"][value="${t.profileShape || 'circle'}"]`);
   if (shapeInput) shapeInput.checked = true;
+
+  // corner group active state
+  if (elements.createCornerGroup) {
+    elements.createCornerGroup.querySelectorAll('button').forEach(btn => {
+      const r = btn.dataset.radius;
+      const isRound = r === 'round';
+      const active = isRound ? (t.videoRadius > 0) : (t.videoRadius === 0);
+      btn.classList.toggle('active', active);
+    });
+  }
 }
 
 function setupCreateInputs() {
@@ -1290,6 +1327,48 @@ function setupCreateInputs() {
     scheduleSaveTemplate();
   });
 
+  if (elements.checkmarkToggle) {
+    elements.checkmarkToggle.addEventListener('change', (e) => {
+      state.template.checkmark = e.target.checked;
+      updateCreatePreview();
+      scheduleSaveTemplate();
+    });
+  }
+
+  if (elements.templateVideoRadius) {
+    elements.templateVideoRadius.addEventListener('input', (e) => {
+      const val = parseInt(e.target.value, 10) || 0;
+      state.template.videoRadius = val;
+      if (elements.templateVideoRadiusValue) elements.templateVideoRadiusValue.textContent = val + 'px';
+      if (elements.createCornerGroup) {
+        elements.createCornerGroup.querySelectorAll('button').forEach(btn => {
+          const isRound = btn.dataset.radius === 'round';
+          btn.classList.toggle('active', isRound ? val > 0 : val === 0);
+        });
+      }
+      updateCreatePreview();
+      scheduleSaveTemplate();
+    });
+  }
+
+  if (elements.createCornerGroup) {
+    elements.createCornerGroup.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const isRound = btn.dataset.radius === 'round';
+        const val = isRound ? 48 : 0;
+        state.template.videoRadius = val;
+        if (elements.templateVideoRadius) {
+          elements.templateVideoRadius.value = val;
+          if (elements.templateVideoRadiusValue) elements.templateVideoRadiusValue.textContent = val + 'px';
+        }
+        elements.createCornerGroup.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        updateCreatePreview();
+        scheduleSaveTemplate();
+      });
+    });
+  }
+
   [elements.createAreaX, elements.createAreaY, elements.createAreaW, elements.createAreaH].forEach(input => {
     input.addEventListener('change', () => {
       state.template.video.x = parseInt(elements.createAreaX.value, 10) || 0;
@@ -1367,6 +1446,9 @@ function setupCreateDragAndResize() {
     } else if (target.closest('.preview-layer') && target.closest('.preview-layer').dataset.el !== 'bg') {
       isDragging = true;
       currentEl = target.closest('.preview-layer').dataset.el;
+    } else if (target.closest('.preview-video-area')) {
+      isDragging = true;
+      currentEl = 'video';
     } else return;
 
     e.preventDefault();
@@ -1450,7 +1532,11 @@ async function generateTemplateMask() {
       ctx.clip();
     } else {
       ctx.beginPath();
-      ctx.roundRect(t.profile.x, t.profile.y, t.profile.w, t.profile.h, 24);
+      if (ctx.roundRect) {
+        ctx.roundRect(t.profile.x, t.profile.y, t.profile.w, t.profile.h, 24);
+      } else {
+        ctx.rect(t.profile.x, t.profile.y, t.profile.w, t.profile.h);
+      }
       ctx.clip();
     }
     ctx.drawImage(t.profileImg, t.profile.x, t.profile.y, t.profile.w, t.profile.h);
@@ -1484,10 +1570,12 @@ async function generateTemplateMask() {
   ctx.font = `bold ${unameSize}px ${unameFont}`;
   ctx.fillText(unameStr, t.username.x, t.username.y);
 
-  const unameW = ctx.measureText(unameStr).width;
-  ctx.fillStyle = '#1d9bf0';
-  ctx.font = `bold ${Math.round(unameSize * 0.85)}px ${unameFont}`;
-  ctx.fillText('✓', t.username.x + unameW + 8, t.username.y + 2);
+  if (t.checkmark !== false) {
+    const unameW = ctx.measureText(unameStr).width;
+    ctx.fillStyle = '#1d9bf0';
+    ctx.font = `bold ${Math.round(unameSize * 0.85)}px ${unameFont}`;
+    ctx.fillText('✓', t.username.x + unameW + 8, t.username.y + 2);
+  }
 
   ctx.fillStyle = textColor;
   ctx.font = `bold ${captionSize}px ${captionFont}`;
@@ -1508,6 +1596,7 @@ async function generateTemplateMask() {
   }
   ctx.fillText(line, t.caption.x, y);
 
+  // clear video area (transparent hole)
   ctx.clearRect(t.video.x, t.video.y, t.video.w, t.video.h);
 
   return new Promise(resolve => canvas.toBlob(blob => resolve(blob), 'image/png'));
@@ -1515,7 +1604,8 @@ async function generateTemplateMask() {
 
 elements.finalizeBtn.addEventListener('click', async () => {
   elements.finalizeBtn.disabled = true;
-  elements.finalizeBtn.textContent = 'Gerando...';
+  const originalHTML = elements.finalizeBtn.innerHTML;
+  elements.finalizeBtn.innerHTML = '<span class="spinner"></span> Gerando...';
   try {
     const blob = await generateTemplateMask();
     state.frameFile = new File([blob], 'moldura-criada.png', { type: 'image/png' });
@@ -1528,6 +1618,7 @@ elements.finalizeBtn.addEventListener('click', async () => {
       videoWidth: state.template.video.w,
       videoHeight: state.template.video.h
     };
+    state.areaRadius = state.template.videoRadius || 0;
 
     elements.frameName.textContent = 'moldura-criada.png';
     elements.frameSize.textContent = formatBytes(blob.size);
@@ -1536,6 +1627,10 @@ elements.finalizeBtn.addEventListener('click', async () => {
 
     await refreshFramePreviewWithHole();
     syncAreaInputs();
+    if (elements.areaRadius) {
+      elements.areaRadius.value = state.areaRadius;
+      if (elements.areaRadiusValue) elements.areaRadiusValue.textContent = state.areaRadius + 'px';
+    }
     scheduleSaveTemplate();
 
     setMode('upload');
@@ -1546,7 +1641,7 @@ elements.finalizeBtn.addEventListener('click', async () => {
     showToast('Erro ao gerar moldura', 'error');
   } finally {
     elements.finalizeBtn.disabled = false;
-    elements.finalizeBtn.textContent = 'Gerar moldura';
+    elements.finalizeBtn.innerHTML = originalHTML;
   }
 });
 
@@ -1794,6 +1889,8 @@ function renderAreaBox() {
   box.style.top = `${fi.videoY * scaleY}px`;
   box.style.width = `${fi.videoWidth * scaleX}px`;
   box.style.height = `${fi.videoHeight * scaleY}px`;
+  const radius = state.areaRadius || 0;
+  box.style.borderRadius = (radius * scaleX) + 'px';
 }
 
 function syncAreaInputs() {
@@ -1857,6 +1954,37 @@ function setupAreaEditorEvents() {
     syncAreaInputs();
     await refreshFramePreviewWithHole();
   });
+
+  if (elements.areaRadius) {
+    elements.areaRadius.addEventListener('input', (e) => {
+      state.areaRadius = parseInt(e.target.value, 10) || 0;
+      if (elements.areaRadiusValue) elements.areaRadiusValue.textContent = state.areaRadius + 'px';
+      if (elements.uploadCornerGroup) {
+        elements.uploadCornerGroup.querySelectorAll('button').forEach(btn => {
+          const isRound = btn.dataset.radius === 'round';
+          btn.classList.toggle('active', isRound ? state.areaRadius > 0 : state.areaRadius === 0);
+        });
+      }
+      renderAreaBox();
+    });
+  }
+
+  if (elements.uploadCornerGroup) {
+    elements.uploadCornerGroup.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const isRound = btn.dataset.radius === 'round';
+        const val = isRound ? 48 : 0;
+        state.areaRadius = val;
+        if (elements.areaRadius) {
+          elements.areaRadius.value = val;
+          if (elements.areaRadiusValue) elements.areaRadiusValue.textContent = val + 'px';
+        }
+        elements.uploadCornerGroup.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderAreaBox();
+      });
+    });
+  }
 
   elements.areaBox.addEventListener('pointerdown', (e) => {
     if (e.target.classList.contains('area-handle')) return;
@@ -1956,8 +2084,17 @@ async function handleVideoFiles(files) {
     }
     const duration = await getVideoDuration(file);
     const video = {
-      id: generateId(), file, name: file.name, size: file.size, duration,
-      status: 'waiting', progress: 0, outputBlob: null, outputUrl: null
+      id: generateId(),
+      file,
+      name: file.name,
+      size: file.size,
+      duration,
+      status: 'waiting',
+      progress: 0,
+      outputBlob: null,
+      outputUrl: null,
+      trimStart: 0,
+      trimEnd: duration || 0
     };
     state.videos.push(video);
     added++;
@@ -1990,35 +2127,89 @@ function renderVideoItem(video) {
   videoEl.muted = true;
   videoEl.playsInline = true;
   videoEl.src = URL.createObjectURL(video.file);
-  videoEl.addEventListener('loadeddata', () => { videoEl.currentTime = 1; });
+  videoEl.addEventListener('loadeddata', () => { try { videoEl.currentTime = 0.5; } catch(e){} });
   thumbDiv.appendChild(videoEl);
+  const playBadge = document.createElement('div');
+  playBadge.className = 'play-badge';
+  playBadge.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>';
+  thumbDiv.appendChild(playBadge);
+  thumbDiv.addEventListener('click', () => openPreviewModal(video));
 
   const infoDiv = document.createElement('div');
   infoDiv.className = 'video-info';
+  const durationStr = formatDuration(video.duration);
   infoDiv.innerHTML = `
     <div class="video-name" title="${escapeHtml(video.name)}">${escapeHtml(video.name)}</div>
-    <div class="video-meta-line">${formatBytes(video.size)} • ${formatDuration(video.duration)}</div>
+    <div class="video-meta-line">${formatBytes(video.size)} • ${durationStr}</div>
     <div class="video-progress-bar"><div class="fill" style="width:${video.progress || 0}%"></div></div>
   `;
 
-  const labels = { waiting: 'Aguardando', processing: 'Processando', done: 'Pronto', error: 'Erro' };
-  const classes = { waiting: 'status-pending', processing: 'status-active', done: 'status-complete', error: 'status-failed' };
+  // trim controls (if duration known)
+  if (video.duration && isFinite(video.duration) && video.duration > 0) {
+    const trimDiv = document.createElement('div');
+    trimDiv.className = 'video-trim';
+    const max = Math.floor(video.duration * 10) / 10;
+    trimDiv.innerHTML = `
+      <div class="trim-row">
+        <label>Início</label>
+        <input type="range" class="trim-start" min="0" max="${max}" step="0.1" value="${video.trimStart || 0}">
+        <span class="trim-val">${formatDuration(video.trimStart || 0)}</span>
+      </div>
+      <div class="trim-row">
+        <label>Fim</label>
+        <input type="range" class="trim-end" min="0" max="${max}" step="0.1" value="${video.trimEnd || max}">
+        <span class="trim-val">${formatDuration(video.trimEnd || max)}</span>
+      </div>
+      <div class="trim-summary">Duração: ${formatDuration((video.trimEnd || max) - (video.trimStart || 0))}</div>
+    `;
+    infoDiv.appendChild(trimDiv);
+
+    const startInput = trimDiv.querySelector('.trim-start');
+    const endInput = trimDiv.querySelector('.trim-end');
+    const startVal = trimDiv.querySelectorAll('.trim-val')[0];
+    const endVal = trimDiv.querySelectorAll('.trim-val')[1];
+    const summary = trimDiv.querySelector('.trim-summary');
+
+    const updateTrim = () => {
+      let s = parseFloat(startInput.value) || 0;
+      let e = parseFloat(endInput.value) || max;
+      if (s >= e) {
+        if (startInput === document.activeElement) e = Math.min(max, s + 0.5);
+        else s = Math.max(0, e - 0.5);
+        startInput.value = s;
+        endInput.value = e;
+      }
+      video.trimStart = s;
+      video.trimEnd = e;
+      startVal.textContent = formatDuration(s);
+      endVal.textContent = formatDuration(e);
+      summary.textContent = `Duração: ${formatDuration(e - s)}`;
+    };
+    startInput.addEventListener('input', updateTrim);
+    endInput.addEventListener('input', updateTrim);
+  }
+
+  const labels = { waiting: 'Aguardando', processing: 'Processando', done: 'Pronto', error: 'Erro', completed: 'Pronto' };
+  const classes = { waiting: 'status-pending', processing: 'status-active', done: 'status-complete', error: 'status-failed', completed: 'status-complete' };
   const statusDiv = document.createElement('div');
   statusDiv.className = `video-status-badge ${classes[video.status] || 'status-pending'}`;
   statusDiv.textContent = labels[video.status] || 'Aguardando';
 
+  const actionsDiv = document.createElement('div');
+  actionsDiv.className = 'video-entry-actions';
   const removeBtn = document.createElement('button');
   removeBtn.className = 'btn-remove-video';
   removeBtn.type = 'button';
   removeBtn.title = 'Remover';
   removeBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
   removeBtn.addEventListener('click', () => removeVideo(video.id));
+  actionsDiv.appendChild(removeBtn);
 
   item.appendChild(handle);
   item.appendChild(thumbDiv);
   item.appendChild(infoDiv);
   item.appendChild(statusDiv);
-  item.appendChild(removeBtn);
+  item.appendChild(actionsDiv);
   setupVideoDragReorder(item);
   elements.videosList.appendChild(item);
 }
@@ -2115,6 +2306,89 @@ elements.clearQueueBtn.addEventListener('click', () => {
 });
 
 // =====================================================
+// MODAL PREVIEW
+// =====================================================
+function openPreviewModal(video) {
+  if (!elements.previewModal) return;
+  elements.previewModalTitle.textContent = video.name;
+  elements.previewStageVideo.src = URL.createObjectURL(video.file);
+  if (state.frameHolePreviewUrl) {
+    elements.previewStageFrame.src = state.frameHolePreviewUrl;
+  } else if (state.frameFile) {
+    elements.previewStageFrame.src = URL.createObjectURL(state.frameFile);
+  } else {
+    elements.previewStageFrame.removeAttribute('src');
+  }
+
+  // position video inside frame area if we have frameInfo
+  const vid = elements.previewStageVideo;
+  const stage = elements.previewStage;
+  if (state.frameInfo) {
+    const fi = state.frameInfo;
+    const scaleX = stage.clientWidth / fi.frameWidth;
+    const scaleY = stage.clientHeight / fi.frameHeight;
+    vid.style.left = (fi.videoX * scaleX) + 'px';
+    vid.style.top = (fi.videoY * scaleY) + 'px';
+    vid.style.width = (fi.videoWidth * scaleX) + 'px';
+    vid.style.height = (fi.videoHeight * scaleY) + 'px';
+    const radius = (state.areaRadius || 0) * scaleX;
+    vid.style.borderRadius = radius + 'px';
+  } else {
+    vid.style.left = '0';
+    vid.style.top = '0';
+    vid.style.width = '100%';
+    vid.style.height = '100%';
+    vid.style.borderRadius = '0';
+  }
+
+  elements.previewModal.classList.remove('hidden');
+  updatePreviewTime();
+}
+
+function closePreviewModal() {
+  if (!elements.previewModal) return;
+  elements.previewStageVideo.pause();
+  elements.previewStageVideo.removeAttribute('src');
+  elements.previewStageFrame.removeAttribute('src');
+  elements.previewModal.classList.add('hidden');
+}
+
+function updatePreviewTime() {
+  const v = elements.previewStageVideo;
+  if (!v) return;
+  const cur = formatDuration(v.currentTime || 0);
+  const dur = formatDuration(v.duration || 0);
+  if (elements.previewTimeLabel) elements.previewTimeLabel.textContent = `${cur} / ${dur}`;
+}
+
+if (elements.closePreviewModal) {
+  elements.closePreviewModal.addEventListener('click', closePreviewModal);
+}
+if (elements.previewModal) {
+  elements.previewModal.addEventListener('click', (e) => {
+    if (e.target === elements.previewModal) closePreviewModal();
+  });
+}
+if (elements.previewPlayBtn) {
+  elements.previewPlayBtn.addEventListener('click', () => {
+    const v = elements.previewStageVideo;
+    if (v.paused) {
+      v.play();
+      elements.previewPlayIcon.innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+    } else {
+      v.pause();
+      elements.previewPlayIcon.innerHTML = '<polygon points="6 3 20 12 6 21 6 3"/>';
+    }
+  });
+}
+if (elements.previewStageVideo) {
+  elements.previewStageVideo.addEventListener('timeupdate', updatePreviewTime);
+  elements.previewStageVideo.addEventListener('ended', () => {
+    if (elements.previewPlayIcon) elements.previewPlayIcon.innerHTML = '<polygon points="6 3 20 12 6 21 6 3"/>';
+  });
+}
+
+// =====================================================
 // PROCESSAMENTO
 // =====================================================
 elements.processAllBtn.addEventListener('click', async () => {
@@ -2153,7 +2427,7 @@ elements.processAllBtn.addEventListener('click', async () => {
 
   for (let i = 0; i < state.videos.length; i++) {
     const video = state.videos[i];
-    if (video.status === 'completed') {
+    if (video.status === 'completed' || video.status === 'done') {
       completedCount++;
       continue;
     }
@@ -2182,7 +2456,7 @@ elements.processAllBtn.addEventListener('click', async () => {
   elements.progressStatus.textContent = 'Processamento concluído!';
   updateProcessButton();
 
-  const successCount = state.videos.filter(v => v.status === 'completed').length;
+  const successCount = state.videos.filter(v => v.status === 'completed' || v.status === 'done').length;
   elements.resultsCount.textContent = successCount;
   if (successCount > 0) elements.downloadAllBtn.classList.remove('hidden');
 
@@ -2200,30 +2474,52 @@ async function processVideo(video, frameSource) {
   await ffmpeg.FS('writeFile', frameName, await fetchFile(frameSource || state.frameFile));
 
   const frameInfo = state.frameInfo;
-  const duration = video.duration && isFinite(video.duration) ? video.duration : 3600;
+  const trimStart = video.trimStart || 0;
+  const trimEnd = video.trimEnd || (video.duration || 3600);
+  const duration = Math.max(0.1, trimEnd - trimStart);
 
   let command;
+  const radius = state.areaRadius || 0;
+
   if (!frameInfo) {
     command = [
-      '-i', inputName, '-loop', '1', '-i', frameName, '-t', String(duration),
+      '-ss', String(trimStart),
+      '-i', inputName,
+      '-loop', '1', '-i', frameName,
+      '-t', String(duration),
       '-filter_complex',
       '[1:v]format=rgba[frame];[0:v]scale=iw:ih[video];[video][frame]overlay=(W-w)/2:(H-h)/2:format=auto:eof_action=pass[out]',
-      '-map', '[out]', '-map', '0:a?', '-c:a', 'copy',
+      '-map', '[out]', '-map', '0:a?',
+      '-c:a', 'aac', '-b:a', '128k',
       '-c:v', 'libx264', '-preset', 'ultrafast', '-crf', '23',
-      '-pix_fmt', 'yuv420p', '-movflags', '+faststart', outputName
+      '-pix_fmt', 'yuv420p', '-movflags', '+faststart',
+      outputName
     ];
   } else {
-    command = [
-      '-i', inputName, '-loop', '1', '-i', frameName, '-t', String(duration),
-      '-filter_complex',
-      `[0:v]scale=${frameInfo.videoWidth}:${frameInfo.videoHeight}:force_original_aspect_ratio=decrease,` +
-      `pad=${frameInfo.videoWidth}:${frameInfo.videoHeight}:(ow-iw)/2:(oh-ih)/2:black,` +
-      `pad=${frameInfo.frameWidth}:${frameInfo.frameHeight}:${frameInfo.videoX}:${frameInfo.videoY}:black[video];` +
+    let videoFilter = `[0:v]scale=${frameInfo.videoWidth}:${frameInfo.videoHeight}:force_original_aspect_ratio=decrease,` +
+      `pad=${frameInfo.videoWidth}:${frameInfo.videoHeight}:(ow-iw)/2:(oh-ih)/2:black`;
+
+    if (radius > 0) {
+      // rounded corners via geq / alpha mask is complex; approximate with format
+      videoFilter += `,format=yuva420p`;
+    }
+
+    videoFilter += `[scaled];` +
+      `[scaled]pad=${frameInfo.frameWidth}:${frameInfo.frameHeight}:${frameInfo.videoX}:${frameInfo.videoY}:black[video];` +
       `[1:v]scale=${frameInfo.frameWidth}:${frameInfo.frameHeight},format=rgba[frame];` +
-      `[video][frame]overlay=0:0:format=auto:eof_action=pass[out]`,
-      '-map', '[out]', '-map', '0:a?', '-c:a', 'copy',
+      `[video][frame]overlay=0:0:format=auto:eof_action=pass[out]`;
+
+    command = [
+      '-ss', String(trimStart),
+      '-i', inputName,
+      '-loop', '1', '-i', frameName,
+      '-t', String(duration),
+      '-filter_complex', videoFilter,
+      '-map', '[out]', '-map', '0:a?',
+      '-c:a', 'aac', '-b:a', '128k',
       '-c:v', 'libx264', '-preset', 'ultrafast', '-crf', '23',
-      '-pix_fmt', 'yuv420p', '-movflags', '+faststart', outputName
+      '-pix_fmt', 'yuv420p', '-movflags', '+faststart',
+      outputName
     ];
   }
 
@@ -2264,17 +2560,17 @@ function setVideoStatus(id, status) {
   el.dataset.status = status;
   const statusDiv = el.querySelector('.video-status-badge');
   if (!statusDiv) return;
-  const labels = { waiting: 'Aguardando', processing: 'Processando', done: 'Pronto', error: 'Erro' };
-  const classes = { waiting: 'status-pending', processing: 'status-active', done: 'status-complete', error: 'status-failed' };
-  statusDiv.className = `video-status-badge ${classes[status]}`;
-  statusDiv.textContent = labels[status];
+  const labels = { waiting: 'Aguardando', processing: 'Processando', done: 'Pronto', error: 'Erro', completed: 'Pronto' };
+  const classes = { waiting: 'status-pending', processing: 'status-active', done: 'status-complete', error: 'status-failed', completed: 'status-complete' };
+  statusDiv.className = `video-status-badge ${classes[status] || 'status-pending'}`;
+  statusDiv.textContent = labels[status] || status;
 }
 
 function updateOverallProgress(percent) {
   percent = Math.min(100, Math.max(0, percent));
   elements.overallProgressFill.style.width = `${percent}%`;
   elements.overallProgressText.textContent = `${Math.round(percent)}%`;
-  const completed = state.videos.filter(v => v.status === 'done' || v.status === 'error').length;
+  const completed = state.videos.filter(v => v.status === 'done' || v.status === 'error' || v.status === 'completed').length;
   elements.overallProgressCount.textContent = `${completed} de ${state.videos.length} concluídos`;
 }
 
@@ -2310,7 +2606,7 @@ function addResultItem(video) {
 }
 
 elements.downloadAllBtn.addEventListener('click', async () => {
-  const completed = state.videos.filter(v => v.status === 'completed' && v.outputBlob);
+  const completed = state.videos.filter(v => (v.status === 'completed' || v.status === 'done') && v.outputBlob);
   if (completed.length === 0) return;
 
   elements.downloadAllBtn.disabled = true;
