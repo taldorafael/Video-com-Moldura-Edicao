@@ -899,7 +899,7 @@ function updateCreatePreview() {
   const unamePreviewSize = Math.max(9, Math.round((t.usernameSize || 42) * s));
   const captionPreviewSize = Math.max(9, Math.round((t.captionSize || 48) * s));
 
-  elements.previewUsername.innerHTML = escapeHtml(t.usernameText || '') + '<span class="check">✓</span>';
+  elements.previewUsername.innerHTML = escapeHtml(t.usernameText || '') + '';
   elements.previewUsername.style.left = (t.username.x * s) + 'px';
   elements.previewUsername.style.top = (t.username.y * s) + 'px';
   elements.previewUsername.style.color = textColor;
