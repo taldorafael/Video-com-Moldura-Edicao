@@ -2,8 +2,8 @@
 
 Aplique molduras em vídeos direto no navegador — sem upload, sem servidor, sem enviar nada para fora do seu computador. Todo o processamento roda localmente com [FFmpeg.wasm](https://ffmpeg.org/).
 
-**Demo:** [videocommoldura.vercel.app](https://videocommoldura.vercel.app/)
-
+**Demo Funcional:** [videocommoldura.vercel.app](https://videocommoldura.vercel.app/)
+**EXEMPLO MOLDURA:** [https://videocommoldura.vercel.app/templatefoto.png)
 ## O que o app faz
 
 O projeto tem duas partes, organizadas em abas:
