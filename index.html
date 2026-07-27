@@ -46,21 +46,14 @@
     }
 
     .skip-link {
-      position: absolute;
-      top: -40px;
-      left: 0;
-      background: var(--accent);
-      color: white;
-      padding: 8px 16px;
-      text-decoration: none;
-      z-index: 1000;
+      position: absolute; top: -40px; left: 0;
+      background: var(--accent); color: white; padding: 8px 16px;
+      text-decoration: none; z-index: 1000;
     }
     .skip-link:focus { top: 0; }
 
     .site-header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      position: sticky; top: 0; z-index: 100;
       background: rgba(9, 9, 11, 0.85);
       backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border-color);
@@ -68,521 +61,286 @@
     }
 
     .header-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
       height: 64px;
     }
 
     .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-      color: var(--text-primary);
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none; color: var(--text-primary);
     }
 
     .logo-icon {
-      width: 36px;
-      height: 36px;
+      width: 36px; height: 36px;
       background: linear-gradient(135deg, var(--accent), #065f46);
       border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
     }
     .logo-icon svg { width: 20px; height: 20px; color: white; }
 
-    .logo-text {
-      font-weight: 700;
-      font-size: 1.1rem;
-      letter-spacing: -0.02em;
-    }
+    .logo-text { font-weight: 700; font-size: 1.1rem; letter-spacing: -0.02em; }
 
     .header-badge {
-      font-size: 0.7rem;
-      font-weight: 600;
-      padding: 3px 8px;
-      border-radius: 20px;
-      background: var(--accent-glow);
-      color: var(--accent);
+      font-size: 0.7rem; font-weight: 600; padding: 3px 8px;
+      border-radius: 20px; background: var(--accent-glow); color: var(--accent);
       border: 1px solid rgba(16, 185, 129, 0.2);
     }
 
     .warning-banner {
       background: linear-gradient(135deg, #451a03, #1c0a00);
       border: 1px solid rgba(245, 158, 11, 0.3);
-      color: #fbbf24;
-      padding: 14px 24px;
-      font-size: 0.85rem;
-      text-align: center;
-      display: none;
+      color: #fbbf24; padding: 14px 24px; font-size: 0.85rem;
+      text-align: center; display: none;
     }
     .warning-banner:not(.hidden) { display: block; }
     .warning-banner strong { color: #fde68a; }
 
     .app-container {
-      max-width: 1200px;
-      margin: 0 auto;
+      max-width: 1200px; margin: 0 auto;
       padding: 32px 24px 80px;
     }
 
-    .hero {
-      text-align: center;
-      padding: 48px 0 40px;
-    }
+    .hero { text-align: center; padding: 48px 0 40px; }
 
     .hero h1 {
       font-size: clamp(1.8rem, 4vw, 2.8rem);
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      line-height: 1.15;
-      margin-bottom: 16px;
+      font-weight: 800; letter-spacing: -0.03em;
+      line-height: 1.15; margin-bottom: 16px;
     }
 
     .hero h1 .highlight {
       background: linear-gradient(135deg, var(--accent), #34d399);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
     .hero p {
-      color: var(--text-secondary);
-      font-size: 1.05rem;
-      max-width: 560px;
-      margin: 0 auto;
+      color: var(--text-secondary); font-size: 1.05rem;
+      max-width: 560px; margin: 0 auto;
     }
 
     .privacy-badges {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      margin-top: 24px;
-      flex-wrap: wrap;
+      display: flex; justify-content: center; gap: 16px;
+      margin-top: 24px; flex-wrap: wrap;
     }
 
     .privacy-badge {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      padding: 6px 12px;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-      border-radius: 20px;
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.8rem; color: var(--text-muted);
+      padding: 6px 12px; background: var(--bg-secondary);
+      border: 1px solid var(--border-color); border-radius: 20px;
     }
-    .privacy-badge svg {
-      width: 14px;
-      height: 14px;
-      color: var(--accent);
-    }
+    .privacy-badge svg { width: 14px; height: 14px; color: var(--accent); }
 
     .workflow {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-      margin-top: 16px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 16px;
     }
+    @media (max-width: 900px) { .workflow { grid-template-columns: 1fr; } }
 
-    @media (max-width: 900px) {
-      .workflow { grid-template-columns: 1fr; }
-    }
+    /* Quando modo criar está ativo, o painel de vídeos some e o painel 1 ocupa tudo */
+    .workflow.create-mode { grid-template-columns: 1fr; }
+    .workflow.create-mode #panel-videos { display: none !important; }
+    body.create-mode .bottom-section { display: none !important; }
 
     .panel {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
+      background: var(--bg-card); border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg); overflow: hidden;
       transition: border-color var(--transition);
     }
     .panel:hover { border-color: var(--border-hover); }
 
     .panel-header {
-      padding: 20px 24px;
-      border-bottom: 1px solid var(--border-color);
-      display: flex;
-      align-items: center;
-      gap: 12px;
+      padding: 20px 24px; border-bottom: 1px solid var(--border-color);
+      display: flex; align-items: center; gap: 12px;
     }
 
     .panel-step {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: var(--accent);
-      border: 1.5px solid var(--accent);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: white;
-      flex-shrink: 0;
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--accent); border: 1.5px solid var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 700; color: white; flex-shrink: 0;
     }
 
-    .panel-title {
-      font-size: 0.95rem;
-      font-weight: 600;
-    }
-
+    .panel-title { font-size: 0.95rem; font-weight: 600; }
     .panel-body { padding: 24px; }
 
-    /* Tabs criar / enviar */
+    /* Tabs */
     .mode-tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 20px;
-      background: var(--bg-tertiary);
-      padding: 4px;
-      border-radius: var(--radius-sm);
+      display: flex; gap: 8px; margin-bottom: 20px;
+      background: var(--bg-tertiary); padding: 4px; border-radius: var(--radius-sm);
     }
 
     .mode-tab {
-      flex: 1;
-      padding: 10px 14px;
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
-      font-size: 0.85rem;
-      font-weight: 600;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all var(--transition);
+      flex: 1; padding: 10px 14px; border: none; background: transparent;
+      color: var(--text-muted); font-size: 0.85rem; font-weight: 600;
+      border-radius: 6px; cursor: pointer; transition: all var(--transition);
       font-family: inherit;
     }
-
-    .mode-tab.active {
-      background: var(--accent);
-      color: white;
-    }
+    .mode-tab.active { background: var(--accent); color: white; }
 
     .mode-panel { display: none; }
     .mode-panel.active { display: block; }
 
+    /* Drop zone */
     .drop-zone {
-      border: 2px dashed var(--border-color);
-      border-radius: var(--radius);
-      padding: 40px 24px;
-      text-align: center;
-      cursor: pointer;
-      transition: all var(--transition);
-      position: relative;
+      border: 2px dashed var(--border-color); border-radius: var(--radius);
+      padding: 40px 24px; text-align: center; cursor: pointer;
+      transition: all var(--transition); position: relative;
     }
-
-    .drop-zone:hover,
-    .drop-zone.drag-over {
-      border-color: var(--accent);
-      background: var(--accent-glow);
+    .drop-zone:hover, .drop-zone.drag-over {
+      border-color: var(--accent); background: var(--accent-glow);
     }
-
     .drop-zone-icon {
-      width: 48px;
-      height: 48px;
-      margin: 0 auto 16px;
-      color: var(--text-muted);
-      transition: color var(--transition);
+      width: 48px; height: 48px; margin: 0 auto 16px;
+      color: var(--text-muted); transition: color var(--transition);
     }
     .drop-zone:hover .drop-zone-icon { color: var(--accent); }
-
-    .drop-zone-title {
-      font-weight: 600;
-      font-size: 0.95rem;
-      margin-bottom: 6px;
-    }
-
-    .drop-zone-hint {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
-
+    .drop-zone-title { font-weight: 600; font-size: 0.95rem; margin-bottom: 6px; }
+    .drop-zone-hint { font-size: 0.8rem; color: var(--text-muted); }
     .drop-zone input[type="file"] {
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      cursor: pointer;
+      position: absolute; inset: 0; opacity: 0; cursor: pointer;
     }
 
-    .frame-preview-area {
-      display: none;
-      text-align: center;
-    }
+    .frame-preview-area { display: none; text-align: center; }
     .frame-preview-area:not(.hidden) { display: block; }
 
     .frame-editor-wrap {
-      position: relative;
-      display: inline-block;
-      margin-bottom: 16px;
-      max-width: 100%;
-      user-select: none;
-      -webkit-user-select: none;
-      touch-action: none;
+      position: relative; display: inline-block; margin-bottom: 16px;
+      max-width: 100%; user-select: none; -webkit-user-select: none; touch-action: none;
     }
-
     .frame-editor-wrap img {
-      display: block;
-      max-width: 100%;
-      max-height: 340px;
-      width: auto;
-      height: auto;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border-color);
+      display: block; max-width: 100%; max-height: 340px; width: auto; height: auto;
+      border-radius: var(--radius-sm); border: 1px solid var(--border-color);
       background: repeating-conic-gradient(#1a1a1f 0% 25%, #27272a 0% 50%) 50% / 16px 16px;
       pointer-events: none;
     }
 
     .area-box {
-      position: absolute;
-      border: 2px dashed var(--accent);
-      background: rgba(16, 185, 129, 0.14);
-      box-sizing: border-box;
-      cursor: move;
-      min-width: 16px;
-      min-height: 16px;
+      position: absolute; border: 2px dashed var(--accent);
+      background: rgba(16, 185, 129, 0.14); box-sizing: border-box;
+      cursor: move; min-width: 16px; min-height: 16px;
     }
-
     .area-box::before {
-      content: 'Área do vídeo';
-      position: absolute;
-      top: -22px;
-      left: 0;
-      font-size: 0.65rem;
-      font-weight: 600;
-      color: var(--accent);
-      background: var(--bg-primary);
-      padding: 2px 6px;
-      border-radius: 4px;
-      white-space: nowrap;
-      pointer-events: none;
+      content: 'Área do vídeo'; position: absolute; top: -22px; left: 0;
+      font-size: 0.65rem; font-weight: 600; color: var(--accent);
+      background: var(--bg-primary); padding: 2px 6px; border-radius: 4px;
+      white-space: nowrap; pointer-events: none;
     }
-
     .area-handle {
-      position: absolute;
-      width: 14px;
-      height: 14px;
-      background: var(--accent);
-      border: 2px solid var(--bg-primary);
-      border-radius: 50%;
-      z-index: 2;
+      position: absolute; width: 14px; height: 14px; background: var(--accent);
+      border: 2px solid var(--bg-primary); border-radius: 50%; z-index: 2;
     }
-
     .area-handle.nw { top: 0; left: 0; transform: translate(-50%, -50%); cursor: nwse-resize; }
     .area-handle.ne { top: 0; right: 0; transform: translate(50%, -50%); cursor: nesw-resize; }
     .area-handle.sw { bottom: 0; left: 0; transform: translate(-50%, 50%); cursor: nesw-resize; }
     .area-handle.se { bottom: 0; right: 0; transform: translate(50%, 50%); cursor: nwse-resize; }
 
     .area-controls {
-      text-align: left;
-      background: var(--bg-tertiary);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-sm);
-      padding: 14px 16px;
-      margin-bottom: 16px;
+      text-align: left; background: var(--bg-tertiary);
+      border: 1px solid var(--border-color); border-radius: var(--radius-sm);
+      padding: 14px 16px; margin-bottom: 16px;
     }
-
     .area-controls-title {
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: var(--text-secondary);
-      margin-bottom: 10px;
+      font-size: 0.78rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 10px;
     }
-
     .area-controls-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
     }
-
     .area-controls-grid label {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      font-size: 0.75rem;
-      color: var(--text-muted);
+      display: flex; flex-direction: column; gap: 4px;
+      font-size: 0.75rem; color: var(--text-muted);
     }
-
     .area-controls-grid input[type="number"],
-    .field input[type="text"],
-    .field input[type="number"],
-    .field input[type="color"],
-    .field select,
-    .field textarea {
-
-      background: var(--bg-primary);
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      padding: 7px 9px;
-      color: var(--text-primary);
-      font-size: 0.85rem;
-      font-family: inherit;
-      width: 100%;
+    .field input[type="text"], .field input[type="number"],
+    .field select, .field textarea {
+      background: var(--bg-primary); border: 1px solid var(--border-color);
+      border-radius: 6px; padding: 7px 9px; color: var(--text-primary);
+      font-size: 0.85rem; font-family: inherit; width: 100%;
       transition: border-color var(--transition);
     }
-
-    .area-controls-grid input[type="number"]:focus,
-    .field input:focus,
-    .field input[type="color"]:focus,
-    .field select:focus,
-    .field textarea:focus {
-
-      outline: none;
-      border-color: var(--accent);
+    .area-controls-grid input:focus, .field input:focus,
+    .field select:focus, .field textarea:focus {
+      outline: none; border-color: var(--accent);
     }
-
     .area-controls-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 12px;
-      flex-wrap: wrap;
+      display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap;
     }
-
     .btn-secondary-sm {
-      background: none;
-      border: 1px solid var(--border-color);
-      color: var(--text-secondary);
-      padding: 7px 12px;
-      border-radius: 6px;
-      font-size: 0.75rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all var(--transition);
-      font-family: inherit;
+      background: none; border: 1px solid var(--border-color);
+      color: var(--text-secondary); padding: 7px 12px; border-radius: 6px;
+      font-size: 0.75rem; font-weight: 500; cursor: pointer;
+      transition: all var(--transition); font-family: inherit;
     }
-    .btn-secondary-sm:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
+    .btn-secondary-sm:hover { border-color: var(--accent); color: var(--accent); }
     .area-hint {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      margin-top: 10px;
-      line-height: 1.4;
+      font-size: 0.72rem; color: var(--text-muted); margin-top: 10px; line-height: 1.4;
     }
-
-    .frame-meta {
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-      margin-bottom: 12px;
-    }
-
+    .frame-meta { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 12px; }
     .btn-remove-frame {
-      background: none;
-      border: 1px solid var(--border-color);
-      color: var(--text-secondary);
-      padding: 8px 16px;
-      border-radius: var(--radius-sm);
-      font-size: 0.8rem;
-      cursor: pointer;
-      transition: all var(--transition);
+      background: none; border: 1px solid var(--border-color);
+      color: var(--text-secondary); padding: 8px 16px; border-radius: var(--radius-sm);
+      font-size: 0.8rem; cursor: pointer; transition: all var(--transition);
       font-family: inherit;
     }
-    .btn-remove-frame:hover {
-      border-color: var(--danger);
-      color: var(--danger);
+    .btn-remove-frame:hover { border-color: var(--danger); color: var(--danger); }
+
+    /* ===== CREATE EDITOR ===== */
+    .create-layout {
+      display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: start;
+    }
+    @media (max-width: 700px) {
+      .create-layout { grid-template-columns: 1fr; }
     }
 
-    /* ===== Editor de criação ===== */
-    .create-preview-wrap {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
+    .create-preview-wrap { display: flex; justify-content: center; }
 
     #template-preview-container {
-      width: 270px;
-      height: 486px;
-      position: relative;
-      border-radius: 12px;
-      overflow: hidden;
-      border: 2px solid var(--border-color);
-      background: #ffffff;
-      touch-action: none;
-      user-select: none;
+      width: 270px; height: 485px;
+      position: relative; border-radius: 12px; overflow: hidden;
+      border: 2px solid var(--border-color); background: #fff;
+      touch-action: none; user-select: none;
     }
 
-    #preview-bg { position: absolute; inset: 0; }
+    #preview-bg { position: absolute; inset: 0; background: #fff; }
 
     .preview-layer { position: absolute; cursor: move; }
 
-    .preview-layer.shape-circle {
-      border-radius: 50%;
-      overflow: hidden;
-    }
-    .preview-layer.shape-rounded {
-      border-radius: 12px;
-      overflow: hidden;
-    }
-
-    .profile-gradient-ring {
-      position: absolute;
-      inset: -6px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #ff3b9a, #ff5e3a, #8e2de2);
-      z-index: -1;
-    }
-    #preview-profile:has(#preview-profile-img[src=""]) .profile-gradient-ring {
-      display: none;
-    }
-
+    .preview-layer.shape-circle { border-radius: 50%; overflow: hidden; }
+    .preview-layer.shape-rounded { border-radius: 12px; overflow: hidden; }
 
     #preview-profile-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      border-radius: 50%;
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      background: linear-gradient(135deg, #ff6b35, #f72585, #7b2ff7);
     }
 
     #preview-username {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      color: #000000;
-      font-weight: 700;
-      font-size: 13px;
-      white-space: nowrap;
-      cursor: move;
-      user-select: none;
-      touch-action: none;
+      color: #111; font-weight: 700; font-size: 12px;
+      white-space: nowrap; cursor: move;
+      display: flex; align-items: center; gap: 3px;
+      padding: 2px 4px;
     }
-
-    #preview-username .verified-badge {
-      width: 14px;
-      height: 14px;
-      color: #3b82f6;
-      flex-shrink: 0;
+    #preview-username .check {
+      color: #1d9bf0; font-size: 11px; line-height: 1;
       pointer-events: none;
     }
 
     #preview-caption {
-      color: #000000;
-      font-size: 18px;
-      font-weight: 800;
-      line-height: 1.25;
-      text-align: center;
-      cursor: move;
-      user-select: none;
-      touch-action: none;
+      color: #111; font-size: 13px; font-weight: 700;
+      line-height: 1.3; cursor: move;
+      padding: 2px 4px;
     }
 
     #preview-video-area {
       border: 2px dashed rgba(16, 185, 129, 0.9);
-      background: #000000;
+      background: rgba(0, 0, 0, 0.85);
       position: absolute;
     }
 
     .create-area-handle {
-      position: absolute;
-      width: 10px;
-      height: 10px;
-      background: var(--accent);
-      border: 2px solid white;
-      border-radius: 2px;
-      z-index: 5;
+      position: absolute; width: 10px; height: 10px;
+      background: var(--accent); border: 2px solid white;
+      border-radius: 2px; z-index: 5;
     }
     .create-area-handle.nw { top: -5px; left: -5px; cursor: nwse-resize; }
     .create-area-handle.ne { top: -5px; right: -5px; cursor: nesw-resize; }
@@ -593,207 +351,105 @@
     .create-area-handle.w  { left: -5px; top: 50%; transform: translateY(-50%); cursor: ew-resize; }
     .create-area-handle.e  { right: -5px; top: 50%; transform: translateY(-50%); cursor: ew-resize; }
 
-    .create-mode-hidden { display: none !important; }
-
-
     .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 16px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;
     }
+    @media (max-width: 500px) { .form-grid { grid-template-columns: 1fr; } }
 
-    @media (max-width: 500px) {
-      .form-grid { grid-template-columns: 1fr; }
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    .field label {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      font-weight: 500;
-    }
-
-    .field textarea {
-      resize: vertical;
-      min-height: 60px;
-    }
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field label { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
+    .field textarea { resize: vertical; min-height: 60px; }
 
     .radio-group {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-top: 4px;
+      display: flex; gap: 12px; flex-wrap: wrap; margin-top: 4px;
     }
-
     .radio-group label {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      color: var(--text-primary);
+      display: flex; align-items: center; gap: 5px; cursor: pointer;
+      font-size: 0.85rem; color: var(--text-primary);
     }
 
     .create-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 8px;
+      display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px;
     }
 
     .btn-create-finalize {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 11px 20px;
-      background: var(--accent);
-      color: white;
-      border: none;
-      border-radius: var(--radius-sm);
-      font-size: 0.88rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all var(--transition);
-      font-family: inherit;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 11px 20px; background: var(--accent); color: white;
+      border: none; border-radius: var(--radius-sm);
+      font-size: 0.88rem; font-weight: 600; cursor: pointer;
+      transition: all var(--transition); font-family: inherit;
     }
-    .btn-create-finalize:hover:not(:disabled) {
-      background: var(--accent-hover);
-    }
-    .btn-create-finalize:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+    .btn-create-finalize:hover:not(:disabled) { background: var(--accent-hover); }
+    .btn-create-finalize:disabled { opacity: 0.5; cursor: not-allowed; }
 
     /* Vídeos */
     .video-queue { display: none; }
     .video-queue:not(.hidden) { display: block; }
 
     .queue-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
       margin-bottom: 16px;
     }
-
-    .queue-count {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-    }
+    .queue-count { font-size: 0.85rem; color: var(--text-secondary); }
     .queue-count strong { color: var(--text-primary); }
 
     .btn-clear-queue {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      font-size: 0.8rem;
-      cursor: pointer;
-      padding: 4px 8px;
-      border-radius: 4px;
-      transition: all var(--transition);
-      font-family: inherit;
+      background: none; border: none; color: var(--text-muted);
+      font-size: 0.8rem; cursor: pointer; padding: 4px 8px;
+      border-radius: 4px; transition: all var(--transition); font-family: inherit;
     }
     .btn-clear-queue:hover { color: var(--danger); }
 
     .video-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      max-height: 320px;
-      overflow-y: auto;
-      padding-right: 4px;
+      list-style: none; display: flex; flex-direction: column; gap: 8px;
+      max-height: 320px; overflow-y: auto; padding-right: 4px;
     }
-
     .video-list::-webkit-scrollbar { width: 4px; }
     .video-list::-webkit-scrollbar-track { background: transparent; }
     .video-list::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
 
     .video-entry {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px;
-      background: var(--bg-tertiary);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-sm);
-      transition: all var(--transition);
+      display: flex; align-items: center; gap: 12px; padding: 12px;
+      background: var(--bg-tertiary); border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm); transition: all var(--transition);
     }
     .video-entry:hover { border-color: var(--border-hover); }
 
     .video-thumb {
-      width: 56px;
-      height: 40px;
-      border-radius: 6px;
-      overflow: hidden;
-      flex-shrink: 0;
-      background: var(--bg-primary);
+      width: 56px; height: 40px; border-radius: 6px; overflow: hidden;
+      flex-shrink: 0; background: var(--bg-primary);
     }
-    .video-thumb video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+    .video-thumb video { width: 100%; height: 100%; object-fit: cover; }
 
     .video-info { flex: 1; min-width: 0; }
-
     .video-name {
-      font-size: 0.82rem;
-      font-weight: 500;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      font-size: 0.82rem; font-weight: 500; white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis;
     }
-
-    .video-meta-line {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
+    .video-meta-line { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
 
     .video-progress-bar {
-      height: 3px;
-      background: var(--border-color);
-      border-radius: 2px;
-      margin-top: 6px;
-      overflow: hidden;
+      height: 3px; background: var(--border-color); border-radius: 2px;
+      margin-top: 6px; overflow: hidden;
     }
     .video-progress-bar .fill {
-      height: 100%;
-      width: 0%;
-      background: var(--accent);
-      border-radius: 2px;
-      transition: width 300ms ease;
+      height: 100%; width: 0%; background: var(--accent);
+      border-radius: 2px; transition: width 300ms ease;
     }
 
     .video-status-badge {
-      font-size: 0.68rem;
-      font-weight: 600;
-      padding: 3px 8px;
-      border-radius: 12px;
-      white-space: nowrap;
-      flex-shrink: 0;
+      font-size: 0.68rem; font-weight: 600; padding: 3px 8px;
+      border-radius: 12px; white-space: nowrap; flex-shrink: 0;
     }
-
     .status-pending { background: var(--bg-primary); color: var(--text-muted); }
     .status-active { background: rgba(16, 185, 129, 0.1); color: var(--accent); }
     .status-complete { background: rgba(16, 185, 129, 0.15); color: #34d399; }
     .status-failed { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
 
     .btn-remove-video {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      padding: 4px;
-      border-radius: 4px;
-      transition: all var(--transition);
-      flex-shrink: 0;
+      background: none; border: none; color: var(--text-muted);
+      cursor: pointer; padding: 4px; border-radius: 4px;
+      transition: all var(--transition); flex-shrink: 0;
     }
     .btn-remove-video:hover { color: var(--danger); }
     .btn-remove-video svg { width: 16px; height: 16px; }
@@ -801,262 +457,138 @@
     .bottom-section { margin-top: 24px; }
 
     .action-bar {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      padding: 24px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
+      display: flex; align-items: center; justify-content: center; gap: 16px;
+      padding: 24px; background: var(--bg-card);
+      border: 1px solid var(--border-color); border-radius: var(--radius-lg);
     }
 
     .btn-process {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 14px 32px;
-      background: var(--accent);
-      color: white;
-      border: none;
-      border-radius: var(--radius);
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all var(--transition);
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 32px; background: var(--accent); color: white;
+      border: none; border-radius: var(--radius); font-size: 0.95rem;
+      font-weight: 600; cursor: pointer; transition: all var(--transition);
       font-family: inherit;
     }
     .btn-process:hover:not(:disabled) {
-      background: var(--accent-hover);
-      transform: translateY(-1px);
+      background: var(--accent-hover); transform: translateY(-1px);
       box-shadow: 0 8px 24px var(--accent-glow);
     }
-    .btn-process:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-      transform: none;
-    }
+    .btn-process:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
     .btn-process svg { width: 18px; height: 18px; }
 
     .overall-progress {
-      display: none;
-      margin-top: 24px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      padding: 24px;
+      display: none; margin-top: 24px; background: var(--bg-card);
+      border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 24px;
     }
     .overall-progress:not(.hidden) { display: block; }
 
     .progress-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
     }
-
     .progress-label { font-size: 0.85rem; font-weight: 500; }
-
-    .progress-percentage {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--accent);
-    }
+    .progress-percentage { font-size: 0.85rem; font-weight: 700; color: var(--accent); }
 
     .progress-track-main {
-      height: 8px;
-      background: var(--bg-tertiary);
-      border-radius: 4px;
-      overflow: hidden;
-      margin-bottom: 12px;
+      height: 8px; background: var(--bg-tertiary); border-radius: 4px;
+      overflow: hidden; margin-bottom: 12px;
     }
     .progress-track-main .bar {
-      height: 100%;
-      width: 0%;
+      height: 100%; width: 0%;
       background: linear-gradient(90deg, var(--accent), #34d399);
-      border-radius: 4px;
-      transition: width 400ms ease;
+      border-radius: 4px; transition: width 400ms ease;
     }
-
-    .progress-details {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-    }
+    .progress-details { font-size: 0.78rem; color: var(--text-muted); }
 
     .results-panel {
-      display: none;
-      margin-top: 24px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
+      display: none; margin-top: 24px; background: var(--bg-card);
+      border: 1px solid var(--border-color); border-radius: var(--radius-lg); overflow: hidden;
     }
     .results-panel:not(.hidden) { display: block; }
 
     .results-header {
-      padding: 20px 24px;
-      border-bottom: 1px solid var(--border-color);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 12px;
+      padding: 20px 24px; border-bottom: 1px solid var(--border-color);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
     }
-
     .results-title {
-      font-size: 0.95rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      font-size: 0.95rem; font-weight: 600;
+      display: flex; align-items: center; gap: 8px;
     }
     .results-title .count {
-      background: var(--accent-glow);
-      color: var(--accent);
-      font-size: 0.72rem;
-      padding: 2px 8px;
-      border-radius: 10px;
+      background: var(--accent-glow); color: var(--accent);
+      font-size: 0.72rem; padding: 2px 8px; border-radius: 10px;
     }
 
     .btn-download-all {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 20px;
-      background: var(--accent);
-      color: white;
-      border: none;
-      border-radius: var(--radius-sm);
-      font-size: 0.82rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all var(--transition);
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 20px; background: var(--accent); color: white;
+      border: none; border-radius: var(--radius-sm); font-size: 0.82rem;
+      font-weight: 600; cursor: pointer; transition: all var(--transition);
       font-family: inherit;
     }
     .btn-download-all:hover { background: var(--accent-hover); }
     .btn-download-all svg { width: 16px; height: 16px; }
 
     .results-list {
-      list-style: none;
-      padding: 16px 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      max-height: 300px;
-      overflow-y: auto;
+      list-style: none; padding: 16px 24px;
+      display: flex; flex-direction: column; gap: 8px;
+      max-height: 300px; overflow-y: auto;
     }
 
     .result-entry {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px;
-      background: var(--bg-tertiary);
-      border-radius: var(--radius-sm);
+      display: flex; align-items: center; gap: 12px; padding: 12px;
+      background: var(--bg-tertiary); border-radius: var(--radius-sm);
       border: 1px solid var(--border-color);
     }
-
     .result-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: var(--accent-glow);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--accent-glow); display: flex;
+      align-items: center; justify-content: center; flex-shrink: 0;
     }
     .result-icon svg { width: 18px; height: 18px; color: var(--accent); }
-
     .result-info { flex: 1; min-width: 0; }
-
     .result-name {
-      font-size: 0.82rem;
-      font-weight: 500;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      font-size: 0.82rem; font-weight: 500; white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis;
     }
-
-    .result-size {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
+    .result-size { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
 
     .btn-download-single {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 14px;
-      background: var(--bg-primary);
-      border: 1px solid var(--border-color);
-      color: var(--text-secondary);
-      border-radius: var(--radius-sm);
-      font-size: 0.78rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all var(--transition);
-      flex-shrink: 0;
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 14px; background: var(--bg-primary);
+      border: 1px solid var(--border-color); color: var(--text-secondary);
+      border-radius: var(--radius-sm); font-size: 0.78rem; font-weight: 500;
+      cursor: pointer; transition: all var(--transition); flex-shrink: 0;
       font-family: inherit;
     }
-    .btn-download-single:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
+    .btn-download-single:hover { border-color: var(--accent); color: var(--accent); }
     .btn-download-single svg { width: 14px; height: 14px; }
 
     .site-footer {
-      text-align: center;
-      padding: 32px 24px;
-      border-top: 1px solid var(--border-color);
-      margin-top: 48px;
+      text-align: center; padding: 32px 24px;
+      border-top: 1px solid var(--border-color); margin-top: 48px;
     }
-
-    .footer-text {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-    }
-    .footer-text a {
-      color: var(--text-secondary);
-      text-decoration: none;
-    }
+    .footer-text { font-size: 0.78rem; color: var(--text-muted); }
+    .footer-text a { color: var(--text-secondary); text-decoration: none; }
     .footer-text a:hover { color: var(--accent); }
 
     .toast-area {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      pointer-events: none;
+      position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+      display: flex; flex-direction: column; gap: 8px; pointer-events: none;
     }
-
     .toast-msg {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 18px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-sm);
-      font-size: 0.82rem;
-      box-shadow: var(--shadow);
-      pointer-events: auto;
-      animation: toastSlideIn 300ms ease forwards;
-      max-width: 360px;
+      display: flex; align-items: center; gap: 10px; padding: 12px 18px;
+      background: var(--bg-card); border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm); font-size: 0.82rem; box-shadow: var(--shadow);
+      pointer-events: auto; animation: toastSlideIn 300ms ease forwards; max-width: 360px;
     }
     .toast-msg.success { border-left: 3px solid var(--accent); }
     .toast-msg.error { border-left: 3px solid var(--danger); }
     .toast-msg.info { border-left: 3px solid #3b82f6; }
-
     .toast-msg svg { width: 16px; height: 16px; flex-shrink: 0; }
     .toast-msg.success svg { color: var(--accent); }
     .toast-msg.error svg { color: var(--danger); }
     .toast-msg.info svg { color: #3b82f6; }
-
     .toast-msg.hiding { animation: toastSlideOut 300ms ease forwards; }
 
     @keyframes toastSlideIn {
@@ -1069,11 +601,8 @@
     }
 
     .spinner {
-      width: 16px;
-      height: 16px;
-      border: 2px solid transparent;
-      border-top-color: currentColor;
-      border-radius: 50%;
+      width: 16px; height: 16px; border: 2px solid transparent;
+      border-top-color: currentColor; border-radius: 50%;
       animation: spin 0.6s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
@@ -1136,17 +665,16 @@
       </div>
     </section>
 
-    <div class="workflow">
+    <div class="workflow" id="workflow">
 
       <!-- PAINEL 1: MOLDURA -->
-      <div class="panel">
+      <div class="panel" id="panel-frame">
         <div class="panel-header">
           <div class="panel-step">1</div>
           <span class="panel-title">Moldura</span>
         </div>
         <div class="panel-body">
 
-          <!-- Tabs -->
           <div class="mode-tabs">
             <button class="mode-tab active" data-mode="upload" type="button">Enviar PNG</button>
             <button class="mode-tab" data-mode="create" type="button">Criar moldura</button>
@@ -1200,93 +728,142 @@
 
           <!-- ===== MODO CRIAR ===== -->
           <div class="mode-panel" id="mode-create">
-            <div class="create-preview-wrap">
-              <div id="template-preview-container">
-                <div id="preview-bg"></div>
-                <div class="preview-layer shape-circle" data-el="profile" id="preview-profile" style="left:107px;top:44px;width:56px;height:56px;">
-                  <div class="profile-gradient-ring"></div>
-                  <img id="preview-profile-img" src="" alt="" />
-                </div>
-                <div class="preview-layer" data-el="username" id="preview-username" style="left:78px;top:108px;">
-                  @seuusuario
-                  <svg class="verified-badge" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/><path d="M10 14.6l-2.6-2.6L6 13.4l4 4 8-8-1.4-1.4-6.6 6.6z" fill="white"/></svg>
-                </div>
-                <div class="preview-layer" data-el="caption" id="preview-caption" style="left:15px;top:146px;width:240px;">vídeo bem engraçado 🤣🤣🤣</div>
-                <div id="preview-video-area" data-el="video" style="left:15px;top:200px;width:240px;height:275px;">
-                  <div class="create-area-handle nw" data-handle="nw"></div>
-                  <div class="create-area-handle ne" data-handle="ne"></div>
-                  <div class="create-area-handle sw" data-handle="sw"></div>
-                  <div class="create-area-handle se" data-handle="se"></div>
-                  <div class="create-area-handle n" data-handle="n"></div>
-                  <div class="create-area-handle s" data-handle="s"></div>
-                  <div class="create-area-handle w" data-handle="w"></div>
-                  <div class="create-area-handle e" data-handle="e"></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="form-grid">
-              <div class="field">
-                <label>Foto de perfil</label>
-                <input type="file" id="template-profile-input" accept="image/*" style="font-size:0.8rem;">
-              </div>
-              <div class="field">
-                <label>Formato da foto</label>
-                <div class="radio-group">
-                  <label><input type="radio" name="profile-shape" value="circle" checked> Círculo</label>
-                  <label><input type="radio" name="profile-shape" value="rounded"> Arredondado</label>
-                </div>
-              </div>
-              <div class="field">
-                <label>Username</label>
-                <input type="text" id="template-username-input" value="@milenaviral">
-              </div>
-              <div class="field">
-                <label>Cor de fundo</label>
-                <input type="color" id="template-bg-input" value="#ffffff">
-              </div>
-              <div class="field">
-                <label>Mostrar verificado</label>
-                <div class="radio-group">
-                  <label><input type="radio" name="verified" value="yes" checked> Sim</label>
-                  <label><input type="radio" name="verified" value="no"> Não</label>
+            <div class="create-layout">
+              <div class="create-preview-wrap">
+                <div id="template-preview-container">
+                  <div id="preview-bg"></div>
+                  <div class="preview-layer shape-circle" data-el="profile" id="preview-profile">
+                    <img id="preview-profile-img" src="" alt="" />
+                  </div>
+                  <div class="preview-layer" data-el="username" id="preview-username">@milenaviral<span class="check">✓</span></div>
+                  <div class="preview-layer" data-el="caption" id="preview-caption">vídeo bem engraçado 😂😂😂</div>
+                  <div id="preview-video-area" data-el="video">
+                    <div class="create-area-handle nw" data-handle="nw"></div>
+                    <div class="create-area-handle ne" data-handle="ne"></div>
+                    <div class="create-area-handle sw" data-handle="sw"></div>
+                    <div class="create-area-handle se" data-handle="se"></div>
+                    <div class="create-area-handle n" data-handle="n"></div>
+                    <div class="create-area-handle s" data-handle="s"></div>
+                    <div class="create-area-handle w" data-handle="w"></div>
+                    <div class="create-area-handle e" data-handle="e"></div>
+                  </div>
                 </div>
               </div>
 
-              <div class="field" style="grid-column: 1 / -1;">
-                <label>Título / Legenda</label>
-                <textarea id="template-caption-input">vídeo bem engraçado 🤣🤣🤣</textarea>
-              </div>
-            </div>
+              <div>
+                <div class="form-grid">
+                  <div class="field">
+                    <label>Foto de perfil</label>
+                    <input type="file" id="template-profile-input" accept="image/*" style="font-size:0.8rem;">
+                  </div>
+                  <div class="field">
+                    <label>Formato da foto</label>
+                    <div class="radio-group">
+                      <label><input type="radio" name="profile-shape" value="circle" checked> Círculo</label>
+                      <label><input type="radio" name="profile-shape" value="rounded"> Arredondado</label>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Username</label>
+                    <input type="text" id="template-username-input" value="@milenaviral">
+                  </div>
+                  <div class="field">
+                    <label>Cor de fundo</label>
+                    <select id="template-bg-input">
+                      <option value="#ffffff" selected>Branco</option>
+                      <option value="transparent">Transparente</option>
+                      <option value="#000000">Preto</option>
+                      <option value="#0f172a">Slate</option>
+                      <option value="#1a1a2e">Azul escuro</option>
+                      <option value="#111111">Cinza escuro</option>
+                    </select>
+                  </div>
+                  <div class="field" style="grid-column: 1 / -1;">
+                    <label>Legenda / Caption</label>
+                    <textarea id="template-caption-input">vídeo bem engraçado 😂😂😂</textarea>
+                  </div>
+                  <div class="field">
+                    <label>Fonte do username</label>
+                    <select id="template-username-font">
+                      <option value="Inter, -apple-system, BlinkMacSystemFont, sans-serif" selected>Inter</option>
+                      <option value="Arial, Helvetica, sans-serif">Arial</option>
+                      <option value="Georgia, 'Times New Roman', serif">Georgia</option>
+                      <option value="'Courier New', Courier, monospace">Courier</option>
+                      <option value="Impact, Haettenschweiler, sans-serif">Impact</option>
+                      <option value="'Comic Sans MS', 'Comic Sans', cursive">Comic Sans</option>
+                      <option value="Verdana, Geneva, sans-serif">Verdana</option>
+                      <option value="Tahoma, Geneva, sans-serif">Tahoma</option>
+                      <option value="'Trebuchet MS', sans-serif">Trebuchet</option>
+                      <option value="'Times New Roman', Times, serif">Times New Roman</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>Tamanho username (px)</label>
+                    <input type="number" id="template-username-size" value="42" min="12" max="120" step="1">
+                  </div>
+                  <div class="field">
+                    <label>Fonte da legenda</label>
+                    <select id="template-caption-font">
+                      <option value="Inter, -apple-system, BlinkMacSystemFont, sans-serif" selected>Inter</option>
+                      <option value="Arial, Helvetica, sans-serif">Arial</option>
+                      <option value="Georgia, 'Times New Roman', serif">Georgia</option>
+                      <option value="'Courier New', Courier, monospace">Courier</option>
+                      <option value="Impact, Haettenschweiler, sans-serif">Impact</option>
+                      <option value="'Comic Sans MS', 'Comic Sans', cursive">Comic Sans</option>
+                      <option value="Verdana, Geneva, sans-serif">Verdana</option>
+                      <option value="Tahoma, Geneva, sans-serif">Tahoma</option>
+                      <option value="'Trebuchet MS', sans-serif">Trebuchet</option>
+                      <option value="'Times New Roman', Times, serif">Times New Roman</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>Tamanho legenda (px)</label>
+                    <input type="number" id="template-caption-size" value="48" min="12" max="140" step="1">
+                  </div>
+                  <div class="field">
+                    <label>Cor do texto</label>
+                    <select id="template-text-color-mode">
+                      <option value="auto" selected>Automático (fundo)</option>
+                      <option value="#111111">Preto</option>
+                      <option value="#ffffff">Branco</option>
+                      <option value="#fafafa">Quase branco</option>
+                      <option value="#e5e5e5">Cinza claro</option>
+                      <option value="#3b82f6">Azul</option>
+                      <option value="#10b981">Verde</option>
+                      <option value="#f59e0b">Amarelo</option>
+                      <option value="#ef4444">Vermelho</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>Cor detectada</label>
+                    <input type="text" id="template-text-color-preview" value="#111111" readonly style="opacity:0.8;">
+                  </div>
+                </div>
 
-            <div class="area-controls" style="margin-bottom:12px;">
-              <div class="area-controls-title">Posições (pixels no canvas 1080×1942) — arraste cada elemento no preview</div>
-              <div class="area-controls-grid">
-                <label>Foto X <input type="number" id="create-profile-x" value="430"></label>
-                <label>Foto Y <input type="number" id="create-profile-y" value="175"></label>
-                <label>Nome X <input type="number" id="create-username-x" value="310"></label>
-                <label>Nome Y <input type="number" id="create-username-y" value="430"></label>
-                <label>Título X <input type="number" id="create-caption-x" value="60"></label>
-                <label>Título Y <input type="number" id="create-caption-y" value="585"></label>
-                <label>Vídeo X <input type="number" id="create-area-x" value="60"></label>
-                <label>Vídeo Y <input type="number" id="create-area-y" value="800"></label>
-                <label>Vídeo Larg <input type="number" id="create-area-w" value="960"></label>
-                <label>Vídeo Alt <input type="number" id="create-area-h" value="1100"></label>
-              </div>
-            </div>
+                <div class="area-controls" style="margin-bottom:12px;">
+                  <div class="area-controls-title">Área do vídeo (pixels no canvas 1080×1942)</div>
+                  <div class="area-controls-grid">
+                    <label>X <input type="number" id="create-area-x" value="77"></label>
+                    <label>Y <input type="number" id="create-area-y" value="638"></label>
+                    <label>Largura <input type="number" id="create-area-w" value="926"></label>
+                    <label>Altura <input type="number" id="create-area-h" value="1269"></label>
+                  </div>
+                  <div class="area-hint" style="margin-top:8px;">Arraste foto, username, legenda e a área preta no preview. Tudo é livre.</div>
+                </div>
 
-            <div class="create-actions">
-              <button class="btn-create-finalize" id="finalize-template-btn" type="button">Gerar moldura</button>
-              <button class="btn-secondary-sm" id="reset-template-btn" type="button">Resetar</button>
+                <div class="create-actions">
+                  <button class="btn-create-finalize" id="finalize-template-btn" type="button">Gerar moldura</button>
+                  <button class="btn-secondary-sm" id="reset-template-btn" type="button">Resetar</button>
+                </div>
+              </div>
             </div>
           </div>
-
 
         </div>
       </div>
 
       <!-- PAINEL 2: VÍDEOS -->
-      <div class="panel">
+      <div class="panel" id="panel-videos">
         <div class="panel-header">
           <div class="panel-step">2</div>
           <span class="panel-title">Seus vídeos</span>
@@ -1313,7 +890,7 @@
       </div>
     </div>
 
-    <div class="bottom-section">
+    <div class="bottom-section" id="bottom-section">
       <div class="action-bar">
         <button class="btn-process" id="process-all-btn" disabled>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1364,51 +941,57 @@
 
   <script>
   // =====================================================
-  // Video Frame Studio — Criar OU Enviar moldura
+  // Video Frame Studio — Criar OU Enviar (script estável)
+  // Canvas base = 1080x1942 (igual à referência)
   // =====================================================
   const FFmpegScript = 'https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js';
 
+  // Dimensões reais da imagem de referência
   const CANVAS_WIDTH = 1080;
   const CANVAS_HEIGHT = 1942;
-  const PREVIEW_SCALE = 270 / 1080; // preview 270x486 (proporção da imagem de referência)
+  const PREVIEW_SCALE = 270 / 1080; // preview ~270x485
 
+  // Layout padrão baseado na análise da templateasd.png
   const defaultTemplate = {
     bg: '#ffffff',
     profileShape: 'circle',
     profileImg: null,
-    usernameText: '@milenaviral',
-    showVerified: true,
-    captionText: 'vídeo bem engraçado 🤣🤣🤣',
-    profile: { x: 430, y: 175, w: 220, h: 220 },
-    username: { x: 355, y: 430 },
-    caption: { x: 60, y: 555, w: 960 },
-    video: { x: 60, y: 800, w: 960, h: 1100 }
+    usernameText: '@taldorafael',
+    captionText: 'vídeo bem engraçado 😂',
+    usernameFont: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+    captionFont: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+    usernameSize: 42,
+    captionSize: 48,
+    textColorMode: 'auto', // 'auto' | hex
+    textColor: '#111111',
+    profile:  { x: 386, y: 162, w: 308, h: 308 },
+    username: { x: 390, y: 500 },
+    caption:  { x: 100, y: 560, w: 880 },
+    video:    { x: 77,  y: 638, w: 926, h: 1269 }
   };
-
 
   const state = {
     ffmpeg: null,
     ffmpegLoaded: false,
     fetchFile: null,
-    // frame comum (upload ou criado)
     frameFile: null,
     frameOriginalImage: null,
     frameHolePreviewUrl: null,
     frameInfo: null,
-    // template creator
     template: JSON.parse(JSON.stringify(defaultTemplate)),
-    // vídeos
     videos: [],
     processing: false,
     videoIdCounter: 0
   };
 
   const elements = {
-    // modes
+    workflow: document.getElementById('workflow'),
     modeTabs: document.querySelectorAll('.mode-tab'),
     modeUpload: document.getElementById('mode-upload'),
     modeCreate: document.getElementById('mode-create'),
-    // upload frame
+    panelVideos: document.getElementById('panel-videos'),
+    bottomSection: document.getElementById('bottom-section'),
+    // upload
     frameDropArea: document.getElementById('frame-drop-area'),
     frameInput: document.getElementById('frame-input'),
     framePreviewContainer: document.getElementById('frame-preview-container'),
@@ -1424,7 +1007,7 @@
     areaH: document.getElementById('area-h'),
     areaAutoBtn: document.getElementById('area-auto-btn'),
     areaResetBtn: document.getElementById('area-reset-btn'),
-    // create template
+    // create
     previewContainer: document.getElementById('template-preview-container'),
     previewBg: document.getElementById('preview-bg'),
     previewProfile: document.getElementById('preview-profile'),
@@ -1436,21 +1019,18 @@
     usernameInput: document.getElementById('template-username-input'),
     captionInput: document.getElementById('template-caption-input'),
     bgInput: document.getElementById('template-bg-input'),
-    createProfileX: document.getElementById('create-profile-x'),
-    createProfileY: document.getElementById('create-profile-y'),
-    createUsernameX: document.getElementById('create-username-x'),
-    createUsernameY: document.getElementById('create-username-y'),
-    createCaptionX: document.getElementById('create-caption-x'),
-    createCaptionY: document.getElementById('create-caption-y'),
+    usernameFont: document.getElementById('template-username-font'),
+    captionFont: document.getElementById('template-caption-font'),
+    usernameSize: document.getElementById('template-username-size'),
+    captionSize: document.getElementById('template-caption-size'),
+    textColorMode: document.getElementById('template-text-color-mode'),
+    textColorPreview: document.getElementById('template-text-color-preview'),
     createAreaX: document.getElementById('create-area-x'),
     createAreaY: document.getElementById('create-area-y'),
     createAreaW: document.getElementById('create-area-w'),
     createAreaH: document.getElementById('create-area-h'),
     finalizeBtn: document.getElementById('finalize-template-btn'),
     resetTemplateBtn: document.getElementById('reset-template-btn'),
-    videoPanel: document.querySelectorAll('.panel')[1],
-    bottomSection: document.querySelector('.bottom-section'),
-
     // videos
     videosDropArea: document.getElementById('videos-drop-area'),
     videosInput: document.getElementById('videos-input'),
@@ -1543,72 +1123,102 @@
   }
 
   // =====================================================
-  // TABS MODO
+  // TABS + ESCONDER PAINÉIS NO MODO CRIAR
   // =====================================================
+  function setMode(mode) {
+    elements.modeTabs.forEach(t => t.classList.toggle('active', t.dataset.mode === mode));
+    elements.modeUpload.classList.toggle('active', mode === 'upload');
+    elements.modeCreate.classList.toggle('active', mode === 'create');
+
+    if (mode === 'create') {
+      document.body.classList.add('create-mode');
+      elements.workflow.classList.add('create-mode');
+    } else {
+      document.body.classList.remove('create-mode');
+      elements.workflow.classList.remove('create-mode');
+    }
+  }
+
   elements.modeTabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      elements.modeTabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      const mode = tab.dataset.mode;
-      elements.modeUpload.classList.toggle('active', mode === 'upload');
-      elements.modeCreate.classList.toggle('active', mode === 'create');
-      if (mode === 'create') {
-        elements.videoPanel.classList.add('create-mode-hidden');
-        elements.bottomSection.classList.add('create-mode-hidden');
-      } else {
-        elements.videoPanel.classList.remove('create-mode-hidden');
-        elements.bottomSection.classList.remove('create-mode-hidden');
-      }
-    });
+    tab.addEventListener('click', () => setMode(tab.dataset.mode));
   });
 
+  // =====================================================
+  // EDITOR DE CRIAÇÃO (base = referência 1080x1942)
+  // =====================================================
+  /** Retorna cor de texto efetiva: auto detecta luminosidade do fundo */
+  function getEffectiveTextColor(t) {
+    if (t.textColorMode && t.textColorMode !== 'auto') {
+      return t.textColorMode;
+    }
+    const bg = (t.bg || '#ffffff').toLowerCase();
+    if (bg === 'transparent') return '#111111';
+    // parse hex
+    let hex = bg.replace('#', '');
+    if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+    if (hex.length !== 6) return '#111111';
+    const r = parseInt(hex.slice(0, 2), 16);
+    const g = parseInt(hex.slice(2, 4), 16);
+    const b = parseInt(hex.slice(4, 6), 16);
+    // luminância relativa
+    const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return lum < 0.55 ? '#ffffff' : '#111111';
+  }
 
-  // =====================================================
-  // EDITOR DE CRIAÇÃO DE MOLDURA
-  // =====================================================
   function updateCreatePreview() {
     const t = state.template;
+    const s = PREVIEW_SCALE;
+    const textColor = getEffectiveTextColor(t);
+    t.textColor = textColor;
 
     elements.previewBg.style.background = t.bg === 'transparent'
-      ? 'repeating-conic-gradient(#2a2a2a 0% 25%, #1a1a1a 0% 50%) 50% / 16px 16px'
+      ? 'repeating-conic-gradient(#e5e5e5 0% 25%, #fff 0% 50%) 50% / 16px 16px'
       : t.bg;
 
     elements.previewProfile.className = `preview-layer shape-${t.profileShape}`;
-    elements.previewProfile.style.left = (t.profile.x * PREVIEW_SCALE) + 'px';
-    elements.previewProfile.style.top = (t.profile.y * PREVIEW_SCALE) + 'px';
-    elements.previewProfile.style.width = (t.profile.w * PREVIEW_SCALE) + 'px';
-    elements.previewProfile.style.height = (t.profile.h * PREVIEW_SCALE) + 'px';
-    if (t.profileImg) elements.previewProfileImg.src = t.profileImg.src;
+    elements.previewProfile.style.left = (t.profile.x * s) + 'px';
+    elements.previewProfile.style.top = (t.profile.y * s) + 'px';
+    elements.previewProfile.style.width = (t.profile.w * s) + 'px';
+    elements.previewProfile.style.height = (t.profile.h * s) + 'px';
+    if (t.profileImg) {
+      elements.previewProfileImg.src = t.profileImg.src;
+      elements.previewProfileImg.style.background = 'none';
+    }
 
-    const verifiedSvg = t.showVerified
-      ? '<svg class="verified-badge" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/><path d="M10 14.6l-2.6-2.6L6 13.4l4 4 8-8-1.4-1.4-6.6 6.6z" fill="white"/></svg>'
-      : '';
-    elements.previewUsername.innerHTML = `${t.usernameText}${verifiedSvg}`;
-    elements.previewUsername.style.left = (t.username.x * PREVIEW_SCALE) + 'px';
-    elements.previewUsername.style.top = (t.username.y * PREVIEW_SCALE) + 'px';
+    const unamePreviewSize = Math.max(10, Math.round((t.usernameSize || 42) * s));
+    const captionPreviewSize = Math.max(10, Math.round((t.captionSize || 48) * s));
 
-    elements.previewCaption.textContent = t.captionText;
-    elements.previewCaption.style.left = (t.caption.x * PREVIEW_SCALE) + 'px';
-    elements.previewCaption.style.top = (t.caption.y * PREVIEW_SCALE) + 'px';
-    elements.previewCaption.style.width = (t.caption.w * PREVIEW_SCALE) + 'px';
+    elements.previewUsername.innerHTML = (t.usernameText || '') + '<span class="check">✓</span>';
+    elements.previewUsername.style.left = (t.username.x * s) + 'px';
+    elements.previewUsername.style.top = (t.username.y * s) + 'px';
+    elements.previewUsername.style.color = textColor;
+    elements.previewUsername.style.fontFamily = t.usernameFont || 'Inter, sans-serif';
+    elements.previewUsername.style.fontSize = unamePreviewSize + 'px';
 
-    elements.previewVideoArea.style.left = (t.video.x * PREVIEW_SCALE) + 'px';
-    elements.previewVideoArea.style.top = (t.video.y * PREVIEW_SCALE) + 'px';
-    elements.previewVideoArea.style.width = (t.video.w * PREVIEW_SCALE) + 'px';
-    elements.previewVideoArea.style.height = (t.video.h * PREVIEW_SCALE) + 'px';
+    elements.previewCaption.textContent = t.captionText || '';
+    elements.previewCaption.style.left = (t.caption.x * s) + 'px';
+    elements.previewCaption.style.top = (t.caption.y * s) + 'px';
+    elements.previewCaption.style.width = (t.caption.w * s) + 'px';
+    elements.previewCaption.style.color = textColor;
+    elements.previewCaption.style.fontFamily = t.captionFont || 'Inter, sans-serif';
+    elements.previewCaption.style.fontSize = captionPreviewSize + 'px';
 
-    elements.createProfileX.value = Math.round(t.profile.x);
-    elements.createProfileY.value = Math.round(t.profile.y);
-    elements.createUsernameX.value = Math.round(t.username.x);
-    elements.createUsernameY.value = Math.round(t.username.y);
-    elements.createCaptionX.value = Math.round(t.caption.x);
-    elements.createCaptionY.value = Math.round(t.caption.y);
+    if (elements.textColorPreview) {
+      elements.textColorPreview.value = textColor;
+      elements.textColorPreview.style.color = textColor;
+      elements.textColorPreview.style.background = t.bg === 'transparent' ? '#fff' : t.bg;
+    }
+
+    elements.previewVideoArea.style.left = (t.video.x * s) + 'px';
+    elements.previewVideoArea.style.top = (t.video.y * s) + 'px';
+    elements.previewVideoArea.style.width = (t.video.w * s) + 'px';
+    elements.previewVideoArea.style.height = (t.video.h * s) + 'px';
+
     elements.createAreaX.value = Math.round(t.video.x);
     elements.createAreaY.value = Math.round(t.video.y);
     elements.createAreaW.value = Math.round(t.video.w);
     elements.createAreaH.value = Math.round(t.video.h);
   }
-
 
   function clampCreateVideoArea() {
     const v = state.template.video;
@@ -1652,37 +1262,44 @@
       updateCreatePreview();
     });
 
-    document.querySelectorAll('input[name="verified"]').forEach(radio => {
-      radio.addEventListener('change', (e) => {
-        state.template.showVerified = e.target.value === 'yes';
+    if (elements.usernameFont) {
+      elements.usernameFont.addEventListener('change', (e) => {
+        state.template.usernameFont = e.target.value;
         updateCreatePreview();
       });
-    });
-
-    [elements.createProfileX, elements.createProfileY].forEach(input => {
-      input.addEventListener('change', () => {
-        state.template.profile.x = parseInt(elements.createProfileX.value) || 0;
-        state.template.profile.y = parseInt(elements.createProfileY.value) || 0;
-        clampCreateProfile();
+    }
+    if (elements.captionFont) {
+      elements.captionFont.addEventListener('change', (e) => {
+        state.template.captionFont = e.target.value;
         updateCreatePreview();
       });
-    });
-
-    [elements.createUsernameX, elements.createUsernameY].forEach(input => {
-      input.addEventListener('change', () => {
-        state.template.username.x = parseInt(elements.createUsernameX.value) || 0;
-        state.template.username.y = parseInt(elements.createUsernameY.value) || 0;
+    }
+    if (elements.usernameSize) {
+      elements.usernameSize.addEventListener('change', (e) => {
+        state.template.usernameSize = Math.max(12, parseInt(e.target.value, 10) || 42);
         updateCreatePreview();
       });
-    });
-
-    [elements.createCaptionX, elements.createCaptionY].forEach(input => {
-      input.addEventListener('change', () => {
-        state.template.caption.x = parseInt(elements.createCaptionX.value) || 0;
-        state.template.caption.y = parseInt(elements.createCaptionY.value) || 0;
+      elements.usernameSize.addEventListener('input', (e) => {
+        state.template.usernameSize = Math.max(12, parseInt(e.target.value, 10) || 42);
         updateCreatePreview();
       });
-    });
+    }
+    if (elements.captionSize) {
+      elements.captionSize.addEventListener('change', (e) => {
+        state.template.captionSize = Math.max(12, parseInt(e.target.value, 10) || 48);
+        updateCreatePreview();
+      });
+      elements.captionSize.addEventListener('input', (e) => {
+        state.template.captionSize = Math.max(12, parseInt(e.target.value, 10) || 48);
+        updateCreatePreview();
+      });
+    }
+    if (elements.textColorMode) {
+      elements.textColorMode.addEventListener('change', (e) => {
+        state.template.textColorMode = e.target.value;
+        updateCreatePreview();
+      });
+    }
 
     [elements.createAreaX, elements.createAreaY, elements.createAreaW, elements.createAreaH].forEach(input => {
       input.addEventListener('change', () => {
@@ -1701,33 +1318,28 @@
       elements.usernameInput.value = state.template.usernameText;
       elements.captionInput.value = state.template.captionText;
       elements.bgInput.value = state.template.bg;
+      if (elements.usernameFont) elements.usernameFont.value = state.template.usernameFont;
+      if (elements.captionFont) elements.captionFont.value = state.template.captionFont;
+      if (elements.usernameSize) elements.usernameSize.value = state.template.usernameSize;
+      if (elements.captionSize) elements.captionSize.value = state.template.captionSize;
+      if (elements.textColorMode) elements.textColorMode.value = state.template.textColorMode;
       document.querySelector('input[name="profile-shape"][value="circle"]').checked = true;
-      document.querySelector('input[name="verified"][value="yes"]').checked = true;
       updateCreatePreview();
       showToast('Template resetado', 'info');
     });
   }
 
-  function clampCreateProfile() {
-    const p = state.template.profile;
-    p.w = Math.max(30, Math.min(p.w, CANVAS_WIDTH));
-    p.h = Math.max(30, Math.min(p.h, CANVAS_HEIGHT));
-    p.x = Math.max(0, Math.min(p.x, CANVAS_WIDTH - p.w));
-    p.y = Math.max(0, Math.min(p.y, CANVAS_HEIGHT - p.h));
-  }
-
-
   function setupCreateDragAndResize() {
-    let isDragging = false;
-    let isResizing = false;
-    let currentEl = null;
-    let handle = null;
+    let isDragging = false, isResizing = false, currentEl = null, handle = null;
     let startX, startY, startLeft, startTop, startW, startH;
 
     function getEventPos(e) {
+      const rect = elements.previewContainer.getBoundingClientRect();
+      const clientX = e.clientX ?? e.touches?.[0]?.clientX;
+      const clientY = e.clientY ?? e.touches?.[0]?.clientY;
       return {
-        x: (e.clientX || e.touches[0].clientX) / PREVIEW_SCALE,
-        y: (e.clientY || e.touches[0].clientY) / PREVIEW_SCALE
+        x: (clientX - rect.left) / PREVIEW_SCALE,
+        y: (clientY - rect.top) / PREVIEW_SCALE
       };
     }
 
@@ -1744,13 +1356,10 @@
 
       e.preventDefault();
       const pos = getEventPos(e);
-      startX = pos.x;
-      startY = pos.y;
+      startX = pos.x; startY = pos.y;
       const data = state.template[currentEl];
-      startLeft = data.x;
-      startTop = data.y;
-      startW = data.w || 0;
-      startH = data.h || 0;
+      startLeft = data.x; startTop = data.y;
+      startW = data.w || 0; startH = data.h || 0;
       elements.previewContainer.setPointerCapture(e.pointerId);
     });
 
@@ -1769,8 +1378,8 @@
           data.x = Math.max(0, Math.min(data.x, CANVAS_WIDTH - data.w));
           data.y = Math.max(0, Math.min(data.y, CANVAS_HEIGHT - data.h));
         } else {
-          data.x = Math.max(0, Math.min(data.x, CANVAS_WIDTH - 100));
-          data.y = Math.max(0, Math.min(data.y, CANVAS_HEIGHT - 50));
+          data.x = Math.max(0, Math.min(data.x, CANVAS_WIDTH - 80));
+          data.y = Math.max(0, Math.min(data.y, CANVAS_HEIGHT - 40));
         }
       } else if (isResizing && currentEl === 'video') {
         let newX = startLeft, newY = startTop, newW = startW, newH = startH;
@@ -1778,8 +1387,7 @@
         if (handle.includes('w')) { newX = startLeft + dx; newW = startW - dx; }
         if (handle.includes('s')) newH = startH + dy;
         if (handle.includes('n')) { newY = startTop + dy; newH = startH - dy; }
-        newW = Math.max(50, newW);
-        newH = Math.max(50, newH);
+        newW = Math.max(50, newW); newH = Math.max(50, newH);
         newX = Math.max(0, Math.min(newX, CANVAS_WIDTH - newW));
         newY = Math.max(0, Math.min(newY, CANVAS_HEIGHT - newH));
         data.x = newX; data.y = newY; data.w = newW; data.h = newH;
@@ -1789,43 +1397,10 @@
 
     elements.previewContainer.addEventListener('pointerup', (e) => {
       if (isDragging || isResizing) {
-        isDragging = false;
-        isResizing = false;
+        isDragging = false; isResizing = false;
         elements.previewContainer.releasePointerCapture(e.pointerId);
       }
     });
-  }
-
-  function drawVerifiedBadge(ctx, x, y, size) {
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.scale(size / 24, size / 24);
-    ctx.fillStyle = '#3b82f6';
-    ctx.beginPath();
-    ctx.moveTo(12, 1);
-    ctx.lineTo(3, 5);
-    ctx.lineTo(3, 11);
-    ctx.bezierCurveTo(3, 16.55, 6.84, 21.74, 12, 23);
-    ctx.bezierCurveTo(17.16, 21.74, 21, 16.55, 21, 11);
-    ctx.lineTo(21, 5);
-    ctx.lineTo(12, 1);
-    ctx.closePath();
-    ctx.fill();
-    ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-    ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 2.5;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    ctx.beginPath();
-    ctx.moveTo(10, 14.6);
-    ctx.lineTo(7.4, 12);
-    ctx.moveTo(6, 13.4);
-    ctx.lineTo(10, 17.4);
-    ctx.lineTo(18, 9.4);
-    ctx.stroke();
-    ctx.restore();
   }
 
   async function generateTemplateMask() {
@@ -1835,24 +1410,14 @@
     const ctx = canvas.getContext('2d');
     const t = state.template;
 
+    // fundo
     if (t.bg !== 'transparent') {
       ctx.fillStyle = t.bg;
       ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
     }
 
+    // foto de perfil
     if (t.profileImg) {
-      const ringSize = t.profile.w + 28;
-      const ringX = t.profile.x + t.profile.w / 2;
-      const ringY = t.profile.y + t.profile.h / 2;
-      const ringGradient = ctx.createLinearGradient(t.profile.x, t.profile.y, t.profile.x + t.profile.w, t.profile.y + t.profile.h);
-      ringGradient.addColorStop(0, '#ff3b9a');
-      ringGradient.addColorStop(0.5, '#ff5e3a');
-      ringGradient.addColorStop(1, '#8e2de2');
-      ctx.fillStyle = ringGradient;
-      ctx.beginPath();
-      ctx.arc(ringX, ringY, ringSize / 2, 0, Math.PI * 2);
-      ctx.fill();
-
       ctx.save();
       if (t.profileShape === 'circle') {
         ctx.beginPath();
@@ -1860,60 +1425,79 @@
         ctx.clip();
       } else {
         ctx.beginPath();
-        ctx.roundRect(t.profile.x, t.profile.y, t.profile.w, t.profile.h, 20);
+        ctx.roundRect(t.profile.x, t.profile.y, t.profile.w, t.profile.h, 24);
         ctx.clip();
       }
       ctx.drawImage(t.profileImg, t.profile.x, t.profile.y, t.profile.w, t.profile.h);
       ctx.restore();
+    } else {
+      // placeholder gradient se não tiver foto
+      ctx.save();
+      if (t.profileShape === 'circle') {
+        ctx.beginPath();
+        ctx.arc(t.profile.x + t.profile.w / 2, t.profile.y + t.profile.h / 2, t.profile.w / 2, 0, Math.PI * 2);
+        ctx.clip();
+      }
+      const grad = ctx.createLinearGradient(t.profile.x, t.profile.y, t.profile.x + t.profile.w, t.profile.y + t.profile.h);
+      grad.addColorStop(0, '#ff6b35');
+      grad.addColorStop(0.5, '#f72585');
+      grad.addColorStop(1, '#7b2ff7');
+      ctx.fillStyle = grad;
+      ctx.fillRect(t.profile.x, t.profile.y, t.profile.w, t.profile.h);
+      ctx.restore();
     }
+
+    // textos (fonte, tamanho e cor conforme config / fundo)
+    const unameStr = String(t.usernameText || '');
+    const captionStr = String(t.captionText || '');
+    const textColor = getEffectiveTextColor(t);
+    const unameSize = t.usernameSize || 42;
+    const captionSize = t.captionSize || 48;
+    const unameFont = t.usernameFont || 'Inter, -apple-system, BlinkMacSystemFont, sans-serif';
+    const captionFont = t.captionFont || 'Inter, -apple-system, BlinkMacSystemFont, sans-serif';
 
     ctx.textBaseline = 'top';
-    ctx.fillStyle = '#000000';
-    ctx.strokeStyle = 'none';
-    ctx.shadowColor = 'transparent';
+    ctx.fillStyle = textColor;
+    ctx.font = `bold ${unameSize}px ${unameFont}`;
+    ctx.fillText(unameStr, t.username.x, t.username.y);
 
-    ctx.font = 'bold 48px Inter, -apple-system, sans-serif';
-    ctx.fillText(t.usernameText, t.username.x, t.username.y);
-    if (t.showVerified) {
-      const textWidth = ctx.measureText(t.usernameText).width;
-      drawVerifiedBadge(ctx, t.username.x + textWidth + 12, t.username.y + 4, 38);
-    }
+    // check azul ao lado do username
+    const unameW = ctx.measureText(unameStr).width;
+    ctx.fillStyle = '#1d9bf0';
+    ctx.font = `bold ${Math.round(unameSize * 0.85)}px ${unameFont}`;
+    ctx.fillText('✓', t.username.x + unameW + 8, t.username.y + 2);
 
-    ctx.font = '800 64px Inter, -apple-system, sans-serif';
-    ctx.textAlign = 'center';
-    const words = t.captionText.split(' ');
+    // caption (word wrap)
+    ctx.fillStyle = textColor;
+    ctx.font = `bold ${captionSize}px ${captionFont}`;
+    const words = captionStr.split(' ');
     let line = '';
     let y = t.caption.y;
-    const maxWidth = t.caption.w;
-    const lineHeight = 74;
-    const cx = t.caption.x + t.caption.w / 2;
-
+    const maxWidth = t.caption.w || 880;
+    const lineHeight = Math.round(captionSize * 1.2);
     for (let n = 0; n < words.length; n++) {
       const testLine = line + words[n] + ' ';
       if (ctx.measureText(testLine).width > maxWidth && n > 0) {
-        ctx.fillText(line.trim(), cx, y);
+        ctx.fillText(line, t.caption.x, y);
         line = words[n] + ' ';
         y += lineHeight;
       } else {
         line = testLine;
       }
     }
-    ctx.fillText(line.trim(), cx, y);
-    ctx.textAlign = 'start';
+    ctx.fillText(line, t.caption.x, y);
 
-    // furo transparente
+    // furo transparente (área do vídeo)
     ctx.clearRect(t.video.x, t.video.y, t.video.w, t.video.h);
 
     return new Promise(resolve => canvas.toBlob(blob => resolve(blob), 'image/png'));
   }
-
 
   elements.finalizeBtn.addEventListener('click', async () => {
     elements.finalizeBtn.disabled = true;
     elements.finalizeBtn.textContent = 'Gerando...';
     try {
       const blob = await generateTemplateMask();
-      // transforma o blob criado em "frameFile" para o resto do sistema
       state.frameFile = new File([blob], 'moldura-criada.png', { type: 'image/png' });
       state.frameOriginalImage = await loadImageFromFile(state.frameFile);
       state.frameInfo = {
@@ -1925,24 +1509,18 @@
         videoHeight: state.template.video.h
       };
 
-      // também mostra no painel de upload (opcional) e atualiza botão
       elements.frameName.textContent = 'moldura-criada.png';
       elements.frameSize.textContent = formatBytes(blob.size);
       elements.framePreviewContainer.classList.remove('hidden');
       elements.frameDropArea.classList.add('hidden');
 
-      // gera preview com furo
       await refreshFramePreviewWithHole();
       syncAreaInputs();
 
-      // muda para a aba "Enviar" para o usuário ver o resultado e poder ajustar
-      elements.modeTabs.forEach(t => t.classList.remove('active'));
-      document.querySelector('.mode-tab[data-mode="upload"]').classList.add('active');
-      elements.modeUpload.classList.add('active');
-      elements.modeCreate.classList.remove('active');
-
+      // volta para aba Enviar PNG e mostra de novo os painéis de vídeo
+      setMode('upload');
       updateProcessButton();
-      showToast('Moldura criada com sucesso! Agora adicione os vídeos.', 'success');
+      showToast('Moldura criada! Agora adicione os vídeos.', 'success');
     } catch (err) {
       console.error(err);
       showToast('Erro ao gerar moldura', 'error');
@@ -1953,7 +1531,7 @@
   });
 
   // =====================================================
-  // ANÁLISE / FURO (modo upload)
+  // ANÁLISE / FURO (modo upload) — script original
   // =====================================================
   function analyzeFrame(img) {
     const canvas = document.createElement('canvas');
@@ -2047,7 +1625,7 @@
   }
 
   // =====================================================
-  // FFmpeg
+  // FFmpeg (versão estável 0.11.6)
   // =====================================================
   function checkSharedArrayBuffer() {
     if (typeof SharedArrayBuffer === 'undefined') {
@@ -2092,7 +1670,7 @@
   }
 
   // =====================================================
-  // UPLOAD DE MOLDURA (modo enviar)
+  // UPLOAD DE MOLDURA
   // =====================================================
   function setupFrameUpload() {
     elements.frameInput.addEventListener('change', (e) => {
@@ -2297,8 +1875,7 @@
         if (mode.includes('s')) h = startFrame.h + dyNatural;
       }
 
-      w = Math.max(4, w);
-      h = Math.max(4, h);
+      w = Math.max(4, w); h = Math.max(4, h);
       x = Math.max(0, Math.min(x, fi.frameWidth - w));
       y = Math.max(0, Math.min(y, fi.frameHeight - h));
       w = Math.min(w, fi.frameWidth - x);
@@ -2321,7 +1898,7 @@
   }
 
   // =====================================================
-  // VÍDEOS
+  // VÍDEOS (script original funcional)
   // =====================================================
   function setupVideosUpload() {
     elements.videosInput.addEventListener('change', (e) => {
@@ -2346,15 +1923,8 @@
       }
       const duration = await getVideoDuration(file);
       const video = {
-        id: generateId(),
-        file,
-        name: file.name,
-        size: file.size,
-        duration,
-        status: 'waiting',
-        progress: 0,
-        outputBlob: null,
-        outputUrl: null
+        id: generateId(), file, name: file.name, size: file.size, duration,
+        status: 'waiting', progress: 0, outputBlob: null, outputUrl: null
       };
       state.videos.push(video);
       renderVideoItem(video);
@@ -2435,15 +2005,13 @@
   function setupDragDrop(area, onDrop) {
     ['dragenter', 'dragover'].forEach(evt => {
       area.addEventListener(evt, (e) => {
-        e.preventDefault();
-        e.stopPropagation();
+        e.preventDefault(); e.stopPropagation();
         area.classList.add('drag-over');
       });
     });
     ['dragleave', 'drop'].forEach(evt => {
       area.addEventListener(evt, (e) => {
-        e.preventDefault();
-        e.stopPropagation();
+        e.preventDefault(); e.stopPropagation();
         area.classList.remove('drag-over');
       });
     });
@@ -2466,7 +2034,7 @@
   });
 
   // =====================================================
-  // PROCESSAMENTO
+  // PROCESSAMENTO (script original funcional)
   // =====================================================
   elements.processAllBtn.addEventListener('click', async () => {
     if (state.processing) return;
@@ -2556,43 +2124,25 @@
     let command;
     if (!frameInfo) {
       command = [
-        '-i', inputName,
-        '-loop', '1',
-        '-i', frameName,
-        '-t', String(duration),
+        '-i', inputName, '-loop', '1', '-i', frameName, '-t', String(duration),
         '-filter_complex',
         '[1:v]format=rgba[frame];[0:v]scale=iw:ih[video];[video][frame]overlay=(W-w)/2:(H-h)/2:format=auto:eof_action=pass[out]',
-        '-map', '[out]',
-        '-map', '0:a?',
-        '-c:a', 'copy',
-        '-c:v', 'libx264',
-        '-preset', 'ultrafast',
-        '-crf', '23',
-        '-pix_fmt', 'yuv420p',
-        '-movflags', '+faststart',
-        outputName
+        '-map', '[out]', '-map', '0:a?', '-c:a', 'copy',
+        '-c:v', 'libx264', '-preset', 'ultrafast', '-crf', '23',
+        '-pix_fmt', 'yuv420p', '-movflags', '+faststart', outputName
       ];
     } else {
       command = [
-        '-i', inputName,
-        '-loop', '1',
-        '-i', frameName,
-        '-t', String(duration),
+        '-i', inputName, '-loop', '1', '-i', frameName, '-t', String(duration),
         '-filter_complex',
         `[0:v]scale=${frameInfo.videoWidth}:${frameInfo.videoHeight}:force_original_aspect_ratio=decrease,` +
         `pad=${frameInfo.videoWidth}:${frameInfo.videoHeight}:(ow-iw)/2:(oh-ih)/2:black,` +
         `pad=${frameInfo.frameWidth}:${frameInfo.frameHeight}:${frameInfo.videoX}:${frameInfo.videoY}:black[video];` +
         `[1:v]scale=${frameInfo.frameWidth}:${frameInfo.frameHeight},format=rgba[frame];` +
         `[video][frame]overlay=0:0:format=auto:eof_action=pass[out]`,
-        '-map', '[out]',
-        '-map', '0:a?',
-        '-c:a', 'copy',
-        '-c:v', 'libx264',
-        '-preset', 'ultrafast',
-        '-crf', '23',
-        '-pix_fmt', 'yuv420p',
-        '-movflags', '+faststart',
-        outputName
+        '-map', '[out]', '-map', '0:a?', '-c:a', 'copy',
+        '-c:v', 'libx264', '-preset', 'ultrafast', '-crf', '23',
+        '-pix_fmt', 'yuv420p', '-movflags', '+faststart', outputName
       ];
     }
 
