@@ -589,7 +589,7 @@
                 <div class="preview-layer shape-circle" data-el="profile" id="prev-profile">
                   <img id="prev-profile-img" src="https://videocommoldura.vercel.app/fotoperfil.png" alt="">
                 </div>
-                <div class="preview-layer" data-el="username" id="prev-username">@usuario<span class="check">✓</span></div>
+                <div class="preview-layer" data-el="username" id="prev-username">@usuario</div>
                 <div class="preview-layer" data-el="caption" id="prev-caption">legenda do vídeo aqui 🎬</div>
                 <div id="preview-video-area" data-el="video">
                   <div class="create-area-handle nw" data-handle="nw"></div>
@@ -1095,7 +1095,7 @@ function updatePreview() {
   if(t.profileImg) E.prevProfileImg.src=t.profileImg.src;
 
   const us=Math.max(8,Math.round(t.usernameSize*s));
-  E.prevUsername.innerHTML=(t.usernameText||'')+'<span class="check">✓</span>';
+  E.prevUsername.innerHTML=(t.usernameText||'')+'';
   E.prevUsername.style.cssText=`left:${t.username.x*s}px;top:${t.username.y*s}px;color:${tc};font-size:${us}px;`;
 
   const cs=Math.max(8,Math.round(t.captionSize*s));
@@ -1224,7 +1224,7 @@ async function generateMask() {
   const uw=ctx.measureText(ustr).width;
   ctx.fillStyle='#1d9bf0';
   ctx.font=`bold ${Math.round((t.usernameSize||42)*0.85)}px ${t.usernameFont||'Inter,sans-serif'}`;
-  ctx.fillText('✓',t.username.x+uw+8,t.username.y+2);
+  ctx.fillText('',t.username.x+uw+8,t.username.y+2);
 
   // Caption (word wrap)
   ctx.fillStyle=tc;
